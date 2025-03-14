@@ -5,13 +5,14 @@ if (window.translatorInitialized) {
 window.translatorInitialized = true;
 
 // Global variables
-const state = {
+window.translatorState = window.translatorState || {
     selectedText: '',
     translateButton: null,
     tooltip: null,
     languageSelector: null,
     selectedRange: null
 };
+const state = window.translatorState;
 
 // Initialize the extension
 function initializeExtension() {

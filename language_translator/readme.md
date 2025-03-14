@@ -1,17 +1,26 @@
 # Quick Translator Chrome Extension
 
-A powerful Chrome extension that allows users to instantly translate selected text into multiple languages. The extension provides both translation preview and text replacement capabilities.
+A lightweight Chrome extension that enables instant text translation on any webpage. Select text to translate it into multiple languages with a clean, user-friendly interface.
 
 ## Features
 
-- 🌐 Instant text translation
-- 🔄 Multiple language support (German, Spanish, French, Hindi, Kannada, Chinese, Japanese, Korean)
+- 🌐 Instant text translation with a simple selection
+- 🔄 Support for 8 languages:
+  - German (de)
+  - Spanish (es)
+  - French (fr)
+  - Hindi (hi)
+  - Kannada (kn)
+  - Chinese (zh)
+  - Japanese (ja)
+  - Korean (ko)
 - 💫 Two translation modes:
-  - Preview mode (shows translation in a popup)
-  - Replace mode (replaces selected text with translation)
-- 🎯 Context menu integration
-- 📱 Responsive design
-- ⚡ Fast and lightweight
+  - Preview mode: Shows translation in a floating tooltip
+  - Replace mode: Replaces selected text with translation
+- 🎯 Context menu integration for quick access
+- 📱 Responsive and non-intrusive UI
+- ⚡ Fast translation using MyMemory Translation API
+- 🔒 Safe injection prevention to avoid duplicate instances
 
 ## Installation
 
@@ -23,118 +32,55 @@ A powerful Chrome extension that allows users to instantly translate selected te
 
 ## Usage
 
-### Method 1: Using the Selection Interface
-
+### Method 1: Direct Text Selection
 1. Select any text on a webpage
-2. A language selector will appear near your selection
+2. A language selector will automatically appear near your selection
 3. Choose your target language from the dropdown
 4. Click either:
-   - "Translate" to see the translation in a popup
-   - "Replace" to replace the selected text with its translation
+   - "Translate" to view the translation in a tooltip
+   - "Replace" to replace the original text with the translation
 
-### Method 2: Using the Context Menu
-
-1. Select any text on a webpage
+### Method 2: Context Menu
+1. Select text on any webpage
 2. Right-click to open the context menu
-3. Select "Translate Selection"
-4. The translation will appear in a popup
+3. Choose "Translate Selection"
+4. View the translation in a tooltip
 
-## Code Structure
+## Technical Implementation
 
-### Main Components
+### Key Components
 
-1. **content.js**
-   - Core functionality implementation
-   - Handles text selection, translation, and UI elements
-   - Manages communication between different parts of the extension
+1. **State Management**
+   - Uses global window object for state management
+   - Prevents multiple instance conflicts
+   - Maintains UI element references
 
-2. **background.js**
-   - Manages context menu integration
-   - Handles script injection
-   - Manages extension lifecycle
+2. **UI Components**
+   - Language selector dropdown
+   - Translation tooltip
+   - Floating translate button
+   - Replace/Translate action buttons
 
-3. **manifest.json**
-   - Extension configuration
-   - Permissions and resource declarations
-   - Script and API configurations
+3. **Event Handling**
+   - Text selection detection
+   - Scroll position adaptation
+   - Click-away dismissal
+   - Error handling for all user interactions
 
-### Key Functions
+### API Integration
 
-1. `initializeExtension()`
-   - Initializes UI components
-   - Sets up event listeners
-   - Creates necessary DOM elements
-
-2. `createLanguageSelector()`
-   - Creates the language selection dropdown
-   - Adds translation and replace buttons
-   - Handles button click events
-
-3. `handleTranslation(text, targetLang, shouldReplace)`
-   - Manages the translation process
-   - Communicates with translation API
-   - Updates UI with translation results
-
-4. `showTranslationTooltip(translatedText, langSelectorRect)`
-   - Displays translation results
-   - Manages tooltip positioning and content
-   - Handles user interactions
-
-## Technical Details
-
-### Translation Process
-
-1. Text Selection
-   - User selects text
-   - Selection event triggers UI display
-   - Selected text is stored
-
-2. Language Selection
-   - User chooses target language
-   - Language code is passed to translator
-
-3. Translation
-   - Text is sent to MyMemory Translation API
-   - Response is processed
-   - Result is displayed or text is replaced
-
-### UI Components
-
-1. **Language Selector**
-   - Dropdown for language selection
-   - Translate and Replace buttons
-   - Appears near selected text
-
-2. **Translation Tooltip**
-   - Shows original and translated text
-   - Close button for dismissal
-   - Positioned next to language selector
-
-### Event Handling
-
-- `mouseup`: Triggers selection UI
-- `click`: Manages UI visibility
-- `scroll`: Handles UI repositioning
-- Chrome message events: Manages extension communication
-
-## API Integration
-
-The extension uses the MyMemory Translation API:
-
+- Uses MyMemory Translation API
 - Endpoint: `https://api.mymemory.translated.net/get`
 - Parameters:
   - `q`: Text to translate
-  - `langpair`: Source and target language pair
+  - `langpair`: Source and target language pair (e.g., "en|de")
 
-## Error Handling
+### Security Features
 
-The extension includes comprehensive error handling for:
-
-- Script initialization
-- API communication
-- UI element creation
-- User interactions
-- Extension messaging
+- Script injection protection
+- Single instance enforcement
+- Safe state management
+- Error boundary implementation
 
 ## Browser Compatibility
 
@@ -145,15 +91,33 @@ The extension includes comprehensive error handling for:
   - scripting
   - storage
   - contextMenus
+  - tabs
+
+## Error Handling
+
+The extension implements comprehensive error handling for:
+- Script initialization
+- API communication
+- UI element creation
+- Translation operations
+- Event listeners
+- Message passing
 
 ## Development
 
-To modify or enhance the extension:
+To modify the extension:
 
-1. Make changes to the relevant files
-2. Reload the extension in Chrome
-3. Test thoroughly across different websites
-4. Check console for any errors
+1. Edit the relevant files:
+   - `content.js`: Core functionality
+   - `background.js`: Event handling
+   - `popup.html/js`: User interface
+   - `manifest.json`: Extension configuration
+
+2. Test thoroughly:
+   - Different websites
+   - Various text selections
+   - Multiple language combinations
+   - Error scenarios
 
 ## Troubleshooting
 
@@ -161,24 +125,33 @@ Common issues and solutions:
 
 1. Translation not working
    - Check internet connection
-   - Verify API access
-   - Check console for errors
+   - Verify API accessibility
+   - Check console for specific errors
 
 2. UI not appearing
-   - Reload the extension
+   - Refresh the page
    - Check for conflicts with other extensions
    - Verify script injection
 
-3. Context menu missing
-   - Reinstall the extension
-   - Check permissions
+3. Multiple instances
+   - Clear browser cache
+   - Reload the extension
+   - Check for error messages in console
 
-## Future Enhancements
+## Contributing
 
-Potential improvements:
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
 
-- Additional language support
-- Custom API key configuration
-- Translation history
-- Offline translation support
-- Custom styling options
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- MyMemory Translation API for providing translation services
+- Chrome Extensions API documentation
+- Contributors and testers
