@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Session Manager",
+  "version": "1.0",
+  "description": "A powerful session manager to track, save, and restore your browser windows and tabs",
+  "permissions": [
+    "tabs",
+    "storage",
+    "bookmarks",
+    "sessions",
+    "background",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/session_manager_16.png",
+      "32": "icons/session_manager_32.png",
+      "128": "icons/session_manager_128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/session_manager_16.png",
+    "32": "icons/session_manager_32.png",
+    "128": "icons/session_manager_128.png"
+  }
+}
