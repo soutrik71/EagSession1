@@ -120,6 +120,7 @@ A powerful Chrome extension that allows users to instantly translate selected te
 ## API Integration
 
 The extension uses the MyMemory Translation API:
+
 - Endpoint: `https://api.mymemory.translated.net/get`
 - Parameters:
   - `q`: Text to translate
@@ -128,6 +129,7 @@ The extension uses the MyMemory Translation API:
 ## Error Handling
 
 The extension includes comprehensive error handling for:
+
 - Script initialization
 - API communication
 - UI element creation
@@ -147,6 +149,7 @@ The extension includes comprehensive error handling for:
 ## Development
 
 To modify or enhance the extension:
+
 1. Make changes to the relevant files
 2. Reload the extension in Chrome
 3. Test thoroughly across different websites
@@ -155,6 +158,7 @@ To modify or enhance the extension:
 ## Troubleshooting
 
 Common issues and solutions:
+
 1. Translation not working
    - Check internet connection
    - Verify API access
@@ -172,6 +176,7 @@ Common issues and solutions:
 ## Future Enhancements
 
 Potential improvements:
+
 - Additional language support
 - Custom API key configuration
 - Translation history
