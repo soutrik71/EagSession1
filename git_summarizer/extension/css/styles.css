@@ -1,0 +1,54 @@
+.container {
+    width: 400px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #24292e;
+}
+
+.input-section {
+    margin-bottom: 20px;
+}
+
+#repoUrl {
+    width: 70%;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+}
+
+#analyzeBtn {
+    padding: 8px 16px;
+    background-color: #2ea44f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#analyzeBtn:hover {
+    background-color: #2c974b;
+}
+
+.result-section {
+    margin-top: 20px;
+}
+
+#loading {
+    color: #586069;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.markdown-content {
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+} 
