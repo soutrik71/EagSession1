@@ -2,19 +2,27 @@
   "manifest_version": 3,
   "name": "GitHub Repo Analyzer",
   "version": "1.0",
-  "description": "Analyzes GitHub repositories to provide detailed code flow descriptions",
+  "description": "Analyzes GitHub repositories using AI to provide detailed code structure and architecture insights",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "host_permissions": [
-    "https://github.com/*"
+    "https://github.com/*",
+    "http://localhost:8000/*"
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "128": "icons/icon128.png"
+    }
   },
   "icons": {
-    "48": "icons/icon48.png",
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "128": "icons/icon128.png"
   }
 } 

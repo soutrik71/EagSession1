@@ -1,7 +1,7 @@
 fastapi==0.104.1
 uvicorn==0.24.0
 python-dotenv==1.0.0
-google-generativeai==0.3.1
+google-generativeai==0.3.2
 langchain==0.1.5
 langchain-core==0.1.16
 langchain-google-genai==0.0.5
@@ -18,3 +18,4 @@ cffi==1.15.1
 cryptography==41.0.7
 platformdirs==2.6.2
 pytz==2023.3
+google-cloud-aiplatform==1.42.1

@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import Optional
 from dotenv import load_dotenv
-import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains import LLMChain
@@ -35,15 +34,21 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found in environment variables")
 
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel("gemini-pro")
-
-# Configure LangChain Gemini
+# Configure LangChain Gemini with correct model name and configuration
 llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
+    model="gemini-1.5-pro",
     google_api_key=GOOGLE_API_KEY,
     temperature=0.0,
     convert_system_message_to_human=True,
+    safety_settings=[
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    ],
+    max_output_tokens=2048,
+    top_p=0.8,
+    top_k=40,
 )
 
 
@@ -99,7 +104,10 @@ def clone_repo(repo_url: str) -> str:
         git.Repo.clone_from(repo_url, temp_dir)
         return temp_dir
     except Exception as e:
-        shutil.rmtree(temp_dir)
+        try:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        except Exception:
+            pass
         raise HTTPException(
             status_code=400, detail=f"Failed to clone repository: {str(e)}"
         )
@@ -149,7 +157,10 @@ def analyze_code_structure(repo_path: str) -> str:
 
         # Create and run the chain
         chain = LLMChain(llm=llm, prompt=prompt_template)
-        analysis = chain.run(file_structure=chr(10).join(file_structure))
+        # Using invoke instead of run as per deprecation warning
+        analysis = chain.invoke({"file_structure": chr(10).join(file_structure)})[
+            "text"
+        ]
 
         return analysis
     except Exception as e:
@@ -177,10 +188,10 @@ async def analyze_repo(request: RepoRequest):
     Returns:
         AnalysisResponse containing the analysis results
     """
+    repo_path = None
     try:
         repo_path = clone_repo(str(request.repo_url))
         analysis = analyze_code_structure(repo_path)
-        shutil.rmtree(repo_path)  # Clean up
         return AnalysisResponse(
             analysis=analysis,
             status="success",
@@ -190,8 +201,14 @@ async def analyze_repo(request: RepoRequest):
         raise e
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=str(e), message="An unexpected error occurred"
+            status_code=500, detail=f"An unexpected error occurred: {str(e)}"
         )
+    finally:
+        if repo_path:
+            try:
+                shutil.rmtree(repo_path, ignore_errors=True)
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":
