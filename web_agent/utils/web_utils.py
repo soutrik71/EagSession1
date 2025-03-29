@@ -3,6 +3,7 @@ import finnhub
 from typing import Dict, Any, List
 import requests
 from dotenv import load_dotenv, find_dotenv
+from loguru import logger
 
 load_dotenv(find_dotenv())
 
@@ -84,7 +85,7 @@ def get_company_financials(company_symbol: str) -> Dict[str, Any]:
         financials = finnhub_client.company_basic_financials(company_symbol, "all")
         # Convert metrics dictionary to markdown-style string
         metrics = financials["metric"]
-        markdown_metrics = ", ".join([f"{k}: {v}" for k, v in metrics.items()])
+        markdown_metrics = "   ".join([f"{k}: {v}" for k, v in metrics.items()])
         return markdown_metrics
     except Exception as e:
         raise Exception(f"Error fetching financials for {company_symbol}: {str(e)}")
@@ -93,7 +94,7 @@ def get_company_financials(company_symbol: str) -> Dict[str, Any]:
 from newsapi import NewsApiClient
 
 
-def get_news_headlines(keyword: str, num_articles: int = 3):
+def get_news_headlines(keyword: str, num_articles: int = 5):
     """
     Get news headlines and descriptions for a keyword search
 
@@ -115,6 +116,10 @@ def get_news_headlines(keyword: str, num_articles: int = 3):
         # Get all articles
         all_articles = newsapi.get_everything(
             q=keyword, language="en", sort_by="relevancy"
+        )
+
+        logger.info(
+            f"No of articles: {len(all_articles['articles'])} and filtered: {len(all_articles['articles'][:num_articles])}"
         )
 
         # Extract first n articles

@@ -28,3 +28,7 @@ build/
 .env
 .env.local
 .env.*.local
+web_agent/utils/__pycache__/__init__.cpython-310.pyc
+web_agent/utils/__pycache__/tool_calling_exec.cpython-310.pyc
+web_agent/utils/__pycache__/web_utils.cpython-310.pyc
+*.pyc
