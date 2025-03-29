@@ -4,6 +4,7 @@ from typing import Dict, Any, List
 import requests
 from dotenv import load_dotenv, find_dotenv
 from loguru import logger
+from newsapi import NewsApiClient
 
 load_dotenv(find_dotenv())
 
@@ -90,9 +91,6 @@ def get_company_financials(company_symbol: str) -> Dict[str, Any]:
         return markdown_metrics
     except Exception as e:
         raise Exception(f"Error fetching financials for {company_symbol}: {str(e)}")
-
-
-from newsapi import NewsApiClient
 
 
 def get_news_headlines(keyword: str, num_articles: int = 5):

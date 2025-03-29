@@ -76,7 +76,31 @@ function removeExistingResults() {
   existingResults.forEach(result => result.remove());
 }
 
-popup.addEventListener('click', function(e) {
+// Function to send message with retry
+async function sendMessageWithRetry(message, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(message, response => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve(response);
+          }
+        });
+      });
+    } catch (error) {
+      console.warn(`Attempt ${i + 1} failed:`, error);
+      if (i === maxRetries - 1) {
+        throw error;
+      }
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    }
+  }
+}
+
+popup.addEventListener('click', async function(e) {
   if (e.target.id === 'news-btn' || e.target.id === 'financial-btn') {
     removeExistingResults();
     
@@ -98,12 +122,39 @@ popup.addEventListener('click', function(e) {
       loadingDiv.remove();
     });
     
-    // Send message to background script
-    chrome.runtime.sendMessage({
-      action: 'research',
-      type: e.target.id === 'news-btn' ? 'news' : 'financial',
-      entity: lastSelectedText
-    });
+    try {
+      // Send message to background script with retry
+      await sendMessageWithRetry({
+        action: 'research',
+        type: e.target.id === 'news-btn' ? 'news' : 'financial',
+        entity: lastSelectedText
+      });
+    } catch (error) {
+      console.error('Failed to send message after retries:', error);
+      // Show error message
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'research-result error';
+      errorDiv.innerHTML = `
+        <button class="close-btn">&times;</button>
+        <h3>Connection Error</h3>
+        <div class="content">
+          <p>Failed to connect to the extension. Please:</p>
+          <ol>
+            <li>Check if the extension is enabled</li>
+            <li>Reload the page</li>
+            <li>Try your search again</li>
+          </ol>
+          <p>If the problem persists, try reloading the extension from chrome://extensions</p>
+        </div>
+      `;
+      
+      errorDiv.querySelector('.close-btn').addEventListener('click', () => {
+        errorDiv.remove();
+      });
+      
+      document.body.appendChild(errorDiv);
+      loadingDiv.remove();
+    }
     
     popup.style.display = 'none';
   }

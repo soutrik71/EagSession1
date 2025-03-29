@@ -132,6 +132,7 @@ class CompanyNewsTool(BaseTool):
 company_financials_tool = CompanyFinancialsTool()
 company_news_tool = CompanyNewsTool()
 
+# tool dictionary
 tools_dict = {
     company_financials_tool.name: company_financials_tool,
     company_news_tool.name: company_news_tool,
@@ -148,7 +149,7 @@ def get_prompt(question: str):
     Generate conversation prompt including system instructions and the user's question.
     """
     system_message = (
-        "You are a financial research assistant with access to two specialized tools:\n\n"
+        "You are a news and financial research assistant with access to two specialized tools:\n\n"
         "1. GetCompanyFinancials:\n"
         "   - Purpose: Retrieves detailed financial information for a company\n"
         "   - Input: Company name (e.g., 'Apple', 'Microsoft')\n"

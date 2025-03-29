@@ -14,7 +14,7 @@ from utils.tool_calling_exec import (
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Financial Research API",
+    title="News and Financial Research Assistant",
     description="API for getting financial information and news about companies",
     version="1.0.0",
 )

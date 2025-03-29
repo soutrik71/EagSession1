@@ -1,8 +1,33 @@
 // API endpoint configuration
 const API_BASE_URL = 'http://localhost:8000';
 
+// Track connection status
+let isConnected = true;
+
+// Function to send message to tab with retry
+async function sendTabMessageWithRetry(tabId, message, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await chrome.tabs.sendMessage(tabId, message);
+      return;
+    } catch (error) {
+      console.warn(`Attempt ${i + 1} failed to send tab message:`, error);
+      if (i === maxRetries - 1) {
+        throw error;
+      }
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    }
+  }
+}
+
 // Handle messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (!isConnected) {
+    sendResponse({ error: 'Extension disconnected. Please reload the page.' });
+    return false;
+  }
+
   if (request.action === 'research') {
     const question = request.type === 'news' 
       ? `What are the latest news for ${request.entity}?`
@@ -26,38 +51,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
       return response.json();
     })
-    .then(data => {
+    .then(async data => {
       try {
-        // Send successful response back to content script
-        chrome.tabs.sendMessage(sender.tab.id, {
+        // Send successful response back to content script with retry
+        await sendTabMessageWithRetry(sender.tab.id, {
           action: 'researchResult',
           data: data
-        }).catch(err => {
-          console.error('Tab messaging error:', err);
-          // Try to reload the extension context
-          chrome.runtime.reload();
         });
       } catch (err) {
-        console.error('Extension context error:', err);
-        // Try to reload the extension context
+        console.error('Failed to send success message:', err);
+        isConnected = false;
         chrome.runtime.reload();
       }
     })
-    .catch(error => {
+    .catch(async error => {
       console.error('API Error:', error);
       try {
-        // Send error back to content script
-        chrome.tabs.sendMessage(sender.tab.id, {
+        // Send error back to content script with retry
+        await sendTabMessageWithRetry(sender.tab.id, {
           action: 'researchError',
           error: `Failed to fetch data: ${error.message}. Please make sure the API server is running at ${API_BASE_URL}`
-        }).catch(err => {
-          console.error('Error message sending failed:', err);
-          // Try to reload the extension context
-          chrome.runtime.reload();
         });
       } catch (err) {
-        console.error('Extension context error:', err);
-        // Try to reload the extension context
+        console.error('Failed to send error message:', err);
+        isConnected = false;
         chrome.runtime.reload();
       }
     });
@@ -69,14 +86,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Listen for installation or update
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Extension installed/updated');
+  isConnected = true;
 });
 
 // Handle extension errors
 chrome.runtime.onSuspend.addListener(() => {
   console.log('Extension being suspended');
+  isConnected = false;
 });
 
-// Keep the service worker alive
+// Keep the service worker alive and check connection
 setInterval(() => {
-  console.log('Keeping service worker alive');
+  if (!isConnected) {
+    chrome.runtime.reload();
+  }
 }, 20000); 
