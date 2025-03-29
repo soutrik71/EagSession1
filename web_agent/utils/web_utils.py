@@ -85,7 +85,8 @@ def get_company_financials(company_symbol: str) -> Dict[str, Any]:
         financials = finnhub_client.company_basic_financials(company_symbol, "all")
         # Convert metrics dictionary to markdown-style string
         metrics = financials["metric"]
-        markdown_metrics = "   ".join([f"{k}: {v}" for k, v in metrics.items()])
+
+        markdown_metrics = "\n".join([f"{k}: {v}" for k, v in metrics.items()])
         return markdown_metrics
     except Exception as e:
         raise Exception(f"Error fetching financials for {company_symbol}: {str(e)}")
@@ -119,7 +120,7 @@ def get_news_headlines(keyword: str, num_articles: int = 5):
         )
 
         logger.info(
-            f"No of articles: {len(all_articles['articles'])} and filtered: {len(all_articles['articles'][:num_articles])}"
+            f"No of News articles: {len(all_articles['articles'])} extracted for {keyword}"
         )
 
         # Extract first n articles

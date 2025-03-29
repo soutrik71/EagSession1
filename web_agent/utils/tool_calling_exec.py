@@ -95,7 +95,7 @@ class CompanyFinancialsTool(BaseTool):
 
         # Use the first symbol found to get financial data
         symbol = symbols[0]["symbol"]
-        logger.info(f"Symbol: {symbol}")
+        logger.info(f"We are getting financials for {symbol}")
         return get_company_financials(symbol)
 
     async def _arun(
