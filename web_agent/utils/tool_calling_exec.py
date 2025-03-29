@@ -16,6 +16,7 @@ from utils.web_utils import (
     get_company_financials,
     get_news_headlines,
 )
+from utils.company_symbols import get_symbol_from_mapping
 from loguru import logger
 
 # Load environment variables once
@@ -86,16 +87,27 @@ class CompanyFinancialsTool(BaseTool):
         if not company_name:
             return "Company name is required"
 
+        # Try getting symbol from Alpha Vantage first
         symbols = get_stock_symbol_alpha_vantage(company_name)
-        # filter for symober where 'region': 'United States'
-        symbols = [symbol for symbol in symbols if symbol["region"] == "United States"]
-        # logger.info(f"Symbols: {symbols}")
-        if not symbols:
-            return f"No stock symbol found for {company_name}"
+        logger.info(f"Symbols from alpha vantage: {symbols}")
 
-        # Use the first symbol found to get financial data
-        symbol = symbols[0]["symbol"]
-        logger.info(f"We are getting financials for {symbol}")
+        # Filter for symbols where 'region': 'United States'
+        symbols_fin = [
+            symbol for symbol in symbols if symbol["region"] == "United States"
+        ]
+        if symbols_fin:
+            # Use the first symbol found
+            symbol = symbols_fin[0]["symbol"]
+            logger.info(f"Using symbol from Alpha Vantage: {symbol}")
+        else:
+            # Try getting symbol from our mapping
+            symbol = get_symbol_from_mapping(company_name)
+            logger.info(f"Using symbol from mapping: {symbol}")
+
+        if not symbol:
+            return f"No stock symbol found for {company_name}. Please try with a different company name or check the spelling."
+
+        logger.info(f"Getting financials for {symbol}")
         return get_company_financials(symbol)
 
     async def _arun(
