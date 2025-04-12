@@ -5,9 +5,7 @@ from mcp.types import TextContent
 from PIL import Image as PILImage
 import math
 import sys
-from pywinauto.application import Application
-import win32gui
-import win32con
+from pywinauto.keyboard import send_keys
 import time
 import subprocess
 
@@ -77,35 +75,35 @@ def add_list(numbers: list) -> int:
 @mcp.tool()
 def subtract(a: int, b: int) -> int:
     """Subtract two numbers"""
-    log_tool_call("subtract", f"a: int, b: int")
+    log_tool_call("subtract", "a: int, b: int")
     return int(a - b)
 
 
 @mcp.tool()
 def multiply(a: int, b: int) -> int:
     """Multiply two numbers"""
-    log_tool_call("multiply", f"a: int, b: int")
+    log_tool_call("multiply", "a: int, b: int")
     return int(a * b)
 
 
 @mcp.tool()
 def divide(a: int, b: int) -> float:
     """Divide two numbers"""
-    log_tool_call("divide", f"a: int, b: int")
+    log_tool_call("divide", "a: int, b: int")
     return float(a / b)
 
 
 @mcp.tool()
 def power(a: int, b: int) -> int:
     """Power of two numbers"""
-    log_tool_call("power", f"a: int, b: int")
+    log_tool_call("power", "a: int, b: int")
     return int(a**b)
 
 
 @mcp.tool()
 def remainder(a: int, b: int) -> int:
     """Remainder of two numbers division"""
-    log_tool_call("remainder", f"a: int, b: int")
+    log_tool_call("remainder", "a: int, b: int")
     return int(a % b)
 
 
@@ -113,49 +111,49 @@ def remainder(a: int, b: int) -> int:
 @mcp.tool()
 def sqrt(a: int) -> float:
     """Square root of a number"""
-    log_tool_call("sqrt", f"a: int")
+    log_tool_call("sqrt", "a: int")
     return float(a**0.5)
 
 
 @mcp.tool()
 def cbrt(a: int) -> float:
     """Cube root of a number"""
-    log_tool_call("cbrt", f"a: int")
+    log_tool_call("cbrt", "a: int")
     return float(a ** (1 / 3))
 
 
 @mcp.tool()
 def factorial(a: int) -> int:
     """Factorial of a number"""
-    log_tool_call("factorial", f"a: int")
+    log_tool_call("factorial", "a: int")
     return int(math.factorial(a))
 
 
 @mcp.tool()
 def log(a: int) -> float:
     """Log of a number"""
-    log_tool_call("log", f"a: int")
+    log_tool_call("log", "a: int")
     return float(math.log(a))
 
 
 @mcp.tool()
 def sin(a: int) -> float:
     """Sin of a number"""
-    log_tool_call("sin", f"a: int")
+    log_tool_call("sin", "a: int")
     return float(math.sin(a))
 
 
 @mcp.tool()
 def cos(a: int) -> float:
     """Cos of a number"""
-    log_tool_call("cos", f"a: int")
+    log_tool_call("cos", "a: int")
     return float(math.cos(a))
 
 
 @mcp.tool()
 def tan(a: int) -> float:
     """Tan of a number"""
-    log_tool_call("tan", f"a: int")
+    log_tool_call("tan", "a: int")
     return float(math.tan(a))
 
 
@@ -163,14 +161,14 @@ def tan(a: int) -> float:
 @mcp.tool()
 def mine(a: int, b: int) -> int:
     """Special mining tool"""
-    log_tool_call("mine", f"a: int, b: int")
+    log_tool_call("mine", "a: int, b: int")
     return int(a - b - b)
 
 
 @mcp.tool()
 def fibonacci_numbers(n: int) -> list:
     """Return the first n Fibonacci Numbers"""
-    log_tool_call("fibonacci_numbers", f"n: int")
+    log_tool_call("fibonacci_numbers", "n: int")
     if n <= 0:
         return []
     fib_sequence = [0, 1]
@@ -243,7 +241,7 @@ async def add_text_in_notepad(text: str) -> dict:
         time.sleep(1)
 
         # Use keyboard module for more reliable text input
-        from pywinauto.keyboard import send_keys
+        send_keys
 
         # Press Alt+Space, x to maximize (in case it's not)
         send_keys("%{SPACE}x")
