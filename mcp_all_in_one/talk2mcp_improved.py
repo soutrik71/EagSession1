@@ -23,10 +23,10 @@ Code Flow Description:
    - Create system prompts
    - Handle tool execution
 
-4. Paint Operations
-   - Open Paint application
-   - Draw shapes
+4. Notepad Operations
+   - Open Notepad application
    - Add text
+   - Close Notepad
 
 5. Main Execution Flow
    - Initialize connection
@@ -183,25 +183,32 @@ def get_result_content(result):
     return str(result)
 
 
-# ===== Paint Operations =====
-async def execute_paint_operations(session, response_text):
-    """Execute Paint-related operations"""
-    # Open Paint
-    result = await session.call_tool("open_paint")
-    print(result.content[0].text)
-    await asyncio.sleep(1)  # Wait for Paint to be fully maximized
+# ===== Notepad Operations =====
+async def execute_notepad_operations(session, response_text):
+    """Execute Notepad-related operations"""
+    try:
+        # Open Notepad
+        print("Opening Notepad...")
+        result = await session.call_tool("open_notepad")
+        print(f"Open Notepad result: {result.content[0].text}")
+        await asyncio.sleep(2)  # Wait for Notepad to be ready
 
-    # Draw a rectangle
-    result = await session.call_tool(
-        "draw_rectangle", arguments={"x1": 780, "y1": 380, "x2": 1140, "y2": 700}
-    )
-    print(result.content[0].text)
+        # Add text
+        print("Adding text...")
+        result = await session.call_tool(
+            "add_text_in_notepad", arguments={"text": f"Final Answer: {response_text}"}
+        )
+        print(f"Add text result: {result.content[0].text}")
+        await asyncio.sleep(2)  # Wait to see the result
 
-    # Add text
-    result = await session.call_tool(
-        "add_text_in_paint", arguments={"text": response_text}
-    )
-    print(result.content[0].text)
+        # Close Notepad
+        print("Closing Notepad...")
+        result = await session.call_tool("close_notepad")
+        print(f"Close Notepad result: {result.content[0].text}")
+
+    except Exception as e:
+        print(f"Error in Notepad operations: {e}")
+        raise
 
 
 # ===== Main Execution =====
@@ -217,10 +224,10 @@ async def process_iteration(session, tools, current_query, system_prompt):
         response_text = response.text.strip()
         print(f"LLM Response: {response_text}")
 
-        # Find the FUNCTION_CALL line in the response
+        # Find the FUNCTION_CALL or FINAL_ANSWER line in the response
         for line in response_text.split("\n"):
             line = line.strip()
-            if line.startswith("FUNCTION_CALL:"):
+            if line.startswith("FUNCTION_CALL:") or line.startswith("FINAL_ANSWER:"):
                 response_text = line
                 break
 
@@ -263,8 +270,20 @@ async def process_iteration(session, tools, current_query, system_prompt):
 
     elif response_text.startswith("FINAL_ANSWER:"):
         print("\n=== Agent Execution Complete ===")
-        await execute_paint_operations(session, response_text)
-        return False
+        # Extract the final answer
+        _, final_answer = response_text.split(":", 1)
+        final_answer = final_answer.strip()
+        print(f"Final Answer: {final_answer}")
+
+        # Execute Notepad operations
+        try:
+            print("Starting Notepad operations...")
+            await execute_notepad_operations(session, final_answer)
+            print("Notepad operations completed")
+            return False
+        except Exception as e:
+            print(f"Error executing Notepad operations: {e}")
+            return False
 
     return True
 

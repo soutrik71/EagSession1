@@ -9,7 +9,7 @@ from pywinauto.application import Application
 import win32gui
 import win32con
 import time
-from win32api import GetSystemMetrics
+import subprocess
 
 """
 Available Tools:
@@ -40,14 +40,15 @@ Available Tools:
 4. Image Operations:
    - create_thumbnail(image_path: str) -> Image: Create a thumbnail from an image
 
-5. Paint Operations:
-   - open_paint() -> dict: Open Microsoft Paint maximized on secondary monitor
-   - draw_rectangle(x1: int, y1: int, x2: int, y2: int) -> dict: Draw rectangle in Paint
-   - add_text_in_paint(text: str) -> dict: Add text in Paint
+5. Notepad Operations:
+   - open_notepad() -> dict: Open Notepad maximized
+   - add_text_in_notepad(text: str) -> dict: Add text in Notepad
+   - close_notepad() -> dict: Close Notepad
 """
 
 # Global variables
-paint_app = None
+word_app = None
+notepad_app = None
 
 # Initialize MCP server
 mcp = FastMCP("Calculator")
@@ -62,7 +63,7 @@ def log_tool_call(func_name: str, params: str) -> None:
 @mcp.tool()
 def add(a: int, b: int) -> int:
     """Add two numbers"""
-    log_tool_call("add", f"a: int, b: int")
+    log_tool_call("add", "a: int, b: int")
     return int(a + b)
 
 
@@ -202,236 +203,55 @@ def create_thumbnail(image_path: str) -> Image:
     return Image(data=img.tobytes(), format="png")
 
 
-# ===== Paint Operations =====
-def get_paint_window():
-    """Helper function to get the Paint window"""
-    global paint_app
-    if not paint_app:
-        return None
-    return paint_app.window(class_name="MSPaintApp")
-
-
-def ensure_paint_open():
-    """Helper function to ensure Paint is open"""
-    return {
-        "content": [
-            TextContent(
-                type="text", text="Paint is not open. Please call open_paint first."
-            )
-        ]
-    }
-
-
+# ===== Notepad Operations =====
 @mcp.tool()
-async def open_paint() -> dict:
-    """Open Microsoft Paint maximized on secondary monitor"""
-    global paint_app
+async def open_notepad() -> dict:
+    """Open Notepad"""
     try:
-        # Start Paint with a longer timeout
-        paint_app = Application().start("mspaint.exe", timeout=10)
-        time.sleep(2)  # Give more time for Paint to start
+        # Kill any existing notepad
+        subprocess.run(
+            ["taskkill", "/F", "/IM", "notepad.exe"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        time.sleep(1)
 
-        paint_window = get_paint_window()
-        if not paint_window:
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text="Failed to get Paint window handle. Please ensure Paint is installed and accessible.",
-                    )
-                ]
-            }
-
-        # Get primary monitor width
-        try:
-            primary_width = GetSystemMetrics(0)
-        except Exception:
-            primary_width = (
-                1920  # Default to common resolution if GetSystemMetrics fails
-            )
-
-        # Move to secondary monitor with error handling
-        try:
-            win32gui.SetWindowPos(
-                paint_window.handle,
-                win32con.HWND_TOP,
-                primary_width + 1,
-                0,
-                0,
-                0,
-                win32con.SWP_NOSIZE,
-            )
-        except Exception as e:
-            print(f"Warning: Could not move window: {e}")
-
-        # Maximize window with error handling
-        try:
-            win32gui.ShowWindow(paint_window.handle, win32con.SW_MAXIMIZE)
-            time.sleep(1)  # Give time for maximize to complete
-        except Exception as e:
-            print(f"Warning: Could not maximize window: {e}")
+        # Start notepad
+        subprocess.Popen(
+            ["notepad.exe"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        time.sleep(1)
 
         return {
             "content": [
                 TextContent(
                     type="text",
-                    text="Paint opened successfully on secondary monitor and maximized",
+                    text="Notepad opened successfully",
                 )
             ]
         }
     except Exception as e:
-        return {
-            "content": [TextContent(type="text", text=f"Error opening Paint: {str(e)}")]
-        }
+        return {"content": [TextContent(type="text", text=str(e))]}
 
 
 @mcp.tool()
-async def draw_rectangle(x1: int, y1: int, x2: int, y2: int) -> dict:
-    """Draw a rectangle in Paint from (x1,y1) to (x2,y2)"""
-    paint_window = get_paint_window()
-    if not paint_window:
-        return ensure_paint_open()
-
+async def add_text_in_notepad(text: str) -> dict:
+    """Add text in Notepad"""
     try:
-        if not paint_window.has_focus():
-            paint_window.set_focus()
-            time.sleep(1)  # Give more time for focus
+        # Wait a bit for Notepad to be ready
+        time.sleep(1)
 
-        # Click on the Rectangle tool with retry
-        for _ in range(3):  # Try up to 3 times
-            try:
-                paint_window.click_input(coords=(530, 82))
-                time.sleep(1)
-                break
-            except Exception:
-                time.sleep(1)
-                continue
+        # Use keyboard module for more reliable text input
+        from pywinauto.keyboard import send_keys
 
-        # Get the canvas area
-        canvas = paint_window.child_window(class_name="MSPaintView")
-        if not canvas.exists():
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text="Could not find Paint canvas. Please ensure Paint is open and visible.",
-                    )
-                ]
-            }
-
-        # Draw rectangle with error handling
-        try:
-            canvas.press_mouse_input(coords=(x1 + 2560, y1))
-            time.sleep(0.5)
-            canvas.move_mouse_input(coords=(x2 + 2560, y2))
-            time.sleep(0.5)
-            canvas.release_mouse_input(coords=(x2 + 2560, y2))
-            time.sleep(1)
-        except Exception as e:
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text=f"Error drawing rectangle: {str(e)}. Please ensure Paint is open and visible.",
-                    )
-                ]
-            }
-
-        return {
-            "content": [
-                TextContent(
-                    type="text", text=f"Rectangle drawn from ({x1},{y1}) to ({x2},{y2})"
-                )
-            ]
-        }
-    except Exception as e:
-        return {
-            "content": [
-                TextContent(type="text", text=f"Error drawing rectangle: {str(e)}")
-            ]
-        }
-
-
-@mcp.tool()
-async def add_text_in_paint(text: str) -> dict:
-    """Add text in Paint"""
-    paint_window = get_paint_window()
-    if not paint_window:
-        return ensure_paint_open()
-
-    try:
-        if not paint_window.has_focus():
-            paint_window.set_focus()
-            time.sleep(1)
-
-        # Click on the Text tool with retry
-        for _ in range(3):
-            try:
-                paint_window.click_input(coords=(528, 92))
-                time.sleep(1)
-                break
-            except Exception:
-                time.sleep(1)
-                continue
-
-        # Get the canvas area
-        canvas = paint_window.child_window(class_name="MSPaintView")
-        if not canvas.exists():
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text="Could not find Paint canvas. Please ensure Paint is open and visible.",
-                    )
-                ]
-            }
-
-        # Select text tool with retry
-        for _ in range(3):
-            try:
-                paint_window.type_keys("t")
-                time.sleep(0.5)
-                paint_window.type_keys("x")
-                time.sleep(0.5)
-                break
-            except Exception:
-                time.sleep(1)
-                continue
-
-        # Click where to start typing
-        try:
-            canvas.click_input(coords=(810, 533))
-            time.sleep(1)
-        except Exception as e:
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text=f"Error positioning cursor: {str(e)}. Please ensure Paint is open and visible.",
-                    )
-                ]
-            }
+        # Press Alt+Space, x to maximize (in case it's not)
+        send_keys("%{SPACE}x")
+        time.sleep(0.5)
 
         # Type the text
-        try:
-            paint_window.type_keys(text)
-            time.sleep(1)
-        except Exception as e:
-            return {
-                "content": [
-                    TextContent(
-                        type="text",
-                        text=f"Error typing text: {str(e)}. Please ensure Paint is open and visible.",
-                    )
-                ]
-            }
-
-        # Click to exit text mode
-        try:
-            canvas.click_input(coords=(1050, 800))
-            time.sleep(1)
-        except Exception:
-            pass  # Ignore error on exit text mode
+        send_keys(text, with_spaces=True, pause=0.1)
+        time.sleep(0.5)
 
         return {
             "content": [
@@ -439,7 +259,30 @@ async def add_text_in_paint(text: str) -> dict:
             ]
         }
     except Exception as e:
-        return {"content": [TextContent(type="text", text=f"Error: {str(e)}")]}
+        return {"content": [TextContent(type="text", text=str(e))]}
+
+
+@mcp.tool()
+async def close_notepad() -> dict:
+    """Close Notepad"""
+    try:
+        subprocess.run(
+            ["taskkill", "/F", "/IM", "notepad.exe"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        time.sleep(1)
+        return {
+            "content": [
+                TextContent(
+                    type="text",
+                    text="Notepad closed successfully",
+                )
+            ]
+        }
+    except Exception as e:
+        return {"content": [TextContent(type="text", text=str(e))]}
 
 
 # ===== Resources =====
