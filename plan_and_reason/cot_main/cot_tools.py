@@ -2,20 +2,29 @@ from mcp.server.fastmcp import FastMCP
 from mcp.types import TextContent
 from rich.console import Console
 from rich.panel import Panel
-from typing import List
+from typing import List, Optional, Union
 
+# Initialize console and MCP server
 console = Console()
 mcp = FastMCP("CoTCalculator")
 
 
 def create_step_panel(step: str, step_number: int) -> Panel:
-    """Create a rich panel for displaying a reasoning step."""
+    """Create a rich panel for displaying a reasoning step.
+
+    Args:
+        step: The reasoning step text
+        step_number: The step number in the sequence
+
+    Returns:
+        A rich Panel object for display
+    """
     return Panel(f"{step}", title=f"Step {step_number}", border_style="cyan")
 
 
 @mcp.tool()
 def show_reasoning(steps: List[str]) -> TextContent:
-    """Show the step-by-step reasoning process.
+    """Display the step-by-step reasoning process.
 
     Args:
         steps: List of reasoning steps to display
@@ -80,13 +89,23 @@ def verify(expression: str, expected: float) -> TextContent:
         return TextContent(type="text", text=f"Error: {str(e)}")
 
 
-if __name__ == "__main__":
-    import sys
+def run_server(dev_mode: bool = False) -> None:
+    """Run the MCP server in either development or production mode.
 
-    if len(sys.argv) > 1 and sys.argv[1] == "dev":
+    Args:
+        dev_mode: If True, run in development mode with console output
+    """
+    if dev_mode:
         console.print(
             Panel("CoT Tools Server (Development Mode)", border_style="magenta")
         )
         mcp.run()
     else:
         mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    import sys
+
+    dev_mode = len(sys.argv) > 1 and sys.argv[1] == "dev"
+    run_server(dev_mode)

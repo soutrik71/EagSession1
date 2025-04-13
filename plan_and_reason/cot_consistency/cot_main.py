@@ -6,7 +6,9 @@ from google import genai
 import asyncio
 from rich.console import Console
 from rich.panel import Panel
+from typing import Optional, Tuple, List
 
+# Initialize console for rich text output
 console = Console()
 
 # Load environment variables and setup Gemini
@@ -14,46 +16,8 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
-async def generate_with_timeout(client, prompt, timeout=10):
-    """Generate content with a timeout"""
-    try:
-        loop = asyncio.get_event_loop()
-        response = await asyncio.wait_for(
-            loop.run_in_executor(
-                None, 
-                lambda: client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt
-                )
-            ),
-            timeout=timeout
-        )
-        return response
-    except Exception as e:
-        console.print(f"[red]Error: {e}[/red]")
-        return None
-
-async def get_llm_response(client, prompt):
-    """Get response from LLM with timeout"""
-    response = await generate_with_timeout(client, prompt)
-    if response and response.text:
-        return response.text.strip()
-    return None
-
-async def main():
-    try:
-        console.print(Panel("Chain of Thought Calculator", border_style="cyan"))
-
-        server_params = StdioServerParameters(
-            command="python",
-            args=["cot_tools.py"]
-        )
-
-        async with stdio_client(server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-
-                system_prompt = """You are a mathematical reasoning agent that solves problems step by step.
+# Constants
+SYSTEM_PROMPT = """You are a mathematical reasoning agent that solves problems step by step.
 You have access to these tools:
 - show_reasoning(steps: list) - Show your step-by-step reasoning process
 - calculate(expression: str) - Calculate the result of an expression
@@ -67,7 +31,8 @@ Respond with EXACTLY ONE line in one of these formats:
 
 Example:
 User: Solve (2 + 3) * 4
-Assistant: FUNCTION_CALL: show_reasoning|["1. First, solve inside parentheses: 2 + 3", "2. Then multiply the result by 4"]
+Assistant: FUNCTION_CALL: show_reasoning|["1. First, solve inside parentheses: 2 + 3", 
+         "2. Then multiply the result by 4"]
 User: Next step?
 Assistant: FUNCTION_CALL: calculate|2 + 3
 User: Result is 5. Let's verify this step.
@@ -79,11 +44,117 @@ Assistant: FUNCTION_CALL: verify|(2 + 3) * 4|20
 User: Verified correct.
 Assistant: FINAL_ANSWER: [20]"""
 
-                problem = "(23 + 7) * (15 - 8)"
+
+async def generate_with_timeout(
+    client: genai.Client, prompt: str, timeout: int = 10
+) -> Optional[genai.types.GenerateContentResponse]:
+    """Generate content with a timeout.
+
+    Args:
+        client: The Gemini client instance
+        prompt: The prompt to generate content from
+        timeout: Maximum time to wait for response in seconds
+
+    Returns:
+        The generated response or None if timeout/error occurs
+    """
+    try:
+        loop = asyncio.get_event_loop()
+        response = await asyncio.wait_for(
+            loop.run_in_executor(
+                None,
+                lambda: client.models.generate_content(
+                    model="gemini-2.0-flash", contents=prompt
+                ),
+            ),
+            timeout=timeout,
+        )
+        return response
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        return None
+
+
+async def get_llm_response(client: genai.Client, prompt: str) -> Optional[str]:
+    """Get response from LLM with timeout.
+
+    Args:
+        client: The Gemini client instance
+        prompt: The prompt to get response for
+
+    Returns:
+        The response text or None if no response/error
+    """
+    response = await generate_with_timeout(client, prompt)
+    if response and response.text:
+        return response.text.strip()
+    return None
+
+
+async def handle_function_call(
+    session: ClientSession,
+    result: str,
+    prompt: str,
+    conversation_history: List[Tuple[str, float]],
+) -> Tuple[str, bool]:
+    """Handle a function call from the LLM response.
+
+    Args:
+        session: The MCP client session
+        result: The LLM response containing function call
+        prompt: Current conversation prompt
+        conversation_history: List of (expression, result) tuples
+
+    Returns:
+        Tuple of (updated prompt, should_continue)
+    """
+    _, function_info = result.split(":", 1)
+    parts = [p.strip() for p in function_info.split("|")]
+    func_name = parts[0]
+
+    if func_name == "show_reasoning":
+        steps = eval(parts[1])
+        await session.call_tool("show_reasoning", arguments={"steps": steps})
+        prompt += "\nUser: Next step?"
+
+    elif func_name == "calculate":
+        expression = parts[1]
+        calc_result = await session.call_tool(
+            "calculate", arguments={"expression": expression}
+        )
+        if calc_result.content:
+            value = calc_result.content[0].text
+            prompt += f"\nUser: Result is {value}. Let's verify this step."
+            conversation_history.append((expression, float(value)))
+
+    elif func_name == "verify":
+        expression, expected = parts[1], float(parts[2])
+        await session.call_tool(
+            "verify", arguments={"expression": expression, "expected": expected}
+        )
+        prompt += "\nUser: Verified. Next step?"
+
+    return prompt, True
+
+
+async def main():
+    """Main function to run the Chain of Thought calculator."""
+    try:
+        console.print(Panel("Chain of Thought Calculator", border_style="cyan"))
+
+        server_params = StdioServerParameters(command="python", args=["cot_tools.py"])
+
+        async with stdio_client(server_params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+
+                problem = "What is (23 + 7) * (15 - 8)"
                 console.print(Panel(f"Problem: {problem}", border_style="cyan"))
 
                 # Initialize conversation
-                prompt = f"{system_prompt}\n\nSolve this problem step by step: {problem}"
+                prompt = (
+                    f"{SYSTEM_PROMPT}\n\nSolve this problem step by step: {problem}"
+                )
                 conversation_history = []
 
                 while True:
@@ -95,47 +166,32 @@ Assistant: FINAL_ANSWER: [20]"""
                     console.print(f"\n[yellow]Assistant:[/yellow] {result}")
 
                     if result.startswith("FUNCTION_CALL:"):
-                        _, function_info = result.split(":", 1)
-                        parts = [p.strip() for p in function_info.split("|")]
-                        func_name = parts[0]
-                        
-                        if func_name == "show_reasoning":
-                            steps = eval(parts[1])
-                            await session.call_tool("show_reasoning", arguments={"steps": steps})
-                            prompt += f"\nUser: Next step?"
-                            
-                        elif func_name == "calculate":
-                            expression = parts[1]
-                            calc_result = await session.call_tool("calculate", arguments={"expression": expression})
-                            if calc_result.content:
-                                value = calc_result.content[0].text
-                                prompt += f"\nUser: Result is {value}. Let's verify this step."
-                                conversation_history.append((expression, float(value)))
-                                
-                        elif func_name == "verify":
-                            expression, expected = parts[1], float(parts[2])
-                            await session.call_tool("verify", arguments={
-                                "expression": expression,
-                                "expected": expected
-                            })
-                            prompt += f"\nUser: Verified. Next step?"
-                            
+                        prompt, should_continue = await handle_function_call(
+                            session, result, prompt, conversation_history
+                        )
+                        if not should_continue:
+                            break
+
                     elif result.startswith("FINAL_ANSWER:"):
                         # Verify the final answer against the original problem
                         if conversation_history:
                             final_answer = float(result.split("[")[1].split("]")[0])
-                            await session.call_tool("verify", arguments={
-                                "expression": problem,
-                                "expected": final_answer
-                            })
+                            await session.call_tool(
+                                "verify",
+                                arguments={
+                                    "expression": problem,
+                                    "expected": final_answer,
+                                },
+                            )
                         break
-                    
+
                     prompt += f"\nAssistant: {result}"
 
                 console.print("\n[green]Calculation completed![/green]")
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
