@@ -53,3 +53,36 @@ python main.py # python -m main
 The MCP server will then be available for use in Cursor, allowing you to perform web searches directly from the IDE.
 
 ```
+Similarly we added Github MCP server to the cursor:
+
+1. Add the MCP server to Cursor:
+   - Open Cursor
+   - Go to Settings > Cursor Settings > Features
+   - Click "Add new MCP server"
+   - Enter the following details:
+     - Name: Github
+     - Type: Command
+     - Command: `npx -y @smithery/cli@latest run @smithery-ai/github --config "{\"githubPersonalAccessToken\":\"YOUR_ACCESS_TOKEN\"}"`
+     (Replace YOUR_ACCESS_TOKEN with your actual Github personal access token)
+
+2. After adding:
+   - Go back to Settings > MCP
+   - Click the refresh button
+   - The Cursor agent will then be able to see and use the Github tools
+
+list of commands:
+Create/update files
+Search repositories
+Create repository
+Get file contents
+Push files
+Create issues
+Create pull requests
+Fork repository
+Create branch
+List commits
+List/update issues
+Add issue comments
+Search code/issues/users
+
+```
