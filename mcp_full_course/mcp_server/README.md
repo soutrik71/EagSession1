@@ -29,7 +29,6 @@ python main.py # python -m main
 
 
 ## Addition of existing mcp server to the cursor:
-```text
 
 1. First, you need a Brave Search API key:
    - Create an account on Brave Search
@@ -86,3 +85,26 @@ Add issue comments
 Search code/issues/users
 
 ```
+
+## Adding custom MCP server to the cursor:
+
+1. Start the MCP server:
+
+```bash
+uv run python server.py
+```
+
+2. Add the MCP server to Cursor:
+   - Open Cursor
+   - Go to Preferences > Cursor Settings > MCP
+   - Click "Add new MCP server"
+   - Enter the following details:
+     - Name: MCP Server
+     - Type: uv --directory C:/workspace/EagSession1/mcp_full_course/mcp_server run server.py
+
+3. After adding:
+   - Go back to Settings > MCP
+   - Click the refresh button
+   - The Cursor agent will then be able to see and use the MCP server tools
+
+

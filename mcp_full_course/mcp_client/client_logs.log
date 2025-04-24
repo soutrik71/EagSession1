@@ -1,0 +1,60 @@
+2025-04-24 09:54:24.427 | INFO     | __main__:<module>:25 - Starting Gemini MCP client initialization...
+2025-04-24 09:54:24.428 | DEBUG    | __main__:<module>:26 - Loading environment variables and initializing client...
+2025-04-24 09:54:24.429 | INFO     | __main__:test_api_key:35 - Testing Gemini API key...
+2025-04-24 09:54:26.352 | SUCCESS  | __main__:test_api_key:42 - API key test successful. Response: OK
+...
+2025-04-24 09:54:26.354 | INFO     | __main__:<module>:325 - Starting application...
+2025-04-24 09:54:26.355 | INFO     | __main__:main:304 - Using server script: C:/workspace/EagSession1/mcp_full_course/mcp_server/custom_server.py
+2025-04-24 09:54:26.380 | INFO     | __main__:__init__:79 - Using Gemini model: gemini-2.0-flash
+2025-04-24 09:54:26.380 | INFO     | __main__:main:308 - Initializing client and connecting to server...
+2025-04-24 09:54:26.381 | INFO     | __main__:connect_to_server:83 - Connecting to server at: C:/workspace/EagSession1/mcp_full_course/mcp_server/custom_server.py
+2025-04-24 09:54:26.381 | DEBUG    | __main__:connect_to_server:97 - Server params: command=python, args=[C:/workspace/EagSession1/mcp_full_course/mcp_server/custom_server.py]
+2025-04-24 09:54:26.382 | DEBUG    | __main__:connect_to_server:101 - Entering stdio_client context...
+2025-04-24 09:54:26.429 | SUCCESS  | __main__:connect_to_server:106 - Connected to server process via stdio
+2025-04-24 09:54:26.480 | DEBUG    | __main__:connect_to_server:109 - Creating ClientSession...
+2025-04-24 09:54:26.481 | SUCCESS  | __main__:connect_to_server:113 - ClientSession created successfully
+2025-04-24 09:54:26.482 | INFO     | __main__:connect_to_server:115 - Initializing session...
+2025-04-24 09:54:27.461 | SUCCESS  | __main__:connect_to_server:117 - Session initialized successfully
+2025-04-24 09:54:27.461 | INFO     | __main__:connect_to_server:120 - Fetching available tools from session...
+2025-04-24 09:54:27.470 | SUCCESS  | __main__:connect_to_server:123 - Tools fetched successfully: ['web_search', 'calculate']
+2025-04-24 09:54:27.470 | SUCCESS  | __main__:main:310 - Client connected to server successfully
+2025-04-24 09:54:27.471 | INFO     | __main__:main:312 - Starting chat loop...
+2025-04-24 09:54:27.472 | INFO     | __main__:chat_loop:273 - Starting interactive chat loop
+2025-04-24 09:54:55.015 | INFO     | __main__:chat_loop:283 - User query: Who won the last match between CSK and RCB in IPL 2025?
+2025-04-24 09:54:55.016 | INFO     | __main__:process_query:140 - Processing query: Who won the last match between CSK and RCB in IPL 2025?
+2025-04-24 09:54:55.016 | DEBUG    | __main__:process_query:154 - Created 2 function declarations
+2025-04-24 09:54:55.017 | INFO     | __main__:process_query:166 - Making initial API request to Gemini...
+2025-04-24 09:54:56.962 | SUCCESS  | __main__:process_query:176 - Initial API request successful
+2025-04-24 09:54:56.963 | INFO     | __main__:process_query:185 - Initial response received. Function calls: True
+2025-04-24 09:54:56.964 | INFO     | __main__:process_query:193 - Tool calling turn 1/5
+2025-04-24 09:54:56.964 | INFO     | __main__:process_query:200 - [Tool request] Calling MCP tool: 'web_search' with {'query': 'CSK vs RCB IPL 2025 match winner'}
+2025-04-24 09:54:56.966 | DEBUG    | __main__:process_query:206 - Sending tool call to server: web_search({'query': 'CSK vs RCB IPL 2025 match winner'})
+2025-04-24 09:55:01.457 | SUCCESS  | __main__:process_query:208 - MCP tool 'web_search' executed successfully
+2025-04-24 09:55:01.459 | DEBUG    | __main__:process_query:216 - Tool result: {"answer": "Royal Challengers Bengaluru won the IPL 2025 match against Chennai Super Kings by 50 run...
+2025-04-24 09:55:01.459 | DEBUG    | __main__:process_query:229 - Creating function response for web_search
+2025-04-24 09:55:01.460 | DEBUG    | __main__:process_query:238 - Added 1 tool response parts to history
+2025-04-24 09:55:01.460 | INFO     | __main__:process_query:243 - Making subsequent API call with tool responses...
+2025-04-24 09:55:02.190 | SUCCESS  | __main__:process_query:253 - Subsequent API call successful. Has function calls: False
+2025-04-24 09:55:02.191 | INFO     | __main__:process_query:268 - Tool calling loop finished. Returning final response
+2025-04-24 09:55:02.193 | INFO     | __main__:chat_loop:287 - Response delivered to user
+2025-04-24 09:56:50.933 | INFO     | __main__:chat_loop:283 - User query: What is the output for 365/365
+2025-04-24 09:56:50.933 | INFO     | __main__:process_query:140 - Processing query: What is the output for 365/365
+2025-04-24 09:56:50.934 | DEBUG    | __main__:process_query:154 - Created 2 function declarations
+2025-04-24 09:56:50.935 | INFO     | __main__:process_query:166 - Making initial API request to Gemini...
+2025-04-24 09:56:52.873 | SUCCESS  | __main__:process_query:176 - Initial API request successful
+2025-04-24 09:56:52.873 | INFO     | __main__:process_query:185 - Initial response received. Function calls: True
+2025-04-24 09:56:52.874 | INFO     | __main__:process_query:193 - Tool calling turn 1/5
+2025-04-24 09:56:52.874 | INFO     | __main__:process_query:200 - [Tool request] Calling MCP tool: 'calculate' with {'expression': '365 / 365'}
+2025-04-24 09:56:52.874 | DEBUG    | __main__:process_query:206 - Sending tool call to server: calculate({'expression': '365 / 365'})
+2025-04-24 09:56:52.880 | SUCCESS  | __main__:process_query:208 - MCP tool 'calculate' executed successfully
+2025-04-24 09:56:52.881 | DEBUG    | __main__:process_query:216 - Tool result: 1
+2025-04-24 09:56:52.881 | DEBUG    | __main__:process_query:229 - Creating function response for calculate
+2025-04-24 09:56:52.881 | DEBUG    | __main__:process_query:238 - Added 1 tool response parts to history
+2025-04-24 09:56:52.882 | INFO     | __main__:process_query:243 - Making subsequent API call with tool responses...
+2025-04-24 09:56:53.485 | SUCCESS  | __main__:process_query:253 - Subsequent API call successful. Has function calls: False
+2025-04-24 09:56:53.485 | INFO     | __main__:process_query:268 - Tool calling loop finished. Returning final response
+2025-04-24 09:56:53.485 | INFO     | __main__:chat_loop:287 - Response delivered to user
+2025-04-24 10:05:03.946 | INFO     | __main__:chat_loop:279 - Exit command received. Ending chat loop
+2025-04-24 10:05:03.947 | INFO     | __main__:main:320 - Cleaning up resources...
+2025-04-24 10:05:03.947 | INFO     | __main__:cleanup:291 - Cleaning up resources...
+2025-04-24 10:05:03.950 | SUCCESS  | __main__:cleanup:293 - Resources cleaned up successfully

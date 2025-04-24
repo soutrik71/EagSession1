@@ -35,3 +35,7 @@ web_agent/utils/__pycache__/web_utils.cpython-310.pyc
 credentials.json
 token.json
 
+mcp_full_course/mcp_server/=2.0.0
+mcp_full_course/mcp_server/=2.2.0
+mcp_full_course/mcp_server/data/flashattn.pdf
+mcp_full_course/mcp_server/=4.30.0

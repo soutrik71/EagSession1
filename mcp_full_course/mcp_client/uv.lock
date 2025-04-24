@@ -2090,6 +2090,24 @@ wheels = [
 ]
 
 [[package]]
+name = "huggingface-hub"
+version = "0.30.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/df/22/8eb91736b1dcb83d879bd49050a09df29a57cc5cd9f38e48a4b1c45ee890/huggingface_hub-0.30.2.tar.gz", hash = "sha256:9a7897c5b6fd9dad3168a794a8998d6378210f5b9688d0dfc180b1a228dc2466", size = 400868 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/27/1fb384a841e9661faad1c31cbfa62864f59632e876df5d795234da51c395/huggingface_hub-0.30.2-py3-none-any.whl", hash = "sha256:68ff05969927058cfa41df4f2155d4bb48f5f54f719dd0390103eefa9b191e28", size = 481433 },
+]
+
+[[package]]
 name = "humanfriendly"
 version = "10.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2973,12 +2991,38 @@ wheels = [
 ]
 
 [[package]]
+name = "linkup-sdk"
+version = "0.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c2/c7/d9a85331bf2611ecac67f1ad92a6ced641b2e2e93eea26b17a9af701b3d1/linkup_sdk-0.2.4.tar.gz", hash = "sha256:2b8fd1894b9b4715bc14aabcbf53df6def9024f2cc426f234cc59e1807ec4c12", size = 9392 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/18/d8/bb9e01328fe5ad979e3e459c0f76321d295663906deef56eeaa5ce0cf269/linkup_sdk-0.2.4-py3-none-any.whl", hash = "sha256:8bc4c4f34de93529136a14e42441d803868d681c2bf3fd59be51923e44f1f1d4", size = 8325 },
+]
+
+[[package]]
 name = "lit"
 version = "18.1.8"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/47/b4/d7e210971494db7b9a9ac48ff37dfa59a8b14c773f9cf47e6bda58411c0d/lit-18.1.8.tar.gz", hash = "sha256:47c174a186941ae830f04ded76a3444600be67d5e5fb8282c3783fba671c4edb", size = 161127 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/96/06/b36f150fa7c5bcc96a31a4d19a20fddbd1d965b6f02510b57a3bb8d4b930/lit-18.1.8-py3-none-any.whl", hash = "sha256:a873ff7acd76e746368da32eb7355625e2e55a2baaab884c9cc130f2ee0300f7", size = 96365 },
+]
+
+[[package]]
+name = "loguru"
+version = "0.7.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "win32-setctime", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3a/05/a1dae3dffd1116099471c643b8924f5aa6524411dc6c63fdae648c4f1aca/loguru-0.7.3.tar.gz", hash = "sha256:19480589e77d47b8d85b2c827ad95d49bf31b0dcde16593892eb51dd18706eb6", size = 63559 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0c/29/0348de65b8cc732daa3e33e67806420b2ae89bdce2b04af740289c5c6c8c/loguru-0.7.3-py3-none-any.whl", hash = "sha256:31a33c10c8e1e10422bfd431aeb5d351c7cf7fa671e3c4df004162264b28220c", size = 61595 },
 ]
 
 [[package]]
@@ -3377,6 +3421,7 @@ dependencies = [
     { name = "httplib2" },
     { name = "httpx" },
     { name = "httpx-sse" },
+    { name = "huggingface-hub" },
     { name = "humanfriendly" },
     { name = "humanize" },
     { name = "idna" },
@@ -3426,6 +3471,8 @@ dependencies = [
     { name = "lark" },
     { name = "lazy-object-proxy" },
     { name = "levenshtein" },
+    { name = "linkup-sdk" },
+    { name = "loguru" },
     { name = "lxml" },
     { name = "lz4" },
     { name = "mako" },
@@ -3802,6 +3849,7 @@ requires-dist = [
     { name = "httplib2", specifier = "==0.22.0" },
     { name = "httpx", specifier = "==0.28.1" },
     { name = "httpx-sse", specifier = "==0.4.0" },
+    { name = "huggingface-hub", specifier = ">=0.30.2" },
     { name = "humanfriendly", specifier = "==10.0" },
     { name = "humanize", specifier = "==4.9.0" },
     { name = "idna", specifier = "==3.10" },
@@ -3851,6 +3899,8 @@ requires-dist = [
     { name = "lark", specifier = "==1.1.9" },
     { name = "lazy-object-proxy", specifier = "==1.9.0" },
     { name = "levenshtein", specifier = "==0.25.0" },
+    { name = "linkup-sdk", specifier = ">=0.2.4" },
+    { name = "loguru", specifier = ">=0.7.3" },
     { name = "lxml", specifier = "==4.9.3" },
     { name = "lz4", specifier = "==4.3.2" },
     { name = "mako", specifier = "==1.2.4" },
@@ -4681,8 +4731,8 @@ name = "nvidia-cublas-cu11"
 version = "11.10.3.66"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ce/41/fdeb62b5437996e841d83d7d2714ca75b886547ee8017ee2fe6ea409d983/nvidia_cublas_cu11-11.10.3.66-py3-none-manylinux1_x86_64.whl", hash = "sha256:d32e4d75f94ddfb93ea0a5dda08389bcc65d8916a25cb9f37ac89edaeed3bded", size = 317097917 },
@@ -4693,8 +4743,8 @@ name = "nvidia-cuda-cupti-cu11"
 version = "11.7.101"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e6/9d/dd0cdcd800e642e3c82ee3b5987c751afd4f3fb9cc2752517f42c3bc6e49/nvidia_cuda_cupti_cu11-11.7.101-py3-none-manylinux1_x86_64.whl", hash = "sha256:e0cfd9854e1f2edaa36ca20d21cd0bdd5dcfca4e3b9e130a082e05b33b6c5895", size = 11845698 },
@@ -4714,8 +4764,8 @@ name = "nvidia-cuda-runtime-cu11"
 version = "11.7.99"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/36/92/89cf558b514125d2ebd8344dd2f0533404b416486ff681d5434a5832a019/nvidia_cuda_runtime_cu11-11.7.99-py3-none-manylinux1_x86_64.whl", hash = "sha256:cc768314ae58d2641f07eac350f40f99dcb35719c4faff4bc458a7cd2b119e31", size = 849253 },
@@ -4726,7 +4776,7 @@ name = "nvidia-cudnn-cu11"
 version = "8.5.0.96"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu11", marker = "sys_platform != 'win32'" },
+    { name = "nvidia-cublas-cu11", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/30/66d4347d6e864334da5bb1c7571305e501dcb11b9155971421bb7bb5315f/nvidia_cudnn_cu11-8.5.0.96-2-py3-none-manylinux1_x86_64.whl", hash = "sha256:402f40adfc6f418f9dae9ab402e773cfed9beae52333f6d86ae3107a1b9527e7", size = 557141533 },
@@ -4747,8 +4797,8 @@ name = "nvidia-curand-cu11"
 version = "10.2.10.91"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/11/af78d54b2420e64a4dd19e704f5bb69dcb5a6a3138b4465d6a48cdf59a21/nvidia_curand_cu11-10.2.10.91-py3-none-manylinux1_x86_64.whl", hash = "sha256:eecb269c970fa599a2660c9232fa46aaccbf90d9170b96c462e13bcb4d129e2c", size = 54628716 },
@@ -4759,7 +4809,7 @@ name = "nvidia-cusolver-cu11"
 version = "11.4.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu11", marker = "sys_platform != 'win32'" },
+    { name = "nvidia-cublas-cu11", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/77/66149e3153b19312fb782ea367f3f950123b93916a45538b573fe373570a/nvidia_cusolver_cu11-11.4.0.1-2-py3-none-manylinux1_x86_64.whl", hash = "sha256:72fa7261d755ed55c0074960df5904b65e2326f7adce364cbe4945063c1be412", size = 102594907 },
@@ -4771,8 +4821,8 @@ name = "nvidia-cusparse-cu11"
 version = "11.7.4.91"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ea/6f/6d032cc1bb7db88a989ddce3f4968419a7edeafda362847f42f614b1f845/nvidia_cusparse_cu11-11.7.4.91-py3-none-manylinux1_x86_64.whl", hash = "sha256:a3389de714db63321aa11fbec3919271f415ef19fda58aed7f2ede488c32733d", size = 173182291 },
@@ -4791,8 +4841,8 @@ name = "nvidia-nvtx-cu11"
 version = "11.7.91"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "setuptools", marker = "sys_platform != 'win32'" },
-    { name = "wheel", marker = "sys_platform != 'win32'" },
+    { name = "setuptools", marker = "sys_platform == 'linux'" },
+    { name = "wheel", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/23/d5/09493ff0e64fd77523afbbb075108f27a13790479efe86b9ffb4587671b5/nvidia_nvtx_cu11-11.7.91-py3-none-manylinux1_x86_64.whl", hash = "sha256:b22c64eee426a62fc00952b507d6d29cf62b4c9df7a480fcc417e540e05fd5ac", size = 98579 },
@@ -5144,7 +5194,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450 }
 wheels = [
@@ -6167,7 +6217,7 @@ name = "python-xlib"
 version = "0.33"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "sys_platform != 'win32'" },
+    { name = "six", marker = "sys_platform == 'linux'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/86/f5/8c0653e5bb54e0cbdfe27bf32d41f27bc4e12faa8742778c17f2a71be2c0/python-xlib-0.33.tar.gz", hash = "sha256:55af7906a2c75ce6cb280a584776080602444f75815a7aff4d287bb2d7018b32", size = 269068 }
 wheels = [
@@ -7586,10 +7636,10 @@ name = "triton"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cmake", marker = "sys_platform != 'win32'" },
-    { name = "filelock", marker = "sys_platform != 'win32'" },
-    { name = "lit", marker = "sys_platform != 'win32'" },
-    { name = "torch", marker = "sys_platform != 'win32'" },
+    { name = "cmake", marker = "sys_platform == 'linux'" },
+    { name = "filelock", marker = "sys_platform == 'linux'" },
+    { name = "lit", marker = "sys_platform == 'linux'" },
+    { name = "torch", marker = "sys_platform == 'linux'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ca/31/ff6be541195daf77aa5c72303b2354661a69e717967d44d91eb4f3fdce32/triton-2.0.0-1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:38806ee9663f4b0f7cd64790e96c579374089e58f49aac4a6608121aa55e2505", size = 63268585 },
@@ -8030,6 +8080,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/56/fc/238c424fd7f4ebb25f8b1da9a934a3ad7c848286732ae04263661eb0fc03/widgetsnbextension-4.0.13.tar.gz", hash = "sha256:ffcb67bc9febd10234a362795f643927f4e0c05d9342c727b65d2384f8feacb6", size = 1164730 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/21/02/88b65cc394961a60c43c70517066b6b679738caf78506a5da7b88ffcb643/widgetsnbextension-4.0.13-py3-none-any.whl", hash = "sha256:74b2692e8500525cc38c2b877236ba51d34541e6385eeed5aec15a70f88a6c71", size = 2335872 },
+]
+
+[[package]]
+name = "win32-setctime"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/8f/705086c9d734d3b663af0e9bb3d4de6578d08f46b1b101c2442fd9aecaa2/win32_setctime-1.2.0.tar.gz", hash = "sha256:ae1fdf948f5640aae05c511ade119313fb6a30d7eabe25fef9764dca5873c4c0", size = 4867 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/07/c6fe3ad3e685340704d314d765b7912993bcb8dc198f0e7a89382d37974b/win32_setctime-1.2.0-py3-none-any.whl", hash = "sha256:95d644c4e708aba81dc3704a116d8cbc974d70b3bdb8be1d150e36be6e9d1390", size = 4083 },
 ]
 
 [[package]]

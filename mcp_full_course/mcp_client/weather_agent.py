@@ -144,4 +144,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
+
+# command to call the script: uv run weather_agent.py C:/workspace/EagSession1/mcp_full_course/mcp_server/weather_server.py

@@ -426,6 +426,11 @@ dependencies = [
     "fastapi>=0.115.12",
     "starlette>=0.46.2",
     "typer>=0.9.4",
+    "linkup-sdk>=0.2.4",
+    "llama-index>=0.9.48",
+    "llama-index-embeddings-huggingface>=0.5.3",
+    "llama-index-llms-ollama>=0.5.4",
+    "loguru>=0.7.3",
 ]
 
 [build-system]
