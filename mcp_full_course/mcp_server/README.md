@@ -17,6 +17,10 @@ uv run python main.py
 source .venv/bin/activate #linux
 .venv\Scripts\activate #windows
 python main.py # python -m main
+
+# update conda with uv
+conda activate env
+uv pip install -e .
 ```
 
 `References:`
