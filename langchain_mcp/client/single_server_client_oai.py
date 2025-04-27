@@ -4,32 +4,44 @@ from mcp.client.stdio import stdio_client
 from langchain_mcp_adapters.tools import load_mcp_tools
 from langgraph.prebuilt import create_react_agent
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
 import os
+
+# First, ensure we've installed the required packages
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    import sys
+    import subprocess
+
+    print("Installing required packages...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "langchain-openai"])
+    from langchain_openai import ChatOpenAI
+
+# Disable SSL verification for development (not recommended for production)
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# Disable SSL verification for OpenAI client
+os.environ["CURL_CA_BUNDLE"] = ""
+os.environ["REQUESTS_CA_BUNDLE"] = ""
+os.environ["SSL_CERT_FILE"] = ""
 
 load_dotenv()
 
 # Configure API key
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY not found in environment variables")
 
-# Initialize the model according to the latest docs
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",  # You can switch to gemini-2.0-flash-001 if available
-    google_api_key=GOOGLE_API_KEY,
+# Initialize the OpenAI model
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    openai_api_key=OPENAI_API_KEY,
     temperature=0,
-    max_tokens=2048,
+    max_tokens=1024,
     timeout=None,
     max_retries=2,
-    safety_settings={
-        0: 0,  # HARM_CATEGORY_DANGEROUS_CONTENT: BLOCK_NONE
-        1: 0,  # HARM_CATEGORY_HARASSMENT: BLOCK_NONE
-        2: 0,  # HARM_CATEGORY_HATE_SPEECH: BLOCK_NONE
-        3: 0,  # HARM_CATEGORY_SEXUALLY_EXPLICIT: BLOCK_NONE
-    },
-    top_p=0.8,
-    top_k=40,
 )
 
 
@@ -120,9 +132,12 @@ async def run_interactive_string_session():
                     break
 
                 print("\n" + "=" * 80)
-                res = await agent.ainvoke({"messages": user_input})
-                for m in res["messages"]:
-                    print_message_by_category(m)
+                try:
+                    res = await agent.ainvoke({"messages": user_input})
+                    for m in res["messages"]:
+                        print_message_by_category(m)
+                except Exception as e:
+                    print(f"Error processing request: {e}")
                 print("=" * 80)
 
 
@@ -157,9 +172,12 @@ async def run_interactive_calculator_session():
                     break
 
                 print("\n" + "=" * 80)
-                res = await agent.ainvoke({"messages": user_input})
-                for m in res["messages"]:
-                    print_message_by_category(m)
+                try:
+                    res = await agent.ainvoke({"messages": user_input})
+                    for m in res["messages"]:
+                        print_message_by_category(m)
+                except Exception as e:
+                    print(f"Error processing request: {e}")
                 print("=" * 80)
 
 

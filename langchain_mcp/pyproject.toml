@@ -66,6 +66,9 @@ dependencies = [
     "xxhash==3.5.0",
     "zstandard==0.23.0",
     "loguru>=0.7.3",
+    "langchain-openai>=0.3.14",
+    "pip-system-certs>=4.0",
+    "openai>=1.76.0",
 ]
 
 [build-system]
