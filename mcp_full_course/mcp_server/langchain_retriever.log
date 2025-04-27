@@ -1,6 +1,0 @@
-2025-04-27 08:46:09.261 | INFO     | __main__:<module>:14 - Starting LangChain Retriever MCP Server
-2025-04-27 08:46:09.297 | INFO     | __main__:<module>:71 - Starting MCP server with stdio transport
-2025-04-27 09:07:42.032 | INFO     | __main__:<module>:13 - Starting LangChain Retriever MCP Server
-2025-04-27 09:07:42.050 | INFO     | __main__:<module>:77 - Starting MCP server with stdio transport
-2025-04-27 10:14:19.835 | INFO     | __main__:<module>:12 - Starting LangChain Retriever MCP Server
-2025-04-27 10:14:19.856 | INFO     | __main__:<module>:63 - Starting MCP server with stdio transport

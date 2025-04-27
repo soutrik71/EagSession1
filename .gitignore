@@ -39,3 +39,4 @@ mcp_full_course/mcp_server/=2.0.0
 mcp_full_course/mcp_server/=2.2.0
 mcp_full_course/mcp_server/data/flashattn.pdf
 mcp_full_course/mcp_server/=4.30.0
+langchain_mcp/.python-version

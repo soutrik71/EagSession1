@@ -111,4 +111,30 @@ uv run python server.py
    - Click the refresh button
    - The Cursor agent will then be able to see and use the MCP server tools
 
+### Langchain Retriever MCP Server:
 
+1. Start the MCP server:
+
+```bash
+uv run python langchain_retriever_client.py
+```
+
+2. Add the MCP server to Cursor:
+   - Open Cursor
+   - Go to Preferences > Cursor Settings > MCP
+   - Click "Add new MCP server"
+   - Enter the following details:
+     - Name: Langchain Retriever MCP Server
+     - Type: uv --directory C:/workspace/EagSession1/mcp_full_course/mcp_server run langchain_retriever_client.py
+
+3. After adding:
+   - Go back to Settings > MCP
+   - Click the refresh button
+   - The Cursor agent will then be able to see and use the Langchain Retriever MCP Server tools
+
+   list of commands:
+   - langgraph_query_tool
+   - get_all_langgraph_docs
+
+4. References:
+ - [https://mirror-feeling-d80.notion.site/MCP-From-Scratch-1b9808527b178040b5baf83a991ed3b2]
