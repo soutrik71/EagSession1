@@ -1,0 +1,38 @@
+{
+  "conversation_id": "travel-session",
+  "timestamp": "2025-04-28T18:01:22.534291",
+  "messages": [
+    {
+      "type": "human",
+      "content": "I want to search for flights from New York to Los Angeles on 2025-05-01 with return on 2025-05-05"
+    },
+    {
+      "type": "ai",
+      "content": "{\n  \"search_type\": \"flight\",\n  \"currency\": \"USD\",\n  \"start_date\": \"2025-05-01\",\n  \"end_date\": \"2025-05-05\",\n  \"departure_id\": \"JFK\",\n  \"arrival_id\": \"LAX\",\n  \"location\": null,\n  \"adults\": 1\n}"
+    },
+    {
+      "type": "human",
+      "content": "I need a hotel for 2 adults for the same dates as the flight and in the same city?"
+    },
+    {
+      "type": "ai",
+      "content": "{\n  \"search_type\": \"hotel\",\n  \"currency\": \"USD\",\n  \"start_date\": \"2025-05-01\",\n  \"end_date\": \"2025-05-05\",\n  \"departure_id\": null,\n  \"arrival_id\": null,\n  \"location\": \"Los Angeles\",\n  \"adults\": 2\n}"
+    },
+    {
+      "type": "human",
+      "content": "I need a hotel in Los Angeles for 2 adults from May 4 to May 9, 2025"
+    },
+    {
+      "type": "ai",
+      "content": "{\n  \"search_type\": \"hotel\",\n  \"currency\": \"USD\",\n  \"start_date\": \"2025-05-04\",\n  \"end_date\": \"2025-05-09\",\n  \"departure_id\": null,\n  \"arrival_id\": null,\n  \"location\": \"Los Angeles\",\n  \"adults\": 2\n}"
+    },
+    {
+      "type": "human",
+      "content": "Find me flights from there to New York on June 15, 2025 and return on June 18, 2025"
+    },
+    {
+      "type": "ai",
+      "content": "{\n  \"search_type\": \"flight\",\n  \"currency\": \"USD\",\n  \"start_date\": \"2025-06-15\",\n  \"end_date\": \"2025-06-18\",\n  \"departure_id\": \"LAX\",\n  \"arrival_id\": \"JFK\",\n  \"location\": null,\n  \"adults\": 1\n}"
+    }
+  ]
+}

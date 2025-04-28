@@ -1,0 +1,14 @@
+{
+  "conversation_id": "6303deae-f8de-4f1f-8993-a8632703f218",
+  "timestamp": "2025-04-28T17:25:45.158549",
+  "messages": [
+    {
+      "type": "human",
+      "content": "Hello, how are you?"
+    },
+    {
+      "type": "ai",
+      "content": "I'm good, thank you!"
+    }
+  ]
+}

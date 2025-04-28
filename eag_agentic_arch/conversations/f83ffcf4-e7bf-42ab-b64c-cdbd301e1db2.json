@@ -1,0 +1,22 @@
+{
+  "conversation_id": "f83ffcf4-e7bf-42ab-b64c-cdbd301e1db2",
+  "timestamp": "2025-04-28T17:33:01.434039",
+  "messages": [
+    {
+      "type": "human",
+      "content": "Hello, how are you?"
+    },
+    {
+      "type": "ai",
+      "content": "I'm good, thank you!"
+    },
+    {
+      "type": "human",
+      "content": "What is the weather in New York?"
+    },
+    {
+      "type": "ai",
+      "content": "{\n  \"temperature\": 22,\n  \"condition\": \"Sunny\",\n  \"forecast\": [\n    {\n      \"day\": \"Today\",\n      \"high\": 25,\n      \"low\": 18\n    },\n    {\n      \"day\": \"Tomorrow\",\n      \"high\": 27,\n      \"low\": 19\n    }\n  ]\n}"
+    }
+  ]
+}

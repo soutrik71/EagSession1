@@ -1,0 +1,22 @@
+{
+  "conversation_id": "34ef02f6-2e03-47aa-9657-473578ca0492",
+  "timestamp": "2025-04-28T17:27:32.871709",
+  "messages": [
+    {
+      "type": "human",
+      "content": "Hello, how are you?"
+    },
+    {
+      "type": "ai",
+      "content": "I'm good, thank you!"
+    },
+    {
+      "type": "human",
+      "content": "What is your name?"
+    },
+    {
+      "type": "ai",
+      "content": "My name is John Doe."
+    }
+  ]
+}
