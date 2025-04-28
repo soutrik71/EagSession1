@@ -1,86 +1,94 @@
 from tools import search_flights, search_hotels
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Literal, Optional
 from mcp.server.fastmcp import FastMCP
 from loguru import logger
 
 mcp = FastMCP("eag_agentic_arch")
 
 
-class FlightSearch(BaseModel):
-    departure_id: str = Field(..., description="The IATA code of the departure airport")
-    arrival_id: str = Field(..., description="The IATA code of the arrival airport")
-    outbound_date: str = Field(
-        ..., description="The date of the outbound flight in YYYY-MM-DD format"
+class TravelSearch(BaseModel):
+    search_type: Literal["flight", "hotel"] = Field(
+        ..., description="Type of search to perform"
     )
-    return_date: str = Field(
-        None, description="The date of the return flight in YYYY-MM-DD format"
-    )
+    # Common fields
     currency: str = Field(
-        "USD", description="The currency of the flight prices (USD, EUR, GBP, etc.)"
+        "USD", description="The currency of the prices (USD, EUR, GBP, etc.)"
     )
-
-
-class HotelSearch(BaseModel):
-    location: str = Field(..., description="The location of the hotel")
-    check_in_date: str = Field(
-        ..., description="The date of the check-in in YYYY-MM-DD format"
+    start_date: str = Field(
+        ...,
+        description="The start date in YYYY-MM-DD format (outbound flight or check-in date)",
     )
-    check_out_date: str = Field(
-        ..., description="The date of the check-out in YYYY-MM-DD format"
+    end_date: Optional[str] = Field(
+        None,
+        description="The end date in YYYY-MM-DD format (return flight or check-out date)",
     )
-    adults: int = Field(1, description="The number of adults")
-    currency: str = Field(
-        "USD", description="The currency of the hotel prices (USD, EUR, GBP, etc.)"
+    # Flight specific fields
+    departure_id: Optional[str] = Field(
+        None, description="The IATA code of the departure airport"
     )
+    arrival_id: Optional[str] = Field(
+        None, description="The IATA code of the arrival airport"
+    )
+    # Hotel specific fields
+    location: Optional[str] = Field(None, description="The location of the hotel")
+    adults: Optional[int] = Field(1, description="The number of adults")
 
 
-class FlightSearchResponse(BaseModel):
-    summary: str = Field(..., description="A summary of the flight search")
-
-
-class HotelSearchResponse(BaseModel):
-    summary: str = Field(..., description="A summary of the hotel search")
+class TravelSearchResponse(BaseModel):
+    summary: str = Field(..., description="A summary of the travel search")
 
 
 @mcp.tool()
-def search_flights_tool(search: FlightSearch) -> FlightSearchResponse:
+def search_flights_tool(search: TravelSearch) -> TravelSearchResponse:
     """
     Search for flights between two airports on a given date and return a summary of the flight search.
 
     Args:
-        search: The search parameters for the flight search in the format of FlightSearch pydantic model
+        search: The search parameters for the flight search in the format of TravelSearch pydantic model
 
     Returns:
-        A summary of the flight search in the format of FlightSearchResponse pydantic model
+        A summary of the flight search in the format of TravelSearchResponse pydantic model
     """
-    return search_flights(
+    if not all([search.departure_id, search.arrival_id, search.start_date]):
+        raise ValueError(
+            "Flight search requires departure_id, arrival_id, and start_date"
+        )
+
+    result = search_flights(
         search.departure_id,
         search.arrival_id,
-        search.outbound_date,
-        search.return_date,
+        search.start_date,  # outbound_date
+        search.end_date,  # return_date
         search.currency,
     )
+
+    return TravelSearchResponse(summary=result)
 
 
 @mcp.tool()
-def search_hotels_tool(search: HotelSearch) -> HotelSearchResponse:
+def search_hotels_tool(search: TravelSearch) -> TravelSearchResponse:
     """
-    Search for hotels in a given location for a given date range and number of adults and return a summary of the hotel search.
+    Search for hotels in a given location for a given date range and number of adults.
 
     Args:
-        search: The search parameters for the flight search in the format of FlightSearch pydantic model
+        search: The search parameters for the hotel search in the format of TravelSearch pydantic model
 
     Returns:
-        A summary of the flight search in the format of FlightSearchResponse pydantic model
+        A summary of the hotel search in the format of TravelSearchResponse pydantic model
     """
-    return search_hotels(
+    if not all([search.location, search.start_date, search.end_date]):
+        raise ValueError("Hotel search requires location, start_date, and end_date")
+
+    result = search_hotels(
         search.location,
-        search.check_in_date,
-        search.check_out_date,
+        search.start_date,  # check_in_date
+        search.end_date,  # check_out_date
         search.adults,
         search.currency,
     )
+
+    return TravelSearchResponse(summary=result)
 
 
 if __name__ == "__main__":
