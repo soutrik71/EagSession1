@@ -16,6 +16,7 @@ if sys.platform == "win32":
 # Import from our modules
 from decision_making import analyze_query, get_llm_decision
 from action_layer import execute_actions, print_message_chain
+from memory import ConversationMemory
 
 # Import LLM directly from provider
 from llm_provider import default_llm
@@ -53,21 +54,28 @@ This separation provides:
 """
 
 
-async def main(query: str, chat_history=None):
+async def main(query: str, conversation_memory=None):
     """Main function that coordinates the decision making and action layers.
 
     Args:
         query: The user's query string
-        chat_history: List of previous conversation messages
+        conversation_memory: ConversationMemory instance for storing chat history
 
     Returns:
         Tuple of (response, updated message chain)
     """
-    # Initialize empty chat history if None
-    if chat_history is None:
+    # Initialize empty conversation memory if None
+    if conversation_memory is None:
+        conversation_memory = ConversationMemory()
         chat_history = []
+    else:
+        # Get messages from conversation memory
+        chat_history = conversation_memory.get_langchain_messages()
 
     try:
+        # Add the user query to conversation memory
+        conversation_memory.add_human_message(query)
+
         # Step 1: Analyze the query with perception (in decision_making)
         explanation = await analyze_query(query, chat_history)
 
@@ -98,6 +106,15 @@ async def main(query: str, chat_history=None):
                         content=f"I encountered an error: {response}"
                     )
                     messages.append(error_message)
+
+                    # Save the error message to conversation memory
+                    conversation_memory.add_ai_message(
+                        f"I encountered an error: {response}"
+                    )
+
+                    # Save conversation to disk
+                    conversation_memory.save()
+
                     return response, messages
 
                 # Step 5: Execute tool calls (in action_layer)
@@ -107,12 +124,43 @@ async def main(query: str, chat_history=None):
                 # Step 6: Print the final message chain (in action_layer)
                 print_message_chain(messages)
 
+                # Save AI response to conversation memory
+                # We save only the most recent AI message to avoid duplicating the entire message chain
+                if hasattr(response, "content") and response.content:
+                    conversation_memory.add_ai_message(response.content)
+                # If it's a tool call response, we include that information
+                elif hasattr(response, "tool_calls") and response.tool_calls:
+                    # Extract just the tool names without adding prefix text
+                    raw_tool_info = ", ".join(
+                        [tc["name"] for tc in response.tool_calls]
+                    )
+                    conversation_memory.add_ai_message(raw_tool_info)
+
+                # Save the messages from tools to conversation memory
+                for msg in messages:
+                    if (
+                        hasattr(msg, "content")
+                        and msg.content
+                        and msg.__class__.__name__ == "ToolMessage"
+                    ):
+                        # Extract just the tool result content without adding prefix text
+                        conversation_memory.add_ai_message(msg.content)
+
+                # Save conversation to disk
+                conversation_memory.save()
+
                 return response, messages
     except Exception as e:
         print(f"Error occurred: {e}")
         import traceback
 
         traceback.print_exc()
+
+        # Add error to conversation memory
+        if conversation_memory:
+            conversation_memory.add_ai_message(f"Error: {str(e)}")
+            conversation_memory.save()
+
         return f"Error: {str(e)}", []
 
 
@@ -121,14 +169,17 @@ async def run_conversation():
     # List of example queries to process in sequence
     queries = [
         "I want to search for flights from New York to Los Angeles on 2025-05-01 with return on 2025-05-05",
-        "I want to book hotel in New York for 2 nights starting on 2025-05-01 to 2025-05-02 for 2 adults",
+        "What about booking a hotel for the same dates and same destination?",
         "What is the capital of France?",
+        "I want to book hotel in New York for 2 nights starting on 2025-05-01 to 2025-05-05 for 2 adults",
+        "What about booking a return flight for the same dates?",
         "I want to search for flights from New York to Los Angeles on 2025-05-01 "
         "with return on 2025-05-05 and a hotel for 2 adults in Los Angeles for the same dates",
     ]
 
-    # Initialize chat history
-    chat_history = []
+    # Initialize conversation memory with a unique ID
+    conversation_memory = ConversationMemory(save_dir="conversations")
+    print(f"Starting conversation with ID: {conversation_memory.conversation_id}")
 
     # Process each query in sequence
     for i, query in enumerate(queries, 1):
@@ -136,16 +187,16 @@ async def run_conversation():
         print(f"QUERY {i}: {query}")
         print("=" * 50 + "\n")
 
-        # Run the main function with the current query and chat history
-        response, messages = await main(query, chat_history)
-
-        # Add the messages to chat history for the next iteration
-        chat_history.extend(messages)
+        # Run the main function with the current query and conversation memory
+        response, messages = await main(query, conversation_memory)
 
         # Add a separator between queries
         print("\n" + "-" * 50 + "\n")
 
     print(f"Conversation complete. Processed {len(queries)} queries.")
+    print(
+        f"Conversation saved to: {conversation_memory.save_dir}/{conversation_memory.conversation_id}.json"
+    )
 
 
 if __name__ == "__main__":

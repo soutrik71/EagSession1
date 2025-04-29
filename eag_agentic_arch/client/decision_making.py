@@ -89,6 +89,8 @@ async def analyze_query(query: str, chat_history=None) -> Optional[str]:
     if chat_history is None:
         chat_history = []
 
+    # print(f"The chat history is: {chat_history}")
+
     # Quick check if this is likely a travel query before running full perception
     travel_keywords = [
         "flight",
@@ -117,11 +119,15 @@ async def analyze_query(query: str, chat_history=None) -> Optional[str]:
             {"user_query": query, "chat_history": chat_history}
         )
 
+        print(f"The perception result is: {perception_result.model_dump()}")
+
         # Create explanation of perception results
         print("Creating explanation of perception results...")
         explanation = explain_perception_result(perception_result)
+
         print(f"\nPerception explanation:\n{explanation}\n")
         return explanation
+
     except Exception as e:
         print(f"Perception chain failed: {e}")
         print(

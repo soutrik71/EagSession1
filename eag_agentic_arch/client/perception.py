@@ -52,35 +52,50 @@ class TravelSearch(BaseModel):
         description="Hotel search details, required for hotel or combined searches",
     )
 
+    enhanced_query: Optional[str] = Field(
+        None,
+        description="A standalone question that captures the user's intent and basis of which the search parameters are derived",
+    )
+
 
 system_prompt = """
-    You are a flight and hotel search assistant. You are given a user query and you need to extract 
-    the search parameters for a flight search, hotel search, or both.
+You are an expert travel assistant. Your job is to extract structured search parameters for flight and hotel searches from a user's query, using both the current query and the chat_history for context.
 
-    The key parameters that you need to extract are:
-    - search_type: The type of search to perform (flight, hotel, or combined if both)
-    - currency: The currency of the prices (USD, EUR, GBP, etc.)
-    - start_date: The start date in YYYY-MM-DD format (outbound flight or check-in date)
-    - end_date: The end date in YYYY-MM-DD format (return flight or check-out date)
+**Your tasks:**
+1. Analyze the chat_history and the current user query to determine the user's intent.
+2. Build an enhanced_query: a standalone, unambiguous question that summarizes the user's intent, using chat_history to fill in any missing details.
+3. Extract the following parameters as a JSON object:
+    - search_type: "flight", "hotel", or "combined"
+    - currency: The currency for prices (e.g., USD, EUR, GBP)
+    - start_date: Outbound flight or hotel check-in date (YYYY-MM-DD)
+    - end_date: Return flight or hotel check-out date (YYYY-MM-DD)
+    - enhanced_query: The standalone question you constructed
 
-    For flight searches or combined searches, include a "flight" object with:
-    - departure_id: The IATA code of the departure airport (e.g., JFK for New York, LAX for Los Angeles)
-    - arrival_id: The IATA code of the arrival airport
+    For flight or combined searches, include a "flight" object:
+        - departure_id: IATA code of the departure airport (e.g., JFK)
+        - arrival_id: IATA code of the arrival airport
 
-    For hotel searches or combined searches, include a "hotel" object with:
-    - location: The location of the hotel
-    - adults: The number of adults
+    For hotel or combined searches, include a "hotel" object:
+        - location: Hotel location (city or area)
+        - adults: Number of adults
 
-    If the user asks for both a flight and hotel in the same query, set search_type to "combined"
-    and include both the flight and hotel objects.
+**Rules:**
+- Use chat_history to resolve ambiguity or fill in missing information. If information is not available, set the value to null or "unknown".
+- Only set search_type to "combined" if the user explicitly requests both a flight and a hotel in the same query. If the request is inferred from chat_history, set search_type to "flight" or "hotel" as appropriate.
+- Always return all required fields in the output, even if some are null or "unknown".
+- Do not guess or hallucinate values. If a value cannot be determined, use null or "unknown".
+- If the user's intent is unclear, set ambiguous fields to "unknown" and explain the ambiguity in the enhanced_query.
+- search_type can only be combined if the user explicitly asks for both a flight and hotel in the original user_query.
+- Always prioritize the user's intent for search_type mentioned in the user_query and then reconsolidate the enhanced_query based on the chat_history.
 
-    The output should be in the following format as a JSON object following the below model:
-    {format_instructions}
 
-    Always refer to chat_history for previous messages and use it to improve the current search 
-    if it is relevant and ambiguous. Use the context from previous searches to fill in missing 
-    information.
-    """
+**Output Format:**
+Return a single JSON object following this schema:
+{format_instructions}
+
+**Historical Context:**
+Always refer to chat_history to improve the current search if relevant or ambiguous. Use context from previous searches to fill in missing information and to improve the enhanced_query.
+"""
 
 
 def get_perception_chain(default_llm=default_llm) -> RunnableSequence:
