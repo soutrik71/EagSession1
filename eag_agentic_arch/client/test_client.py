@@ -46,6 +46,8 @@ def explain_perception_result(perception_result: TravelSearch) -> str:
         explanation += "- You want to search for FLIGHTS\n"
     elif search_type == "hotel":
         explanation += "- You want to search for HOTELS\n"
+    elif search_type == "combined":
+        explanation += "- You want to search for BOTH FLIGHTS AND HOTELS\n"
 
     # Explain dates
     start_date = result_dict.get("start_date")
@@ -56,20 +58,22 @@ def explain_perception_result(perception_result: TravelSearch) -> str:
         explanation += f"- Ending on: {end_date}\n"
 
     # Explain flight-specific details
-    if search_type == "flight":
-        departure = result_dict.get("departure_id")
-        arrival = result_dict.get("arrival_id")
+    flight_data = result_dict.get("flight")
+    if flight_data:
+        departure = flight_data.get("departure_id")
+        arrival = flight_data.get("arrival_id")
         if departure:
             explanation += f"- Departing from: {departure}\n"
         if arrival:
             explanation += f"- Arriving at: {arrival}\n"
 
     # Explain hotel-specific details
-    if search_type == "hotel":
-        location = result_dict.get("location")
-        adults = result_dict.get("adults")
+    hotel_data = result_dict.get("hotel")
+    if hotel_data:
+        location = hotel_data.get("location")
+        adults = hotel_data.get("adults")
         if location:
-            explanation += f"- Location: {location}\n"
+            explanation += f"- Hotel Location: {location}\n"
         if adults:
             explanation += f"- Number of adults: {adults}\n"
 
@@ -173,8 +177,9 @@ async def main(llm, query, perception_explanation=None):
 if __name__ == "__main__":
     # Choose one query to run
     # query = "I want to search for flights from New York to Los Angeles on 2025-05-01 with return on 2025-05-05"
-    # query = "I want to book hotel in New York for 2 nights starting on 2025-05-01 to 2025-05-02"
+    # query = "I want to book hotel in New York for 2 nights starting on 2025-05-01 to 2025-05-02 for 2 adults"
     query = "What is the capital of France?"
+    # query = "I want to search for flights from New York to Los Angeles on 2025-05-01 with return on 2025-05-05 and a hotel for 2 adults in Los Angeles for the same dates"
 
     try:
         explanation = None

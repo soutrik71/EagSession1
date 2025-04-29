@@ -42,4 +42,7 @@ mcp_full_course/mcp_server/=4.30.0
 langchain_mcp/.python-version
 property_sale_pdf.py
 property_sale_intimation.pdf
-eag_agentic_arch/conversations/*
+eag_agentic_arch/conversations/
+eag_agentic_arch/conversations/*.json
+eag_agentic_arch/conversations/travel-session.json
+eag_agentic_arch/conversations/travel-session.json

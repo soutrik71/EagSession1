@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Literal, Optional, Callable, Any
+from typing import Literal, Optional
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableSequence
@@ -8,9 +8,26 @@ from memory import ConversationMemory
 import json
 
 
+class FlightSearch(BaseModel):
+    """Flight search parameters"""
+
+    departure_id: str = Field(..., description="The IATA code of the departure airport")
+    arrival_id: str = Field(..., description="The IATA code of the arrival airport")
+
+
+class HotelSearch(BaseModel):
+    """Hotel search parameters"""
+
+    location: str = Field(..., description="The location of the hotel")
+    adults: int = Field(1, description="The number of adults")
+
+
 class TravelSearch(BaseModel):
-    search_type: Literal["flight", "hotel"] = Field(
-        ..., description="Type of search to perform"
+    """Travel search parameters that can include flight, hotel, or both"""
+
+    search_type: Literal["flight", "hotel", "combined"] = Field(
+        ...,
+        description="Type of search to perform (flight, hotel, or combined for both)",
     )
     # Common fields
     currency: str = Field(
@@ -24,41 +41,38 @@ class TravelSearch(BaseModel):
         None,
         description="The end date in YYYY-MM-DD format (return flight or check-out date)",
     )
-    # Flight specific fields
-    departure_id: Optional[str] = Field(
+
+    # Specific search components
+    flight: Optional[FlightSearch] = Field(
         None,
-        description="The IATA code of the departure airport meant only for flight search",
+        description="Flight search details, required for flight or combined searches",
     )
-    arrival_id: Optional[str] = Field(
+    hotel: Optional[HotelSearch] = Field(
         None,
-        description="The IATA code of the arrival airport meant only for flight search",
-    )
-    # Hotel specific fields
-    location: Optional[str] = Field(
-        None, description="The location of the hotel meant only for hotel search"
-    )
-    adults: Optional[int] = Field(
-        1, description="The number of adults meant only for hotel search"
+        description="Hotel search details, required for hotel or combined searches",
     )
 
 
 system_prompt = """
     You are a flight and hotel search assistant. You are given a user query and you need to extract 
-    the search parameters for a flight or hotel search.
+    the search parameters for a flight search, hotel search, or both.
 
     The key parameters that you need to extract are:
-    - search_type: The type of search to perform (flight or hotel)
+    - search_type: The type of search to perform (flight, hotel, or combined if both)
     - currency: The currency of the prices (USD, EUR, GBP, etc.)
     - start_date: The start date in YYYY-MM-DD format (outbound flight or check-in date)
     - end_date: The end date in YYYY-MM-DD format (return flight or check-out date)
 
-    The flight specific parameters are:
-    - departure_id: The IATA code of the departure airport
+    For flight searches or combined searches, include a "flight" object with:
+    - departure_id: The IATA code of the departure airport (e.g., JFK for New York, LAX for Los Angeles)
     - arrival_id: The IATA code of the arrival airport
 
-    The hotel specific parameters are:
+    For hotel searches or combined searches, include a "hotel" object with:
     - location: The location of the hotel
     - adults: The number of adults
+
+    If the user asks for both a flight and hotel in the same query, set search_type to "combined"
+    and include both the flight and hotel objects.
 
     The output should be in the following format as a JSON object following the below model:
     {format_instructions}
@@ -187,19 +201,24 @@ def test_perception_chain(
                 search_type = response_data.get("search_type", "unknown")
                 print(f"AI Response #{i}: {search_type} search")
 
-                if search_type == "flight":
-                    print(
-                        f"  Flight: {response_data.get('departure_id')} → {response_data.get('arrival_id')}"
-                    )
-                    print(
-                        f"  Dates: {response_data.get('start_date')} to {response_data.get('end_date')}"
-                    )
-                elif search_type == "hotel":
-                    print(f"  Location: {response_data.get('location')}")
-                    print(
-                        f"  Dates: {response_data.get('start_date')} to {response_data.get('end_date')}"
-                    )
-                    print(f"  Adults: {response_data.get('adults')}")
+                if search_type == "flight" or search_type == "combined":
+                    flight_data = response_data.get("flight", {})
+                    if flight_data:
+                        print(
+                            f"  Flight: {flight_data.get('departure_id')} → {flight_data.get('arrival_id')}"
+                        )
+                        print(
+                            f"  Dates: {response_data.get('start_date')} to {response_data.get('end_date')}"
+                        )
+
+                if search_type == "hotel" or search_type == "combined":
+                    hotel_data = response_data.get("hotel", {})
+                    if hotel_data:
+                        print(f"  Hotel Location: {hotel_data.get('location')}")
+                        print(
+                            f"  Dates: {response_data.get('start_date')} to {response_data.get('end_date')}"
+                        )
+                        print(f"  Adults: {hotel_data.get('adults')}")
             except json.JSONDecodeError:
                 # If not valid JSON, just print the first 100 characters
                 print(
@@ -215,9 +234,9 @@ if __name__ == "__main__":
     # Demo queries to test the perception chain
     test_queries = [
         "I want to search for flights from New York to Los Angeles on 2025-05-01 with return on 2025-05-05",
-        "I need a hotel for 2 adults for the same dates as the flight and in the same city?",
-        "I need a hotel in Los Angeles for 2 adults from May 4 to May 9, 2025",
-        "Find me flights from there to New York on June 15, 2025 and return on June 18, 2025",
+        "I need a hotel in Los Angeles for 2 adults from May 1 to May 5, 2025",
+        "I want to search for flights from New York to Los Angeles on 2025-05-01 "
+        "with return on 2025-05-05 and a hotel for 2 adults in Los Angeles for the same dates",
     ]
 
     # Run the test
