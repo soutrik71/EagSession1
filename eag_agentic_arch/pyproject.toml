@@ -34,6 +34,7 @@ dependencies = [
     "mcp>=1.6.0",
     "langchain-openai>=0.3.14",
     "openai>=1.76.0",
+    "langchain-mcp-adapters>=0.0.9",
 ]
 
 [build-system]
