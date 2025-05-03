@@ -36,6 +36,7 @@ dependencies = [
     "openai>=1.76.0",
     "langchain-mcp-adapters>=0.0.9",
     "ollama>=0.4.8",
+    "markitdown[all]>=0.1.1",
 ]
 
 [build-system]
