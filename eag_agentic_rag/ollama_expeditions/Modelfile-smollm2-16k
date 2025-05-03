@@ -1,0 +1,4 @@
+FROM smollm2:135m
+
+PARAMETER temperature 0.1
+PARAMETER num_ctx 16384
