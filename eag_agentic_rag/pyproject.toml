@@ -37,6 +37,10 @@ dependencies = [
     "langchain-mcp-adapters>=0.0.9",
     "ollama>=0.4.8",
     "markitdown[all]>=0.1.1",
+    "playwright>=1.52.0",
+    "beautifulsoup4>=4.13.4",
+    "langchain-community>=0.3.23",
+    "html2text>=2025.4.15",
 ]
 
 [build-system]
