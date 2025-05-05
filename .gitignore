@@ -46,3 +46,5 @@ eag_agentic_arch/conversations/
 eag_agentic_arch/conversations/*.json
 eag_agentic_arch/conversations/travel-session.json
 eag_agentic_arch/conversations/travel-session.json
+eag_agentic_rag/S7/faiss_index/
+eag_agentic_rag/S7/documents/
