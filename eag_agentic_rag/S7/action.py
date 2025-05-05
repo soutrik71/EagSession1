@@ -8,6 +8,7 @@ try:
     from agent import log
 except ImportError:
     import datetime
+
     def log(stage: str, msg: str):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] [{stage}] {msg}")
@@ -56,7 +57,9 @@ def parse_function_call(response: str) -> tuple[str, Dict[str, Any]]:
         raise
 
 
-async def execute_tool(session: ClientSession, tools: list[Any], response: str) -> ToolCallResult:
+async def execute_tool(
+    session: ClientSession, tools: list[Any], response: str
+) -> ToolCallResult:
     """Executes a FUNCTION_CALL via MCP tool session."""
     try:
         tool_name, arguments = parse_function_call(response)
@@ -68,20 +71,17 @@ async def execute_tool(session: ClientSession, tools: list[Any], response: str) 
         log("tool", f"⚙️ Calling '{tool_name}' with: {arguments}")
         result = await session.call_tool(tool_name, arguments=arguments)
 
-        if hasattr(result, 'content'):
+        if hasattr(result, "content"):
             if isinstance(result.content, list):
-                out = [getattr(item, 'text', str(item)) for item in result.content]
+                out = [getattr(item, "text", str(item)) for item in result.content]
             else:
-                out = getattr(result.content, 'text', str(result.content))
+                out = getattr(result.content, "text", str(result.content))
         else:
             out = str(result)
 
         log("tool", f"✅ {tool_name} result: {out}")
         return ToolCallResult(
-            tool_name=tool_name,
-            arguments=arguments,
-            result=out,
-            raw_response=result
+            tool_name=tool_name, arguments=arguments, result=out, raw_response=result
         )
 
     except Exception as e:

@@ -24,14 +24,10 @@ def websearch_tool(request: WebsearchRequest) -> WebsearchResponse:
     Returns:
         A list of URLs and their corresponding page content in the format of WebsearchResponse pydantic model
     """
-    try:
-        mcp_log("INFO", f"Received query: {request.query}")
-        web_url, page_content = get_retrieved_docs(request.query, request.k)
-        mcp_log("INFO", f"Returning {len(web_url)} results")
-        return WebsearchResponse(web_url=web_url, page_content=page_content)
-    except Exception as e:
-        mcp_log("ERROR", f"Failed to retrieve docs: {e}")
-        return WebsearchResponse(web_url=[], page_content=[])
+    mcp_log("INFO", f"Received query: {request.query}")
+    web_url, page_content = get_retrieved_docs(request.query, request.k)
+    mcp_log("INFO", f"Returning {len(web_url)} results")
+    return WebsearchResponse(web_url=web_url, page_content=page_content)
 
 
 if __name__ == "__main__":

@@ -4,14 +4,14 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils import read_yaml_file
-from client.embedding_provider import OllamaEmbeddingProvider
+from client.embedding_provider import OpenAIEmbeddingProvider
 from langchain_community.vectorstores import FAISS
 
 print("Current working directory:", os.getcwd())
 
-yaml_file_path = "url_rag/config.yaml"
+yaml_file_path = "url_rag/server/config.yaml"
 yaml_data = read_yaml_file(yaml_file_path)
-embedder = OllamaEmbeddingProvider().embeddings
+embedder = OpenAIEmbeddingProvider().embeddings
 
 
 index_name = yaml_data["db_index_name"]

@@ -2,7 +2,7 @@ import traceback
 import os
 from dotenv import load_dotenv
 from llm_provider import default_llm
-from embedding_provider import OllamaEmbeddingProvider
+from embedding_provider import OpenAIEmbeddingProvider
 
 # Load environment variables
 load_dotenv()
@@ -44,10 +44,10 @@ def test_llm_provider():
 
 
 def test_embedding_provider():
-    """Test the Ollama embedding provider."""
-    print("\nTesting Ollama embedding provider...")
+    """Test the  embedding provider."""
+    print("\nTesting embedding provider...")
     try:
-        provider = OllamaEmbeddingProvider()
+        provider = OpenAIEmbeddingProvider()
         sentences = [
             "How does AlphaFold work?",
             "How do proteins fold?",
