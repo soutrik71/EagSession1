@@ -42,6 +42,8 @@ dependencies = [
     "langchain-community>=0.3.23",
     "html2text>=2025.4.15",
     "scipy>=1.15.2",
+    "langchain-ollama>=0.3.2",
+    "faiss-cpu>=1.11.0",
 ]
 
 [build-system]
