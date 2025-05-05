@@ -89,8 +89,3 @@ def search_hotels_tool(search: TravelSearch) -> TravelSearchResponse:
     )
 
     return TravelSearchResponse(summary=result)
-
-
-if __name__ == "__main__":
-    logger.info("Starting MCP server...")
-    mcp.run(transport="stdio")

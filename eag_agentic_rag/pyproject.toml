@@ -44,6 +44,8 @@ dependencies = [
     "scipy>=1.15.2",
     "langchain-ollama>=0.3.2",
     "faiss-cpu>=1.11.0",
+    "langchain-text-splitters>=0.3.8",
+    "tiktoken>=0.9.0",
 ]
 
 [build-system]

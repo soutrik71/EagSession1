@@ -1,0 +1,3 @@
+# db_index_name: "weburl_index"
+db_index_name: "test_index"
+history_index_name: "history_index"
