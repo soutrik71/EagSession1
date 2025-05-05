@@ -1,15 +1,16 @@
-import traceback
 import os
-from dotenv import load_dotenv
-from llm_provider import default_llm
-from embedding_provider import OpenAIEmbeddingProvider
 
-# Load environment variables
-load_dotenv()
-
-# Clear SSL_CERT_FILE environment variable if set
+# Clear SSL_CERT_FILE environment variable if set, before any other imports
 if "SSL_CERT_FILE" in os.environ:
     del os.environ["SSL_CERT_FILE"]
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+import traceback
+from llm_provider import default_llm
+from embedding_provider import OpenAIEmbeddingProvider
 
 
 def test_llm_provider():

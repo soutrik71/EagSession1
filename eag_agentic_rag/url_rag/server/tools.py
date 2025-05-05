@@ -1,11 +1,17 @@
 import os
 import sys
+from dotenv import load_dotenv
 
+load_dotenv()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Clear SSL_CERT_FILE environment variable if set
+if "SSL_CERT_FILE" in os.environ:
+    del os.environ["SSL_CERT_FILE"]
 
 from utils import read_yaml_file
 from client.embedding_provider import OpenAIEmbeddingProvider
 from langchain_community.vectorstores import FAISS
+
 
 print("Current working directory:", os.getcwd())
 

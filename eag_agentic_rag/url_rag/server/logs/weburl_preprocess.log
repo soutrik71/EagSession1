@@ -1,0 +1,89 @@
+2025-05-06 00:38:04 | INFO     | __main__:<module>:45 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-06 00:38:04 | DEBUG    | __main__:<module>:50 - Removed SSL_CERT_FILE from environment variables
+2025-05-06 00:38:04 | DEBUG    | __main__:<module>:54 - Loaded environment variables
+2025-05-06 00:38:04 | INFO     | __main__:<module>:396 - Processing 2 URLs...
+2025-05-06 00:38:04 | INFO     | __main__:batch_process_urls:376 - Batch processing 2 URLs
+2025-05-06 00:38:04 | INFO     | __main__:batch_process_urls:379 - Processing URL 1/2: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:38:04 | INFO     | __main__:process_single_url:346 - Processing single URL https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade with config from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:38:04 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:38:04 | DEBUG    | __main__:setup_embedding_provider:96 - Added C:\workspace\EagSession1\eag_agentic_rag\url_rag to sys.path
+2025-05-06 00:38:04 | DEBUG    | __main__:setup_embedding_provider:101 - Attempting to import from client.embedding_provider
+2025-05-06 00:38:06 | INFO     | __main__:setup_embedding_provider:103 - Successfully imported OpenAIEmbeddingProvider from client.embedding_provider
+2025-05-06 00:38:06 | INFO     | __main__:process_url:284 - Processing URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:38:06 | INFO     | __main__:process_url:292 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=weburl_index
+2025-05-06 00:38:06 | INFO     | __main__:extract_text_from_url:154 - Extracting text from URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:38:06 | SUCCESS  | __main__:extract_text_from_url:159 - Successfully extracted text from https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade, got 1 documents
+2025-05-06 00:38:06 | INFO     | __main__:chunk_text_documents:191 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-06 00:38:07 | SUCCESS  | __main__:chunk_text_documents:201 - Chunked documents: 3 chunks extracted from 1 original documents
+2025-05-06 00:38:07 | INFO     | __main__:add_documents_to_faiss_index:233 - Index folder 'weburl_index' does not exist. Creating a new index.
+2025-05-06 00:38:09 | SUCCESS  | __main__:add_documents_to_faiss_index:246 - Created new FAISS index at 'weburl_index'
+2025-05-06 00:38:11 | SUCCESS  | __main__:add_documents_to_faiss_index:259 - Added 3 documents to the vector store
+2025-05-06 00:38:11 | SUCCESS  | __main__:add_documents_to_faiss_index:263 - Index saved at 'weburl_index'
+2025-05-06 00:38:11 | SUCCESS  | __main__:process_url:320 - Successfully processed URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade and added to index weburl_index
+2025-05-06 00:38:12 | INFO     | __main__:batch_process_urls:379 - Processing URL 2/2: https://www.ibm.com/think/topics/docker
+2025-05-06 00:38:13 | INFO     | __main__:process_single_url:346 - Processing single URL https://www.ibm.com/think/topics/docker with config from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:38:13 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:38:13 | DEBUG    | __main__:setup_embedding_provider:96 - Added C:\workspace\EagSession1\eag_agentic_rag\url_rag to sys.path
+2025-05-06 00:38:13 | DEBUG    | __main__:setup_embedding_provider:101 - Attempting to import from client.embedding_provider
+2025-05-06 00:38:13 | INFO     | __main__:setup_embedding_provider:103 - Successfully imported OpenAIEmbeddingProvider from client.embedding_provider
+2025-05-06 00:38:13 | INFO     | __main__:process_url:284 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-06 00:38:13 | INFO     | __main__:process_url:292 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=weburl_index
+2025-05-06 00:38:13 | INFO     | __main__:extract_text_from_url:154 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-06 00:38:16 | SUCCESS  | __main__:extract_text_from_url:159 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-06 00:38:16 | INFO     | __main__:chunk_text_documents:191 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-06 00:38:17 | SUCCESS  | __main__:chunk_text_documents:201 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-06 00:38:17 | INFO     | __main__:add_documents_to_faiss_index:248 - Index folder 'weburl_index' exists. Loading existing index.
+2025-05-06 00:38:17 | SUCCESS  | __main__:add_documents_to_faiss_index:253 - Loaded existing FAISS index from 'weburl_index'
+2025-05-06 00:38:19 | SUCCESS  | __main__:add_documents_to_faiss_index:259 - Added 10 documents to the vector store
+2025-05-06 00:38:19 | SUCCESS  | __main__:add_documents_to_faiss_index:263 - Index saved at 'weburl_index'
+2025-05-06 00:38:19 | SUCCESS  | __main__:process_url:320 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index weburl_index
+2025-05-06 00:38:20 | INFO     | __main__:batch_process_urls:385 - Batch processing complete. Success: 2/2
+2025-05-06 00:38:21 | INFO     | __main__:<module>:402 - Processing complete. Successful: 2, Failed: 0
+2025-05-06 00:38:21 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:38:21 | INFO     | __main__:<module>:409 - Index file exists at weburl_index/index.pkl
+2025-05-06 00:38:21 | SUCCESS  | __main__:<module>:416 - Script execution completed
+2025-05-06 00:41:45 | INFO     | __main__:<module>:45 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-06 00:41:45 | DEBUG    | __main__:<module>:50 - Removed SSL_CERT_FILE from environment variables
+2025-05-06 00:41:45 | DEBUG    | __main__:<module>:54 - Loaded environment variables
+2025-05-06 00:41:45 | INFO     | __main__:<module>:396 - Processing 2 URLs...
+2025-05-06 00:41:45 | INFO     | __main__:batch_process_urls:376 - Batch processing 2 URLs
+2025-05-06 00:41:45 | INFO     | __main__:batch_process_urls:379 - Processing URL 1/2: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:41:45 | INFO     | __main__:process_single_url:346 - Processing single URL https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade with config from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:41:45 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:41:45 | DEBUG    | __main__:setup_embedding_provider:96 - Added C:\workspace\EagSession1\eag_agentic_rag\url_rag to sys.path
+2025-05-06 00:41:45 | DEBUG    | __main__:setup_embedding_provider:101 - Attempting to import from client.embedding_provider
+2025-05-06 00:41:47 | INFO     | __main__:setup_embedding_provider:103 - Successfully imported OpenAIEmbeddingProvider from client.embedding_provider
+2025-05-06 00:41:47 | INFO     | __main__:process_url:284 - Processing URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:41:47 | INFO     | __main__:process_url:292 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=url_rag/weburl_index
+2025-05-06 00:41:47 | INFO     | __main__:extract_text_from_url:154 - Extracting text from URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-06 00:41:48 | SUCCESS  | __main__:extract_text_from_url:159 - Successfully extracted text from https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade, got 1 documents
+2025-05-06 00:41:48 | INFO     | __main__:chunk_text_documents:191 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-06 00:41:48 | SUCCESS  | __main__:chunk_text_documents:201 - Chunked documents: 3 chunks extracted from 1 original documents
+2025-05-06 00:41:48 | INFO     | __main__:add_documents_to_faiss_index:233 - Index folder 'url_rag/weburl_index' does not exist. Creating a new index.
+2025-05-06 00:41:49 | SUCCESS  | __main__:add_documents_to_faiss_index:246 - Created new FAISS index at 'url_rag/weburl_index'
+2025-05-06 00:41:50 | SUCCESS  | __main__:add_documents_to_faiss_index:259 - Added 3 documents to the vector store
+2025-05-06 00:41:50 | SUCCESS  | __main__:add_documents_to_faiss_index:263 - Index saved at 'url_rag/weburl_index'
+2025-05-06 00:41:50 | SUCCESS  | __main__:process_url:320 - Successfully processed URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade and added to index url_rag/weburl_index
+2025-05-06 00:41:51 | INFO     | __main__:batch_process_urls:379 - Processing URL 2/2: https://www.ibm.com/think/topics/docker
+2025-05-06 00:41:51 | INFO     | __main__:process_single_url:346 - Processing single URL https://www.ibm.com/think/topics/docker with config from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:41:51 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:41:51 | DEBUG    | __main__:setup_embedding_provider:96 - Added C:\workspace\EagSession1\eag_agentic_rag\url_rag to sys.path
+2025-05-06 00:41:51 | DEBUG    | __main__:setup_embedding_provider:101 - Attempting to import from client.embedding_provider
+2025-05-06 00:41:51 | INFO     | __main__:setup_embedding_provider:103 - Successfully imported OpenAIEmbeddingProvider from client.embedding_provider
+2025-05-06 00:41:51 | INFO     | __main__:process_url:284 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-06 00:41:51 | INFO     | __main__:process_url:292 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=url_rag/weburl_index
+2025-05-06 00:41:51 | INFO     | __main__:extract_text_from_url:154 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-06 00:41:52 | SUCCESS  | __main__:extract_text_from_url:159 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-06 00:41:52 | INFO     | __main__:chunk_text_documents:191 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-06 00:41:52 | SUCCESS  | __main__:chunk_text_documents:201 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-06 00:41:52 | INFO     | __main__:add_documents_to_faiss_index:248 - Index folder 'url_rag/weburl_index' exists. Loading existing index.
+2025-05-06 00:41:52 | SUCCESS  | __main__:add_documents_to_faiss_index:253 - Loaded existing FAISS index from 'url_rag/weburl_index'
+2025-05-06 00:41:53 | SUCCESS  | __main__:add_documents_to_faiss_index:259 - Added 10 documents to the vector store
+2025-05-06 00:41:53 | SUCCESS  | __main__:add_documents_to_faiss_index:263 - Index saved at 'url_rag/weburl_index'
+2025-05-06 00:41:53 | SUCCESS  | __main__:process_url:320 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index url_rag/weburl_index
+2025-05-06 00:41:54 | INFO     | __main__:batch_process_urls:385 - Batch processing complete. Success: 2/2
+2025-05-06 00:41:54 | INFO     | __main__:<module>:402 - Processing complete. Successful: 2, Failed: 0
+2025-05-06 00:41:54 | DEBUG    | __main__:load_config:70 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-06 00:41:54 | INFO     | __main__:<module>:409 - Index file exists at url_rag/weburl_index/index.pkl
+2025-05-06 00:41:54 | DEBUG    | __main__:<module>:415 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001E8DBF84290>, {0: 'c9e67464-0646-46a2-8b72-534c955e15ac', 1: '4b172b35-3434-441c-bde9-9313acd47c92', 2: 'd3fe8598-f173-4148-bbc6-b1a755fa7bae', 3: '440a5b85-568b-416b-8abc-42b535b7e94e', 4: 'df1e9b26-9b83-4b88-bb24-e22018cfa36e', 5: '23f622a7-a8ae-4298-a1f0-f6a259042315', 6: 'b16dc175-7484-4b42-86f2-8808829d3e77', 7: '23d0df55-52f6-47af-a689-ec828d30f958', 8: '2ba7fcc2-70e1-4662-9757-344b76c463cd', 9: '0500fd56-078e-40b2-8539-f6da56ccdeda', 10: 'c2b12d87-7398-4379-b10d-46c431021389', 11: '330b3854-64de-4f7c-a865-3bfd6383c9a2', 12: 'f55d8a41-ec11-4802-8e40-2c6c356eed99'})
+2025-05-06 00:41:54 | SUCCESS  | __main__:<module>:417 - Script execution completed

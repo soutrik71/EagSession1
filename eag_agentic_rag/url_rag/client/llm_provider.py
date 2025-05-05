@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+import httpx
 
 # Load environment variables from .env file
 load_dotenv()
@@ -9,17 +10,27 @@ load_dotenv()
 class LLMProvider:
     """Simple provider for LLM interactions using LangChain's OpenAI implementation."""
 
-    def __init__(self, api_key: str = None, model: str = "gpt-4o"):
+    def __init__(
+        self, api_key: str = None, model: str = "gpt-4o", verify_ssl: bool = False
+    ):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError(
                 "OpenAI API key not provided and not found in environment variables"
             )
         self.model = model
+
+        # Create a custom HTTPX client with SSL verification disabled if needed
+        if not verify_ssl:
+            self.http_client = httpx.Client(verify=False, timeout=120.0)
+        else:
+            self.http_client = None
+
         self.chat_model = ChatOpenAI(
             model=self.model,
             openai_api_key=self.api_key,
             temperature=0,
+            http_client=self.http_client,
         )
 
     def get_completion(self, system_message: str, user_prompt: str) -> str:
@@ -33,5 +44,5 @@ class LLMProvider:
         return response.content
 
 
-# Create a default instance for easy import
-default_llm = LLMProvider()
+# Create a default instance for easy import, with SSL verification disabled
+default_llm = LLMProvider(verify_ssl=False)

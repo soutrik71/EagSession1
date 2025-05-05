@@ -1,0 +1,417 @@
+import os
+import uuid
+import yaml
+import sys
+import time
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+from dotenv import load_dotenv
+from loguru import logger
+
+# Fix paths for imports
+current_dir = Path(__file__).parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
+
+# Import necessary libraries
+from langchain_community.document_loaders import AsyncHtmlLoader
+from langchain_community.document_transformers import Html2TextTransformer
+from langchain_text_splitters import TokenTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_community.docstore.in_memory import InMemoryDocstore
+from langchain_core.documents import Document
+import faiss
+
+# Configure loguru logger
+LOG_DIR = Path(current_dir) / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+LOG_FILE = LOG_DIR / "weburl_preprocess.log"
+
+# Remove default logger and set up our custom format
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    level="INFO",
+)
+logger.add(
+    LOG_FILE,
+    rotation="10 MB",
+    retention="1 week",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    level="DEBUG",
+)
+
+logger.info(f"Starting weburl_preprocess script from {__file__}")
+
+# Fix SSL issues by unsetting SSL_CERT_FILE if it exists
+if "SSL_CERT_FILE" in os.environ:
+    del os.environ["SSL_CERT_FILE"]
+    logger.debug("Removed SSL_CERT_FILE from environment variables")
+
+# Load environment variables
+load_dotenv()
+logger.debug("Loaded environment variables")
+
+
+def load_config(config_path: str = "config.yaml") -> Optional[Dict[str, Any]]:
+    """
+    Load configuration from a YAML file
+
+    Args:
+        config_path: Path to the configuration file
+
+    Returns:
+        Dictionary containing configuration or None if loading failed
+    """
+    try:
+        with open(config_path, "r") as file:
+            config = yaml.safe_load(file)
+        logger.debug(f"Loaded configuration from {config_path}")
+        return config
+    except Exception as e:
+        logger.error(f"Error loading configuration from {config_path}: {e}")
+        return None
+
+
+def setup_embedding_provider():
+    """
+    Setup and return an embedding provider
+
+    Returns:
+        Embedding function for vector embeddings
+
+    Raises:
+        ImportError: If embedding provider cannot be imported
+    """
+    # Try different import paths to handle various project structures
+    import_paths = [
+        "client.embedding_provider",
+        # Commented out to avoid linter error, will still work at runtime if path exists
+        # "url_rag.client.embedding_provider",
+    ]
+
+    # Add parent dir to paths for better import resolution
+    sys.path.append(str(parent_dir))
+    logger.debug(f"Added {parent_dir} to sys.path")
+
+    last_error = None
+    for import_path in import_paths:
+        try:
+            logger.debug(f"Attempting to import from {import_path}")
+            module = __import__(import_path, fromlist=["OpenAIEmbeddingProvider"])
+            logger.info(
+                f"Successfully imported OpenAIEmbeddingProvider from {import_path}"
+            )
+            return module.OpenAIEmbeddingProvider().embeddings
+        except (ImportError, AttributeError) as e:
+            last_error = e
+            logger.debug(f"Failed to import from {import_path}: {e}")
+            continue
+
+    # Manual import attempts as fallback
+    try:
+        logger.debug("Attempting direct import from client.embedding_provider")
+        from client.embedding_provider import OpenAIEmbeddingProvider
+
+        logger.info("Successfully imported OpenAIEmbeddingProvider directly")
+        return OpenAIEmbeddingProvider().embeddings
+    except ImportError:
+        try:
+            # This import might fail during linting but work at runtime
+            logger.debug(
+                "Attempting direct import from url_rag.client.embedding_provider"
+            )
+            from url_rag.client.embedding_provider import OpenAIEmbeddingProvider
+
+            logger.info(
+                "Successfully imported OpenAIEmbeddingProvider from url_rag.client"
+            )
+            return OpenAIEmbeddingProvider().embeddings
+        except Exception as e:
+            last_error = e
+            logger.debug(f"Failed direct import attempts: {e}")
+
+    # If we've exhausted all paths, raise the last error
+    logger.error(
+        f"Could not import OpenAIEmbeddingProvider after multiple attempts: {last_error}"
+    )
+    raise ImportError(f"Could not import OpenAIEmbeddingProvider: {last_error}")
+
+
+def extract_text_from_url(url: str) -> List[Document]:
+    """
+    Extract and return plain text Document(s) from a given URL using
+    LangChain's AsyncHtmlLoader and Html2TextTransformer.
+
+    Args:
+        url: The URL to extract content from
+
+    Returns:
+        A list of Document objects
+    """
+    try:
+        logger.info(f"Extracting text from URL: {url}")
+        loader = AsyncHtmlLoader([url])
+        docs = loader.load()
+        html2text = Html2TextTransformer()
+        docs_transformed = html2text.transform_documents(docs)
+        logger.success(
+            f"Successfully extracted text from {url}, got {len(docs_transformed)} documents"
+        )
+        return docs_transformed
+    except Exception as e:
+        logger.error(f"Error extracting text from URL {url}: {e}")
+        return []
+
+
+def chunk_text_documents(
+    docs_transformed: List[Document],
+    chunk_size: int,
+    chunk_overlap: int,
+    model_name: str,
+) -> List[Document]:
+    """
+    Split the transformed documents into chunks using TokenTextSplitter.
+
+    Args:
+        docs_transformed: List of Document objects
+        chunk_size: Maximum size of chunks
+        chunk_overlap: Overlap between chunks
+        model_name: Model name for tokenization
+
+    Returns:
+        A list of chunked Document objects
+    """
+    if not docs_transformed:
+        logger.warning("No documents to chunk")
+        return []
+
+    try:
+        logger.info(
+            f"Chunking {len(docs_transformed)} documents with chunk_size={chunk_size}, chunk_overlap={chunk_overlap}"
+        )
+        text_splitter = TokenTextSplitter(
+            chunk_size=chunk_size, chunk_overlap=chunk_overlap, model_name=model_name
+        )
+        texts_chunked = text_splitter.split_documents(docs_transformed)
+        # Log chunking results
+        orig_len = len(docs_transformed)
+        chunk_len = len(texts_chunked)
+        logger.success(
+            f"Chunked documents: {chunk_len} chunks extracted from {orig_len} original documents"
+        )
+        return texts_chunked
+    except Exception as e:
+        logger.error(f"Error chunking documents: {e}")
+        return []
+
+
+def add_documents_to_faiss_index(
+    documents: List[Document], embedder: Any, index_name: str
+) -> List[str]:
+    """
+    Adds documents to a FAISS vector store with the given index name.
+    If the index does not exist, it creates a new one.
+    If it exists, it loads and updates it.
+
+    Args:
+        documents: List of Document objects to add
+        embedder: Embedding function to use
+        index_name: Name of the index to use
+
+    Returns:
+        List of document IDs
+    """
+    if not documents:
+        logger.warning("No documents to add to index")
+        return []
+
+    try:
+        # Ensure the index folder exists or not
+        if not os.path.exists(index_name):
+            logger.info(
+                f"Index folder '{index_name}' does not exist. Creating a new index."
+            )
+            # Create new FAISS index
+            # Get embedding size from a sample embedding
+            sample_embedding = embedder.embed_query("sample text")
+            index = faiss.IndexFlatL2(len(sample_embedding))
+            vector_store = FAISS(
+                embedding_function=embedder,
+                index=index,
+                docstore=InMemoryDocstore(),
+                index_to_docstore_id={},
+            )
+            logger.success(f"Created new FAISS index at '{index_name}'")
+        else:
+            logger.info(f"Index folder '{index_name}' exists. Loading existing index.")
+            # Load existing FAISS index
+            vector_store = FAISS.load_local(
+                index_name, embedder, allow_dangerous_deserialization=True
+            )
+            logger.success(f"Loaded existing FAISS index from '{index_name}'")
+
+        # Generate unique IDs for each document
+        doc_ids = [str(uuid.uuid4()) for _ in documents]
+        # Add documents to the vector store
+        vector_store.add_documents(documents=documents, ids=doc_ids)
+        logger.success(f"Added {len(documents)} documents to the vector store")
+
+        # Save the updated index
+        vector_store.save_local(folder_path=index_name)
+        logger.success(f"Index saved at '{index_name}'")
+
+        return doc_ids
+    except Exception as e:
+        logger.error(f"Error adding documents to index: {e}", exc_info=True)
+        return []
+
+
+def process_url(url: str, config: Dict[str, Any], embedder: Any) -> bool:
+    """
+    Process a URL by extracting content, chunking, and adding to vector store
+
+    Args:
+        url: URL to process
+        config: Configuration dictionary
+        embedder: Embedding function to use
+
+    Returns:
+        Success status
+    """
+    try:
+        logger.info(f"Processing URL: {url}")
+
+        # Get configuration values with defaults
+        chunk_size = int(config.get("chunk_size", 500))
+        chunk_overlap = int(config.get("chunk_overlap", 50))
+        model_name = config.get("model_name", "gpt-4o")
+        index_name = config.get("db_index_name", "weburl_index")
+
+        logger.info(
+            f"Using configuration: chunk_size={chunk_size}, chunk_overlap={chunk_overlap}, "
+            f"model_name={model_name}, index_name={index_name}"
+        )
+
+        # Extract text from URL
+        raw_docs = extract_text_from_url(url)
+        if not raw_docs:
+            logger.warning(f"No content extracted from {url}")
+            return False
+
+        # Chunk the documents
+        chunked_docs = chunk_text_documents(
+            raw_docs,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            model_name=model_name,
+        )
+        if not chunked_docs:
+            logger.warning(f"Chunking failed for content from {url}")
+            return False
+
+        # Add to vector store
+        doc_ids = add_documents_to_faiss_index(chunked_docs, embedder, index_name)
+
+        # Record in history index if successful and if history_index_name is specified
+        if doc_ids and "history_index_name" in config:
+            # Here you could implement history tracking logic
+            logger.success(
+                f"Successfully processed URL: {url} and added to index {index_name}"
+            )
+            # TODO: Implement history tracking logic
+
+        return bool(doc_ids)
+    except Exception as e:
+        logger.error(f"Error processing URL {url}: {e}", exc_info=True)
+        return False
+
+
+def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
+    """
+    Process a single URL with the given configuration path
+
+    Args:
+        url: URL to process
+        config_path: Path to the configuration file
+
+    Returns:
+        Success status
+    """
+    # Resolve config path
+    if not os.path.isabs(config_path):
+        config_path = os.path.join(current_dir, config_path)
+
+    logger.info(f"Processing single URL {url} with config from {config_path}")
+
+    # Load configuration
+    config = load_config(config_path)
+    if not config:
+        logger.error(f"Failed to load configuration from {config_path}. Exiting.")
+        return False
+
+    # Setup embedding provider
+    try:
+        embedder = setup_embedding_provider()
+    except Exception as e:
+        logger.error(f"Failed to setup embedding provider: {e}", exc_info=True)
+        return False
+
+    # Process the URL
+    return process_url(url, config, embedder)
+
+
+def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> List[bool]:
+    """
+    Process a batch of URLs with the given configuration path
+
+    Args:
+        urls: List of URLs to process
+        config_path: Path to the configuration file
+
+    Returns:
+        List of success status for each URL
+    """
+    logger.info(f"Batch processing {len(urls)} URLs")
+    results = []
+    for i, url in enumerate(urls, 1):
+        logger.info(f"Processing URL {i}/{len(urls)}: {url}")
+        success = process_single_url(url, config_path)
+        results.append(success)
+        # Sleep to avoid rate limiting
+        time.sleep(1)
+
+    logger.info(f"Batch processing complete. Success: {sum(results)}/{len(results)}")
+    return results
+
+
+if __name__ == "__main__":
+    # Example usage
+    urls = [
+        "https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade",
+        "https://www.ibm.com/think/topics/docker",
+    ]
+
+    logger.info(f"Processing {len(urls)} URLs...")
+    results = batch_process_urls(urls)
+
+    # Summarize results
+    successful = sum(1 for r in results if r)
+    failed = len(results) - successful
+    logger.info(f"Processing complete. Successful: {successful}, Failed: {failed}")
+
+    # Example of checking FAISS index content
+    config = load_config(os.path.join(current_dir, "config.yaml"))
+    if config:
+        index_name = config.get("db_index_name", "weburl_index")
+        if os.path.exists(f"{index_name}/index.pkl"):
+            logger.info(f"Index file exists at {index_name}/index.pkl")
+            # Example of how to access index details if needed
+            import pickle
+
+            with open(f"{index_name}/index.pkl", "rb") as f:
+                index = pickle.load(f)
+            logger.debug(f"Index details: {index}")
+
+    logger.success("Script execution completed")

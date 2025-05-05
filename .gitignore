@@ -50,3 +50,4 @@ eag_agentic_rag/S7/faiss_index/
 eag_agentic_rag/S7/documents/
 eag_agentic_rag/url_rag/test_index/
 eag_agentic_rag/url_rag/history_index/
+eag_agentic_rag/url_rag/weburl_index/
