@@ -10,7 +10,6 @@ import uuid
 import yaml
 import sys
 import time
-import shutil
 import requests
 from requests.exceptions import RequestException
 from pathlib import Path
@@ -22,6 +21,8 @@ from loguru import logger
 current_dir = Path(__file__).parent
 parent_dir = current_dir.parent
 sys.path.append(str(parent_dir))
+
+from utility.utils import check_and_reset_index
 
 # Import necessary libraries
 from langchain_community.document_loaders import AsyncHtmlLoader
@@ -303,29 +304,6 @@ def add_documents_to_faiss_index(
     except Exception as e:
         logger.error(f"Error adding documents to index: {e}", exc_info=True)
         return []
-
-
-def check_and_reset_index(index_name: str, reset_index: bool) -> None:
-    """
-    Check if the index needs to be reset based on configuration
-
-    Args:
-        index_name: Path to the index folder
-        reset_index: Whether to reset the index
-    """
-    if reset_index and os.path.exists(index_name):
-        logger.warning(
-            f"reset_index is set to True. Deleting existing index at '{index_name}'"
-        )
-        try:
-            shutil.rmtree(index_name)
-            logger.success(f"Successfully deleted index folder '{index_name}'")
-        except Exception as e:
-            logger.error(f"Error deleting index folder '{index_name}': {e}")
-    elif not reset_index and os.path.exists(index_name):
-        logger.info(
-            f"reset_index is set to False. Keeping existing index at '{index_name}'"
-        )
 
 
 def process_url(

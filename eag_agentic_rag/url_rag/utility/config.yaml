@@ -4,4 +4,4 @@ history_index_name: "history_index"
 chunk_size: 500
 chunk_overlap: 50
 model_name: "gpt-4o"
-reset_index: false
+reset_index: True
