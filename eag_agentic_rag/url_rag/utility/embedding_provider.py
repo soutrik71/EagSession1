@@ -2,7 +2,6 @@ from langchain_ollama import OllamaEmbeddings
 import os
 from langchain_openai import OpenAIEmbeddings
 import httpx
-import os
 
 
 class OllamaEmbeddingProvider:

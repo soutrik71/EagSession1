@@ -16,10 +16,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Clear SSL_CERT_FILE environment variable if set
-if "SSL_CERT_FILE" in os.environ:
-    del os.environ["SSL_CERT_FILE"]
-
 # Import LLM provider
 from url_rag.utility.llm_provider import default_llm
 
@@ -71,7 +67,7 @@ async def analyze_query(query: str, chat_history=None) -> Optional[str]:
 
     try:
         print("Processing query through perception chain...")
-        perception_result = perception_chain.invoke(
+        perception_result = await perception_chain.ainvoke(
             {"user_query": query_lower, "chat_history": chat_history}
         )
 

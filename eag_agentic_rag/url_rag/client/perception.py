@@ -1,6 +1,7 @@
 import sys
 import os
 
+# Ensure we're using the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import PydanticOutputParser
@@ -8,13 +9,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableSequence
 from dotenv import load_dotenv
 
-
 # Load environment variables
 load_dotenv()
-
-# Clear SSL_CERT_FILE environment variable if set
-if "SSL_CERT_FILE" in os.environ:
-    del os.environ["SSL_CERT_FILE"]
 
 
 class WebContentSearch(BaseModel):
@@ -91,7 +87,7 @@ def get_perception_chain(llm) -> RunnableSequence:
     return prompt | llm | parser
 
 
-def process_conversation_and_enhance_query(
+async def process_conversation_and_enhance_query(
     history_store, conversation_list, chain, conv_id
 ):
     """
@@ -112,8 +108,10 @@ def process_conversation_and_enhance_query(
     for user_query in conversation_list:
         # Retrieve chat history for the conversation
         chat_history = history_store.get_conversation_as_lc_messages(str(conv_id))
-        # Invoke the chain to get the result
-        result = chain.invoke({"user_query": user_query, "chat_history": chat_history})
+        # Invoke the chain to get the result - use await for async invocation
+        result = await chain.ainvoke(
+            {"user_query": user_query, "chat_history": chat_history}
+        )
         # Store the conversation
         messages = [
             {"sender": "human", "content": user_query},
@@ -126,37 +124,42 @@ def process_conversation_and_enhance_query(
 
 
 if __name__ == "__main__":
+    import asyncio
     from url_rag.utility.llm_provider import default_llm
     from url_rag.utility.utils import read_yaml_file
     from url_rag.utility.embedding_provider import OpenAIEmbeddingProvider
     from url_rag.client.memory import ConversationMemory
     import uuid
 
-    # llm provider
-    llm = default_llm.chat_model
-    embedder = OpenAIEmbeddingProvider().embeddings
-    # read config
-    config = read_yaml_file("url_rag/utility/config.yaml")
-    print(config)
+    async def main():
+        # llm provider
+        llm = default_llm.chat_model
+        embedder = OpenAIEmbeddingProvider().embeddings
+        # read config
+        config = read_yaml_file("url_rag/utility/config.yaml")
+        print(config)
 
-    history_index_name = config["history_index_name"]
-    history_index_name = os.path.join(os.getcwd(), history_index_name)
+        history_index_name = config["history_index_name"]
+        history_index_name = os.path.join(os.getcwd(), history_index_name)
 
-    conv_id = uuid.uuid4()
-    memory_store = ConversationMemory(
-        embedder, index_folder=history_index_name, reset_index=True
-    )
+        conv_id = uuid.uuid4()
+        memory_store = ConversationMemory(
+            embedder, index_folder=history_index_name, reset_index=True
+        )
 
-    # create perception chain
-    perception_chain = get_perception_chain(llm)
+        # create perception chain
+        perception_chain = get_perception_chain(llm)
 
-    # process conversation and enhance query
-    conversation_list = [
-        "What is the capital of France?",
-        "Tell me more about its history.",
-        "List two famous landmarks in that city.",
-    ]
-    enhanced_queries = process_conversation_and_enhance_query(
-        memory_store, conversation_list, perception_chain, conv_id
-    )
-    print(enhanced_queries)
+        # process conversation and enhance query
+        conversation_list = [
+            "What is the capital of France?",
+            "Tell me more about its history.",
+            "List two famous landmarks in that city.",
+        ]
+        enhanced_queries = await process_conversation_and_enhance_query(
+            memory_store, conversation_list, perception_chain, conv_id
+        )
+        print(enhanced_queries)
+
+    # Run the async main function
+    asyncio.run(main())

@@ -16,10 +16,6 @@ import os
 # Load environment variables
 load_dotenv()
 
-# Clear SSL_CERT_FILE environment variable if set
-if "SSL_CERT_FILE" in os.environ:
-    del os.environ["SSL_CERT_FILE"]
-
 # Fix for Windows asyncio subprocess
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
@@ -73,6 +69,8 @@ async def main(query: str, conversation_memory=None, conv_id=None):
     else:
         # Get messages from conversation memory for the given conversation ID
         chat_history = conversation_memory.get_conversation_as_lc_messages(str(conv_id))
+
+    print(f"Chat history: {chat_history}")
 
     try:
         # Add the user query to conversation memory
@@ -194,8 +192,8 @@ async def run_conversation():
         # Run the main function with the current query and conversation memory
         response, messages = await main(query, conversation_memory, conv_id)
 
-        print(f"Messages: {messages}")
-        print(f"Response: {response}")
+        # print(f"Messages: {messages}")
+        # print(f"Response: {response}")
 
         # Add a separator between queries
         print("\n" + "-" * 50 + "\n")
