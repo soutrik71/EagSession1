@@ -8,19 +8,20 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 if "SSL_CERT_FILE" in os.environ:
     del os.environ["SSL_CERT_FILE"]
 
-from utils import read_yaml_file
-from client.embedding_provider import OpenAIEmbeddingProvider
+from utility.utils import read_yaml_file
+from utility.embedding_provider import OpenAIEmbeddingProvider
 from langchain_community.vectorstores import FAISS
 
 
 print("Current working directory:", os.getcwd())
 
-yaml_file_path = "url_rag/server/config.yaml"
+yaml_file_path = os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml")
 yaml_data = read_yaml_file(yaml_file_path)
 embedder = OpenAIEmbeddingProvider().embeddings
 
 
 index_name = yaml_data["db_index_name"]
+index_path = os.path.join(os.getcwd(), "url_rag", index_name)
 
 
 def get_vector_store(index_name=index_name, embedder=embedder):

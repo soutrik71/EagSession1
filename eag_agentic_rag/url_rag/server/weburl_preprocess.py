@@ -1,8 +1,18 @@
+"""
+Web URL Preprocessing module for extracting and embedding content from URLs.
+
+This module processes web URLs by extracting their content, chunking it,
+and storing the chunks as embeddings in a FAISS vector store.
+"""
+
 import os
 import uuid
 import yaml
 import sys
 import time
+import shutil
+import requests
+from requests.exceptions import RequestException
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
@@ -31,7 +41,12 @@ LOG_FILE = LOG_DIR / "weburl_preprocess.log"
 logger.remove()
 logger.add(
     sys.stderr,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    format=(
+        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+        "<level>{level: <8}</level> | "
+        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+        "<level>{message}</level>"
+    ),
     level="INFO",
 )
 logger.add(
@@ -54,7 +69,7 @@ load_dotenv()
 logger.debug("Loaded environment variables")
 
 
-def load_config(config_path: str = "config.yaml") -> Optional[Dict[str, Any]]:
+def load_config(config_path: str) -> Optional[Dict[str, Any]]:
     """
     Load configuration from a YAML file
 
@@ -112,20 +127,29 @@ def setup_embedding_provider():
     # Manual import attempts as fallback
     try:
         logger.debug("Attempting direct import from client.embedding_provider")
-        from client.embedding_provider import OpenAIEmbeddingProvider
+        from utility.embedding_provider import OpenAIEmbeddingProvider
 
         logger.info("Successfully imported OpenAIEmbeddingProvider directly")
         return OpenAIEmbeddingProvider().embeddings
     except ImportError:
+        # The following import is commented out due to linter errors,
+        # but it's kept as a fallback for runtime when the path might exist
+        # The import error is expected during static analysis
         try:
-            # This import might fail during linting but work at runtime
             logger.debug(
-                "Attempting direct import from url_rag.client.embedding_provider"
+                "Attempting direct import from url_rag.utility.embedding_provider"
             )
-            from url_rag.client.embedding_provider import OpenAIEmbeddingProvider
+            # from url_rag.utility.embedding_provider import OpenAIEmbeddingProvider
+
+            # Use dynamic import to avoid linter errors
+            embedding_module = __import__(
+                "url_rag.utility.embedding_provider",
+                fromlist=["OpenAIEmbeddingProvider"],
+            )
+            OpenAIEmbeddingProvider = embedding_module.OpenAIEmbeddingProvider
 
             logger.info(
-                "Successfully imported OpenAIEmbeddingProvider from url_rag.client"
+                "Successfully imported OpenAIEmbeddingProvider from url_rag.utility"
             )
             return OpenAIEmbeddingProvider().embeddings
         except Exception as e:
@@ -141,21 +165,34 @@ def setup_embedding_provider():
 
 def extract_text_from_url(url: str) -> List[Document]:
     """
-    Extract and return plain text Document(s) from a given URL using
-    LangChain's AsyncHtmlLoader and Html2TextTransformer.
-
+    Extract and return plain text Document(s) from a given URL.
+    Uses LangChain's AsyncHtmlLoader and Html2TextTransformer.
     Args:
         url: The URL to extract content from
-
     Returns:
-        A list of Document objects
+        A list of Document objects (empty if failed)
     """
     try:
         logger.info(f"Extracting text from URL: {url}")
+        # Check if URL is reachable before attempting to load
+        try:
+            response = requests.head(url, timeout=10, allow_redirects=True)
+            if response.status_code >= 400:
+                logger.error(f"URL unreachable (status {response.status_code}): {url}")
+                return []
+        except RequestException as e:
+            logger.error(f"Network error reaching URL {url}: {e}")
+            return []
         loader = AsyncHtmlLoader([url])
         docs = loader.load()
+        if not docs:
+            logger.warning(f"No content fetched from {url}")
+            return []
         html2text = Html2TextTransformer()
         docs_transformed = html2text.transform_documents(docs)
+        if not docs_transformed or not docs_transformed[0].page_content.strip():
+            logger.warning(f"Extracted content is empty or malformed for {url}")
+            return []
         logger.success(
             f"Successfully extracted text from {url}, got {len(docs_transformed)} documents"
         )
@@ -268,38 +305,57 @@ def add_documents_to_faiss_index(
         return []
 
 
-def process_url(url: str, config: Dict[str, Any], embedder: Any) -> bool:
+def check_and_reset_index(index_name: str, reset_index: bool) -> None:
     """
-    Process a URL by extracting content, chunking, and adding to vector store
+    Check if the index needs to be reset based on configuration
 
+    Args:
+        index_name: Path to the index folder
+        reset_index: Whether to reset the index
+    """
+    if reset_index and os.path.exists(index_name):
+        logger.warning(
+            f"reset_index is set to True. Deleting existing index at '{index_name}'"
+        )
+        try:
+            shutil.rmtree(index_name)
+            logger.success(f"Successfully deleted index folder '{index_name}'")
+        except Exception as e:
+            logger.error(f"Error deleting index folder '{index_name}': {e}")
+    elif not reset_index and os.path.exists(index_name):
+        logger.info(
+            f"reset_index is set to False. Keeping existing index at '{index_name}'"
+        )
+
+
+def process_url(
+    url: str, config: Dict[str, Any], embedder: Any, index_name: str
+) -> bool:
+    """
+    Process a URL by extracting content, chunking, and adding to vector store.
     Args:
         url: URL to process
         config: Configuration dictionary
         embedder: Embedding function to use
-
+        index_name: Path to the index directory
     Returns:
         Success status
     """
     try:
         logger.info(f"Processing URL: {url}")
-
-        # Get configuration values with defaults
         chunk_size = int(config.get("chunk_size", 500))
         chunk_overlap = int(config.get("chunk_overlap", 50))
         model_name = config.get("model_name", "gpt-4o")
-        index_name = config.get("db_index_name", "weburl_index")
-
         logger.info(
-            f"Using configuration: chunk_size={chunk_size}, chunk_overlap={chunk_overlap}, "
-            f"model_name={model_name}, index_name={index_name}"
+            f"Using configuration: chunk_size={chunk_size}, "
+            f"chunk_overlap={chunk_overlap}, model_name={model_name}, "
+            f"index_name={index_name}"
         )
-
         # Extract text from URL
         raw_docs = extract_text_from_url(url)
         if not raw_docs:
-            logger.warning(f"No content extracted from {url}")
+            logger.warning(f"Skipping URL due to extraction failure: {url}")
             return False
-
         # Chunk the documents
         chunked_docs = chunk_text_documents(
             raw_docs,
@@ -308,20 +364,14 @@ def process_url(url: str, config: Dict[str, Any], embedder: Any) -> bool:
             model_name=model_name,
         )
         if not chunked_docs:
-            logger.warning(f"Chunking failed for content from {url}")
+            logger.warning(f"Skipping URL due to chunking failure: {url}")
             return False
-
         # Add to vector store
         doc_ids = add_documents_to_faiss_index(chunked_docs, embedder, index_name)
-
-        # Record in history index if successful and if history_index_name is specified
-        if doc_ids and "history_index_name" in config:
-            # Here you could implement history tracking logic
+        if doc_ids:
             logger.success(
                 f"Successfully processed URL: {url} and added to index {index_name}"
             )
-            # TODO: Implement history tracking logic
-
         return bool(doc_ids)
     except Exception as e:
         logger.error(f"Error processing URL {url}: {e}", exc_info=True)
@@ -330,7 +380,7 @@ def process_url(url: str, config: Dict[str, Any], embedder: Any) -> bool:
 
 def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
     """
-    Process a single URL with the given configuration path
+    Process a single URL with the given configuration path.
 
     Args:
         url: URL to process
@@ -340,8 +390,7 @@ def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
         Success status
     """
     # Resolve config path
-    if not os.path.isabs(config_path):
-        config_path = os.path.join(current_dir, config_path)
+    config_path = os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml")
 
     logger.info(f"Processing single URL {url} with config from {config_path}")
 
@@ -358,13 +407,17 @@ def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
         logger.error(f"Failed to setup embedding provider: {e}", exc_info=True)
         return False
 
+    # Get index name and reset_index from config
+    index_name = config.get("db_index_name", "weburl_index")
+    index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+
     # Process the URL
-    return process_url(url, config, embedder)
+    return process_url(url, config, embedder, index_name)
 
 
 def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> List[bool]:
     """
-    Process a batch of URLs with the given configuration path
+    Process a batch of URLs with the given configuration path.
 
     Args:
         urls: List of URLs to process
@@ -374,10 +427,34 @@ def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> Lis
         List of success status for each URL
     """
     logger.info(f"Batch processing {len(urls)} URLs")
+
+    # Load configuration once for all URLs
+    config_path = os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml")
+    config = load_config(config_path)
+    if not config:
+        logger.error(f"Failed to load configuration from {config_path}. Exiting.")
+        return [False] * len(urls)
+
+    # Setup embedding provider once
+    try:
+        embedder = setup_embedding_provider()
+    except Exception as e:
+        logger.error(f"Failed to setup embedding provider: {e}", exc_info=True)
+        return [False] * len(urls)
+
+    # Get index name and reset_index from config
+    index_name = config.get("db_index_name", "weburl_index")
+    index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+    reset_index = config.get("reset_index", False)
+
+    # Only reset index once before processing all URLs
+    check_and_reset_index(index_name, reset_index)
+
     results = []
     for i, url in enumerate(urls, 1):
         logger.info(f"Processing URL {i}/{len(urls)}: {url}")
-        success = process_single_url(url, config_path)
+        # Process URL with the already prepared configuration and embedding provider
+        success = process_url(url, config, embedder, index_name)
         results.append(success)
         # Sleep to avoid rate limiting
         time.sleep(1)
@@ -402,9 +479,11 @@ if __name__ == "__main__":
     logger.info(f"Processing complete. Successful: {successful}, Failed: {failed}")
 
     # Example of checking FAISS index content
-    config = load_config(os.path.join(current_dir, "config.yaml"))
+    config = load_config(os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml"))
     if config:
         index_name = config.get("db_index_name", "weburl_index")
+        index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+
         if os.path.exists(f"{index_name}/index.pkl"):
             logger.info(f"Index file exists at {index_name}/index.pkl")
             # Example of how to access index details if needed
@@ -412,6 +491,6 @@ if __name__ == "__main__":
 
             with open(f"{index_name}/index.pkl", "rb") as f:
                 index = pickle.load(f)
-            logger.debug(f"Index details: {index}")
+            logger.info(f"Index details: {index}")
 
     logger.success("Script execution completed")
