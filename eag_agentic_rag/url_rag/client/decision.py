@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 import json
 from typing import Optional, Tuple, Dict, Any, List
 
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from mcp import ClientSession
 from langchain_mcp_adapters.tools import load_mcp_tools
 from url_rag.client.perception import WebContentSearch, get_perception_chain
@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import LLM provider
+# Import LLM provider - this handles SSL configuration
 from url_rag.utility.llm_provider import default_llm
 
 llm = default_llm.chat_model
@@ -126,14 +126,21 @@ async def get_llm_decision(
         print("Invoking model...")
         response = await llm_with_tools.ainvoke(enhanced_query)
 
-        # Build initial message chain
+        # Build initial message chain - this is the message chain that will be used to build the action chain
         messages = [HumanMessage(content=query)]
 
         if response.tool_calls:
-            # Add AI message with tool calls
-            messages.append(AIMessage(content="", tool_calls=response.tool_calls))
+            # Add AI message with tool calls - this is the message chain that will be used to build the action chain
+            messages.append(AIMessage(content="I'll help with that by using tools."))
+            for tc in response.tool_calls:
+                messages.append(
+                    ToolMessage(
+                        content=tc["name"],
+                        tool_call_id=tc["id"],
+                    )
+                )
         else:
-            # Add AI message with content
+            # Add AI message with content - this is the message chain that will be used to build the action chain
             messages.append(AIMessage(content=response.content))
 
         return response, messages

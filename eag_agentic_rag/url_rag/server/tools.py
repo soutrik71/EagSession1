@@ -49,7 +49,7 @@ def get_vector_store(index_name=index_name, embedder=embedder):
     return vector_store
 
 
-def get_retrieved_docs(query, k):
+def get_retrieved_docs(query: str, k: int):
     """
     Retrieve documents from the vector store based on the query and filters.
 

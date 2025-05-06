@@ -51,3 +51,6 @@ eag_agentic_rag/S7/documents/
 eag_agentic_rag/url_rag/test_index/
 eag_agentic_rag/url_rag/history_index/
 eag_agentic_rag/url_rag/weburl_index/
+eag_agentic_rag/history_index/index.faiss
+eag_agentic_rag/history_index/index.pkl
+eag_agentic_rag/history_index/index.faiss

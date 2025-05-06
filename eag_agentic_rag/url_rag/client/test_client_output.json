@@ -1,0 +1,91 @@
+{
+  "response": {
+    "content": "",
+    "tool_calls": [
+      {
+        "name": "web_vector_search",
+        "id": "call_FWHEcSZih0LGVsBIvpGLRC5w",
+        "type": "tool_call",
+        "args": {
+          "request": {
+            "query": "What is the purpose and benefits of using Helm in software development or Kubernetes management?",
+            "k": 1
+          }
+        }
+      }
+    ],
+    "model": "gpt-4o-2024-08-06",
+    "finish_reason": "tool_calls",
+    "usage": {
+      "total_tokens": 247,
+      "input_tokens": 210,
+      "output_tokens": 37
+    }
+  },
+  "messages": [
+    {
+      "type": "HumanMessage",
+      "content": "What is the object of using helm?",
+      "tool_calls": []
+    },
+    {
+      "type": "AIMessage",
+      "content": "",
+      "tool_calls": [
+        {
+          "name": "web_vector_search",
+          "id": "call_FWHEcSZih0LGVsBIvpGLRC5w",
+          "type": "tool_call",
+          "args": {
+            "request": {
+              "query": "What is the purpose and benefits of using Helm in software development or Kubernetes management?",
+              "k": 1
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "web_vector_search",
+      "description": "\n    Perform advanced web search using vector database and return the results.\n\n    Args:\n        request: The search parameters with query and k (number of results) in the format of WebsearchRequest pydantic model\n    Returns:\n        WebsearchResponse with web_url and page_content lists in the format of WebsearchResponse pydantic model\n    ",
+      "args_schema": {
+        "$defs": {
+          "WebsearchRequest": {
+            "description": "Request model for web search.",
+            "properties": {
+              "query": {
+                "description": "The search query",
+                "title": "Query",
+                "type": "string"
+              },
+              "k": {
+                "default": 1,
+                "description": "The number of results to return",
+                "title": "K",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "title": "WebsearchRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/WebsearchRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "web_vector_searchArguments",
+        "type": "object"
+      },
+      "response_format": "content_and_artifact"
+    }
+  ]
+}
