@@ -32,7 +32,8 @@ class MCPTestClient:
 
         # Start the server process and connect to it via stdio
         server_params = StdioServerParameters(
-            command=command, args=[server_script_path], env=None
+            command=command,
+            args=[server_script_path],
         )
         # stdio_transport is a context manager that returns a tuple of (stdio, write)
         stdio_transport = await self.exit_stack.enter_async_context(
@@ -177,12 +178,12 @@ async def main():
 
     # Check for YAML config file
     yaml_paths = [
-        os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml"),
+        os.path.join(os.getcwd(), "url_rag", "client", "config.yaml"),
         os.path.join(
-            os.getcwd(), "eag_agentic_rag", "url_rag", "utility", "config.yaml"
+            os.getcwd(), "eag_agentic_rag", "url_rag", "client", "config.yaml"
         ),
         os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../utility/config.yaml")
+            os.path.join(os.path.dirname(__file__), "../server", "config.yaml")
         ),
     ]
 

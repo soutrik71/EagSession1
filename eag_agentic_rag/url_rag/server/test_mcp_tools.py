@@ -4,11 +4,6 @@
 import os
 import sys
 
-# Add parent directory to path for imports
-sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
-
 # Import server modules directly since we're in the same directory
 from tools import get_retrieved_docs
 from basic_server import web_vector_search  # Changed to import from basic_server

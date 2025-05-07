@@ -2,9 +2,6 @@ import os
 import sys
 import ssl
 
-# Add parent directory to path for imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
 # Disable SSL verification for the server process
 if hasattr(ssl, "_create_unverified_context"):
     ssl._create_default_https_context = ssl._create_unverified_context

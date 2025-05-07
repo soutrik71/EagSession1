@@ -3,7 +3,6 @@ import sys
 from dotenv import load_dotenv
 
 load_dotenv()
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Clear SSL_CERT_FILE environment variable if set
 if "SSL_CERT_FILE" in os.environ:
     del os.environ["SSL_CERT_FILE"]
