@@ -12,17 +12,11 @@ import sys
 import time
 import requests
 from requests.exceptions import RequestException
-from pathlib import Path
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from loguru import logger
 
-# Fix paths for imports
-current_dir = Path(__file__).parent
-parent_dir = current_dir.parent
-sys.path.append(str(parent_dir))
-
-from utility.utils import check_and_reset_index
+from utils import check_and_reset_index
 
 # Import necessary libraries
 from langchain_community.document_loaders import AsyncHtmlLoader
@@ -33,11 +27,7 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_core.documents import Document
 import faiss
 
-# Configure loguru logger
-LOG_DIR = Path(current_dir) / "logs"
-LOG_DIR.mkdir(exist_ok=True)
-LOG_FILE = LOG_DIR / "weburl_preprocess.log"
-
+LOG_FILE = "./weburl_preprocess.log"
 # Remove default logger and set up our custom format
 logger.remove()
 logger.add(
@@ -107,10 +97,6 @@ def setup_embedding_provider():
         # "url_rag.client.embedding_provider",
     ]
 
-    # Add parent dir to paths for better import resolution
-    sys.path.append(str(parent_dir))
-    logger.debug(f"Added {parent_dir} to sys.path")
-
     last_error = None
     for import_path in import_paths:
         try:
@@ -128,7 +114,7 @@ def setup_embedding_provider():
     # Manual import attempts as fallback
     try:
         logger.debug("Attempting direct import from client.embedding_provider")
-        from utility.embedding_provider import OpenAIEmbeddingProvider
+        from embedding_provider import OpenAIEmbeddingProvider
 
         logger.info("Successfully imported OpenAIEmbeddingProvider directly")
         return OpenAIEmbeddingProvider().embeddings
@@ -368,7 +354,7 @@ def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
         Success status
     """
     # Resolve config path
-    config_path = os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml")
+    config_path = os.path.join(os.getcwd(), "url_rag", "server", "config.yaml")
 
     logger.info(f"Processing single URL {url} with config from {config_path}")
 
@@ -387,7 +373,8 @@ def process_single_url(url: str, config_path: str = "config.yaml") -> bool:
 
     # Get index name and reset_index from config
     index_name = config.get("db_index_name", "weburl_index")
-    index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+    # Create the index in the server folder instead of url_rag folder
+    index_name = os.path.join(os.getcwd(), "url_rag", "server", index_name)
 
     # Process the URL
     return process_url(url, config, embedder, index_name)
@@ -407,7 +394,7 @@ def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> Lis
     logger.info(f"Batch processing {len(urls)} URLs")
 
     # Load configuration once for all URLs
-    config_path = os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml")
+    config_path = os.path.join(os.getcwd(), "url_rag", "server", "config.yaml")
     config = load_config(config_path)
     if not config:
         logger.error(f"Failed to load configuration from {config_path}. Exiting.")
@@ -422,7 +409,8 @@ def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> Lis
 
     # Get index name and reset_index from config
     index_name = config.get("db_index_name", "weburl_index")
-    index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+    # Create the index in the server folder instead of url_rag folder
+    index_name = os.path.join(os.getcwd(), "url_rag", "server", index_name)
     reset_index = config.get("reset_index", False)
 
     # Only reset index once before processing all URLs
@@ -446,6 +434,7 @@ if __name__ == "__main__":
     urls = [
         "https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade",
         "https://www.ibm.com/think/topics/docker",
+        "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425",
     ]
 
     logger.info(f"Processing {len(urls)} URLs...")
@@ -457,10 +446,11 @@ if __name__ == "__main__":
     logger.info(f"Processing complete. Successful: {successful}, Failed: {failed}")
 
     # Example of checking FAISS index content
-    config = load_config(os.path.join(os.getcwd(), "url_rag", "utility", "config.yaml"))
+    config = load_config(os.path.join(os.getcwd(), "url_rag", "server", "config.yaml"))
     if config:
         index_name = config.get("db_index_name", "weburl_index")
-        index_name = os.path.join(os.getcwd(), "url_rag", index_name)
+        # Update index path here too for consistency
+        index_name = os.path.join(os.getcwd(), "url_rag", "server", index_name)
 
         if os.path.exists(f"{index_name}/index.pkl"):
             logger.info(f"Index file exists at {index_name}/index.pkl")

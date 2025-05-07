@@ -1,0 +1,164 @@
+2025-05-07 11:13:23 | INFO     | __main__:<module>:52 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:13:23 | DEBUG    | __main__:<module>:57 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:13:23 | DEBUG    | __main__:<module>:61 - Loaded environment variables
+2025-05-07 11:13:23 | INFO     | __main__:<module>:438 - Processing 2 URLs...
+2025-05-07 11:13:23 | INFO     | __main__:batch_process_urls:394 - Batch processing 2 URLs
+2025-05-07 11:13:23 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\utility\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\url_rag\\utility\\config.yaml'
+2025-05-07 11:13:23 | ERROR    | __main__:batch_process_urls:400 - Failed to load configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\utility\config.yaml. Exiting.
+2025-05-07 11:13:23 | INFO     | __main__:<module>:444 - Processing complete. Successful: 0, Failed: 2
+2025-05-07 11:13:23 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\utility\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\url_rag\\utility\\config.yaml'
+2025-05-07 11:13:23 | SUCCESS  | __main__:<module>:461 - Script execution completed
+2025-05-07 11:13:48 | INFO     | __main__:<module>:52 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:13:48 | DEBUG    | __main__:<module>:57 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:13:48 | DEBUG    | __main__:<module>:61 - Loaded environment variables
+2025-05-07 11:13:48 | INFO     | __main__:<module>:438 - Processing 2 URLs...
+2025-05-07 11:13:48 | INFO     | __main__:batch_process_urls:394 - Batch processing 2 URLs
+2025-05-07 11:13:48 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\utility\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\url_rag\\utility\\config.yaml'
+2025-05-07 11:13:48 | ERROR    | __main__:batch_process_urls:400 - Failed to load configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\utility\config.yaml. Exiting.
+2025-05-07 11:13:48 | INFO     | __main__:<module>:444 - Processing complete. Successful: 0, Failed: 2
+2025-05-07 11:13:48 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\config.yaml'
+2025-05-07 11:13:48 | SUCCESS  | __main__:<module>:461 - Script execution completed
+2025-05-07 11:14:15 | INFO     | __main__:<module>:52 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:14:15 | DEBUG    | __main__:<module>:57 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:14:15 | DEBUG    | __main__:<module>:61 - Loaded environment variables
+2025-05-07 11:14:15 | INFO     | __main__:<module>:438 - Processing 2 URLs...
+2025-05-07 11:14:15 | INFO     | __main__:batch_process_urls:394 - Batch processing 2 URLs
+2025-05-07 11:14:15 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\config.yaml'
+2025-05-07 11:14:15 | ERROR    | __main__:batch_process_urls:400 - Failed to load configuration from C:\workspace\EagSession1\eag_agentic_rag\config.yaml. Exiting.
+2025-05-07 11:14:15 | INFO     | __main__:<module>:444 - Processing complete. Successful: 0, Failed: 2
+2025-05-07 11:14:15 | ERROR    | __main__:load_config:80 - Error loading configuration from C:\workspace\EagSession1\eag_agentic_rag\config.yaml: [Errno 2] No such file or directory: 'C:\\workspace\\EagSession1\\eag_agentic_rag\\config.yaml'
+2025-05-07 11:14:15 | SUCCESS  | __main__:<module>:461 - Script execution completed
+2025-05-07 11:15:47 | INFO     | __main__:<module>:52 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:15:48 | DEBUG    | __main__:<module>:57 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:15:48 | DEBUG    | __main__:<module>:61 - Loaded environment variables
+2025-05-07 11:15:48 | INFO     | __main__:<module>:438 - Processing 2 URLs...
+2025-05-07 11:15:48 | INFO     | __main__:batch_process_urls:394 - Batch processing 2 URLs
+2025-05-07 11:15:48 | DEBUG    | __main__:load_config:77 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:15:48 | DEBUG    | __main__:setup_embedding_provider:104 - Attempting to import from client.embedding_provider
+2025-05-07 11:15:48 | DEBUG    | __main__:setup_embedding_provider:112 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-07 11:15:48 | DEBUG    | __main__:setup_embedding_provider:117 - Attempting direct import from client.embedding_provider
+2025-05-07 11:15:52 | INFO     | __main__:setup_embedding_provider:120 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-07 11:15:52 | INFO     | __main__:batch_process_urls:420 - Processing URL 1/2: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:15:52 | INFO     | __main__:process_url:310 - Processing URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:15:52 | INFO     | __main__:process_url:314 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index
+2025-05-07 11:15:52 | INFO     | __main__:extract_text_from_url:164 - Extracting text from URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:15:53 | SUCCESS  | __main__:extract_text_from_url:184 - Successfully extracted text from https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade, got 1 documents
+2025-05-07 11:15:53 | INFO     | __main__:chunk_text_documents:216 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:15:53 | SUCCESS  | __main__:chunk_text_documents:226 - Chunked documents: 3 chunks extracted from 1 original documents
+2025-05-07 11:15:53 | INFO     | __main__:add_documents_to_faiss_index:258 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index' does not exist. Creating a new index.
+2025-05-07 11:15:55 | SUCCESS  | __main__:add_documents_to_faiss_index:271 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index'
+2025-05-07 11:15:56 | SUCCESS  | __main__:add_documents_to_faiss_index:284 - Added 3 documents to the vector store
+2025-05-07 11:15:56 | SUCCESS  | __main__:add_documents_to_faiss_index:288 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index'
+2025-05-07 11:15:56 | SUCCESS  | __main__:process_url:337 - Successfully processed URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index
+2025-05-07 11:15:57 | INFO     | __main__:batch_process_urls:420 - Processing URL 2/2: https://www.ibm.com/think/topics/docker
+2025-05-07 11:15:57 | INFO     | __main__:process_url:310 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:15:57 | INFO     | __main__:process_url:314 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index
+2025-05-07 11:15:57 | INFO     | __main__:extract_text_from_url:164 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:15:58 | SUCCESS  | __main__:extract_text_from_url:184 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-07 11:15:58 | INFO     | __main__:chunk_text_documents:216 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:15:58 | SUCCESS  | __main__:chunk_text_documents:226 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-07 11:15:58 | INFO     | __main__:add_documents_to_faiss_index:273 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index' exists. Loading existing index.
+2025-05-07 11:15:58 | SUCCESS  | __main__:add_documents_to_faiss_index:278 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index'
+2025-05-07 11:16:01 | SUCCESS  | __main__:add_documents_to_faiss_index:284 - Added 10 documents to the vector store
+2025-05-07 11:16:01 | SUCCESS  | __main__:add_documents_to_faiss_index:288 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index'
+2025-05-07 11:16:01 | SUCCESS  | __main__:process_url:337 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index
+2025-05-07 11:16:02 | INFO     | __main__:batch_process_urls:427 - Batch processing complete. Success: 2/2
+2025-05-07 11:16:02 | INFO     | __main__:<module>:444 - Processing complete. Successful: 2, Failed: 0
+2025-05-07 11:16:02 | DEBUG    | __main__:load_config:77 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:16:02 | INFO     | __main__:<module>:453 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\weburl_index/index.pkl
+2025-05-07 11:16:02 | INFO     | __main__:<module>:459 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001DF8223F390>, {0: 'bee54ba9-de12-4db5-8706-26c310e7ce67', 1: '79e9c515-f617-4009-9e48-5902a7ca4f8e', 2: '6fbb702f-8930-4ef8-b3ff-4bd23e310b8d', 3: '3376f4ce-bf06-4a46-b395-46627752908b', 4: '9b831330-92cd-4319-82c3-25542c6c74e9', 5: '38d3e5aa-a53e-4bc2-b2e3-ead54c41ffa6', 6: '46c293e8-23d0-46f4-9af8-1b84af9492c4', 7: '58ed6f75-8ba8-4cf6-812b-0c3db523c272', 8: '33b8364d-c284-4b07-938a-6423767038db', 9: '842facc3-d2f0-4170-a714-0ce4833d6b8b', 10: '994e4145-55bc-4e5e-9be7-fcd9701ae677', 11: '71a285b0-b3f8-464c-b750-458cf21c2806', 12: 'e9c52df9-b040-45eb-acfa-bfd1de12acff'})
+2025-05-07 11:16:02 | SUCCESS  | __main__:<module>:461 - Script execution completed
+2025-05-07 11:18:58 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:18:58 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:18:58 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-07 11:18:58 | INFO     | __main__:<module>:439 - Processing 2 URLs...
+2025-05-07 11:18:58 | INFO     | __main__:batch_process_urls:394 - Batch processing 2 URLs
+2025-05-07 11:18:58 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:18:58 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-07 11:18:58 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-07 11:18:58 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-07 11:18:59 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-07 11:18:59 | INFO     | __main__:batch_process_urls:421 - Processing URL 1/2: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:18:59 | INFO     | __main__:process_url:309 - Processing URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:18:59 | INFO     | __main__:process_url:313 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:18:59 | INFO     | __main__:extract_text_from_url:163 - Extracting text from URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:19:00 | SUCCESS  | __main__:extract_text_from_url:183 - Successfully extracted text from https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade, got 1 documents
+2025-05-07 11:19:00 | INFO     | __main__:chunk_text_documents:215 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:19:01 | SUCCESS  | __main__:chunk_text_documents:225 - Chunked documents: 3 chunks extracted from 1 original documents
+2025-05-07 11:19:01 | INFO     | __main__:add_documents_to_faiss_index:257 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-07 11:19:01 | SUCCESS  | __main__:add_documents_to_faiss_index:270 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:19:02 | SUCCESS  | __main__:add_documents_to_faiss_index:283 - Added 3 documents to the vector store
+2025-05-07 11:19:02 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:19:02 | SUCCESS  | __main__:process_url:336 - Successfully processed URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:19:03 | INFO     | __main__:batch_process_urls:421 - Processing URL 2/2: https://www.ibm.com/think/topics/docker
+2025-05-07 11:19:03 | INFO     | __main__:process_url:309 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:19:03 | INFO     | __main__:process_url:313 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:19:03 | INFO     | __main__:extract_text_from_url:163 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:19:05 | SUCCESS  | __main__:extract_text_from_url:183 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-07 11:19:05 | INFO     | __main__:chunk_text_documents:215 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:19:05 | SUCCESS  | __main__:chunk_text_documents:225 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-07 11:19:05 | INFO     | __main__:add_documents_to_faiss_index:272 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-07 11:19:05 | SUCCESS  | __main__:add_documents_to_faiss_index:277 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:19:06 | SUCCESS  | __main__:add_documents_to_faiss_index:283 - Added 10 documents to the vector store
+2025-05-07 11:19:06 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:19:06 | SUCCESS  | __main__:process_url:336 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:19:07 | INFO     | __main__:batch_process_urls:428 - Batch processing complete. Success: 2/2
+2025-05-07 11:19:07 | INFO     | __main__:<module>:445 - Processing complete. Successful: 2, Failed: 0
+2025-05-07 11:19:07 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:19:07 | INFO     | __main__:<module>:455 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-07 11:19:07 | INFO     | __main__:<module>:461 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001C15A4B2850>, {0: 'f1a53cae-f3fa-4477-b27c-f952140d6b89', 1: 'd0fec361-5de5-4aee-a7fd-28ba9c164d3e', 2: 'b1b0a30f-0174-4f15-9f63-1f2596a10666', 3: '09803cac-5632-4623-9817-19bdf09d0a8c', 4: '9d4b6218-3863-4b9e-be6e-de496c326cc1', 5: '7607743a-fc2f-4778-afe7-160ef45ab88c', 6: 'd831c272-6f63-41e0-ab96-b907f6690576', 7: 'fd1592ef-8d69-415f-9fd9-8f3bfe7e03a9', 8: 'f6f2e441-9d65-421c-8d14-08d6f2fff156', 9: '6e9d07db-7ca8-4570-8ff4-3a7cab611845', 10: 'd6f1b5ed-e502-4b1a-bca8-12192c2db901', 11: '00fe8179-79bd-4771-b309-46764f275581', 12: '2531034a-fccb-49b6-bf47-5228f1428340'})
+2025-05-07 11:19:07 | SUCCESS  | __main__:<module>:463 - Script execution completed
+2025-05-07 11:27:20 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-07 11:27:20 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-07 11:27:20 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-07 11:27:20 | INFO     | __main__:<module>:440 - Processing 3 URLs...
+2025-05-07 11:27:20 | INFO     | __main__:batch_process_urls:394 - Batch processing 3 URLs
+2025-05-07 11:27:20 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:27:20 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-07 11:27:20 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-07 11:27:20 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-07 11:27:21 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-07 11:27:21 | WARNING  | utils:check_and_reset_index:25 - reset_index is set to True. Deleting existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:21 | SUCCESS  | utils:check_and_reset_index:30 - Successfully deleted index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:21 | INFO     | __main__:batch_process_urls:421 - Processing URL 1/3: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:27:21 | INFO     | __main__:process_url:309 - Processing URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:27:21 | INFO     | __main__:process_url:313 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:21 | INFO     | __main__:extract_text_from_url:163 - Extracting text from URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade
+2025-05-07 11:27:22 | SUCCESS  | __main__:extract_text_from_url:183 - Successfully extracted text from https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade, got 1 documents
+2025-05-07 11:27:22 | INFO     | __main__:chunk_text_documents:215 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:27:23 | SUCCESS  | __main__:chunk_text_documents:225 - Chunked documents: 3 chunks extracted from 1 original documents
+2025-05-07 11:27:23 | INFO     | __main__:add_documents_to_faiss_index:257 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-07 11:27:24 | SUCCESS  | __main__:add_documents_to_faiss_index:270 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:25 | SUCCESS  | __main__:add_documents_to_faiss_index:283 - Added 3 documents to the vector store
+2025-05-07 11:27:25 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:25 | SUCCESS  | __main__:process_url:336 - Successfully processed URL: https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:27 | INFO     | __main__:batch_process_urls:421 - Processing URL 2/3: https://www.ibm.com/think/topics/docker
+2025-05-07 11:27:27 | INFO     | __main__:process_url:309 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:27:27 | INFO     | __main__:process_url:313 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:27 | INFO     | __main__:extract_text_from_url:163 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-07 11:27:29 | SUCCESS  | __main__:extract_text_from_url:183 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-07 11:27:29 | INFO     | __main__:chunk_text_documents:215 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:27:29 | SUCCESS  | __main__:chunk_text_documents:225 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-07 11:27:29 | INFO     | __main__:add_documents_to_faiss_index:272 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-07 11:27:30 | SUCCESS  | __main__:add_documents_to_faiss_index:277 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:31 | SUCCESS  | __main__:add_documents_to_faiss_index:283 - Added 10 documents to the vector store
+2025-05-07 11:27:31 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:31 | SUCCESS  | __main__:process_url:336 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:32 | INFO     | __main__:batch_process_urls:421 - Processing URL 3/3: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-07 11:27:32 | INFO     | __main__:process_url:309 - Processing URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-07 11:27:32 | INFO     | __main__:process_url:313 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:32 | INFO     | __main__:extract_text_from_url:163 - Extracting text from URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-07 11:27:35 | SUCCESS  | __main__:extract_text_from_url:183 - Successfully extracted text from https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425, got 1 documents
+2025-05-07 11:27:36 | INFO     | __main__:chunk_text_documents:215 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-07 11:27:36 | SUCCESS  | __main__:chunk_text_documents:225 - Chunked documents: 5 chunks extracted from 1 original documents
+2025-05-07 11:27:36 | INFO     | __main__:add_documents_to_faiss_index:272 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-07 11:27:36 | SUCCESS  | __main__:add_documents_to_faiss_index:277 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:37 | SUCCESS  | __main__:add_documents_to_faiss_index:283 - Added 5 documents to the vector store
+2025-05-07 11:27:37 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-07 11:27:37 | SUCCESS  | __main__:process_url:336 - Successfully processed URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425 and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-07 11:27:38 | INFO     | __main__:batch_process_urls:428 - Batch processing complete. Success: 3/3
+2025-05-07 11:27:38 | INFO     | __main__:<module>:446 - Processing complete. Successful: 3, Failed: 0
+2025-05-07 11:27:38 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-07 11:27:38 | INFO     | __main__:<module>:456 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-07 11:27:38 | INFO     | __main__:<module>:462 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001DDFA5343D0>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
+2025-05-07 11:27:38 | SUCCESS  | __main__:<module>:464 - Script execution completed

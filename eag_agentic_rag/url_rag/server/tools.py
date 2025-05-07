@@ -1,5 +1,4 @@
 import os
-import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,7 +19,8 @@ embedder = OpenAIEmbeddingProvider().embeddings
 
 
 index_name = yaml_data["db_index_name"]
-index_path = os.path.join(os.getcwd(), "url_rag", index_name)
+# Update index path to look in the server folder
+index_path = os.path.join(os.getcwd(), "url_rag", "server", index_name)
 
 
 def get_vector_store(index_name=index_name, embedder=embedder):
@@ -34,7 +34,8 @@ def get_vector_store(index_name=index_name, embedder=embedder):
     Returns:
         vector_store: The loaded FAISS vector store.
     """
-    path = f"url_rag/{index_name}"
+    # Update path to look in the server folder
+    path = f"url_rag/server/{index_name}"
     if not os.path.exists(path):
         print(f"Index folder '{index_name}' does not exist. Creating a new index.")
         raise FileNotFoundError(
@@ -48,7 +49,7 @@ def get_vector_store(index_name=index_name, embedder=embedder):
     return vector_store
 
 
-def get_retrieved_docs(query: str, k: int):
+def get_retrieved_docs(query: str, k: int) -> tuple[list[str], list[str]]:
     """
     Retrieve documents from the vector store based on the query and filters.
 
