@@ -3,6 +3,9 @@ import ssl
 import sys
 import warnings
 import httpx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ======== CRITICAL SSL PATCHING AT THE MOST BASIC LEVEL ========
 # Based on proven ssl_helper.py techniques for comprehensive SSL bypassing

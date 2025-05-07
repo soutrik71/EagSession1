@@ -2,6 +2,9 @@ from langchain_ollama import OllamaEmbeddings
 import os
 from langchain_openai import OpenAIEmbeddings
 import httpx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class OllamaEmbeddingProvider:
