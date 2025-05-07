@@ -125,9 +125,9 @@ async def process_conversation_and_enhance_query(
 
 if __name__ == "__main__":
     import asyncio
-    from url_rag.utility.llm_provider import default_llm
-    from url_rag.utility.utils import read_yaml_file
-    from url_rag.utility.embedding_provider import OpenAIEmbeddingProvider
+    from url_rag.client.llm_provider import default_llm
+    from url_rag.client.utils import read_yaml_file
+    from url_rag.client.embedding_provider import OpenAIEmbeddingProvider
     from url_rag.client.memory import ConversationMemory
     import uuid
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         llm = default_llm.chat_model
         embedder = OpenAIEmbeddingProvider().embeddings
         # read config
-        config = read_yaml_file("url_rag/utility/config.yaml")
+        config = read_yaml_file("url_rag/client/config.yaml")
         print(config)
 
         history_index_name = config["history_index_name"]

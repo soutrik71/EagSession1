@@ -64,7 +64,7 @@ def web_vector_search(request: WebSearchRequest) -> WebSearchResponse:
 
 if __name__ == "__main__":
     try:
-        from url_rag.utility.llm_provider import default_llm
+        from eag_agentic_rag.url_rag.client.llm_provider import default_llm
 
         llm = default_llm.chat_model
     except ImportError:

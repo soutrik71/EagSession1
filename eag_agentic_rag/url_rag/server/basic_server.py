@@ -20,7 +20,7 @@ from tools import get_retrieved_docs
 from loguru import logger
 
 
-mcp = FastMCP("eag_agentic_rag")
+mcp = FastMCP("eag_agentic_rag_basic")
 
 
 def mcp_log(level: str, message: str) -> None:
@@ -30,7 +30,7 @@ def mcp_log(level: str, message: str) -> None:
 
 
 @mcp.tool()
-def web_vector_search(query: str, k: str = "1") -> str:
+def web_vector_search(query: str, k: int = 1) -> str:
     """
     Perform advanced web search using vector database and return the results.
 

@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 # Import llm_provider first to ensure SSL patching happens before any other imports
-from url_rag.utility.llm_provider import default_llm
+from eag_agentic_rag.url_rag.client.llm_provider import default_llm
 
 import asyncio
 import sys

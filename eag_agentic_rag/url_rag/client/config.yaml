@@ -1,6 +1,7 @@
-db_index_name: "url_rag/weburl_index"
+db_index_name: "weburl_index"
 # db_index_name: "test_index"
-history_index_name: "url_rag/history_index"
+history_index_name: "history_index"
 chunk_size: 500
 chunk_overlap: 50
 model_name: "gpt-4o"
+reset_index: True

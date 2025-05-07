@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import LLM provider - this handles SSL configuration
-from url_rag.utility.llm_provider import default_llm
+from eag_agentic_rag.url_rag.client.llm_provider import default_llm
 
 llm = default_llm.chat_model
 

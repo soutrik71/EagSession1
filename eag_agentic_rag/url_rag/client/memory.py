@@ -3,7 +3,7 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_community.docstore.in_memory import InMemoryDocstore
 import faiss
-from url_rag.utility.utils import check_and_reset_index
+from utils import check_and_reset_index
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -146,16 +146,16 @@ class ConversationMemory:
 
 
 if __name__ == "__main__":
-    from url_rag.utility.llm_provider import default_llm
-    from url_rag.utility.embedding_provider import OpenAIEmbeddingProvider
-    from url_rag.utility.utils import read_yaml_file
+    from url_rag.client.llm_provider import default_llm
+    from url_rag.client.embedding_provider import OpenAIEmbeddingProvider
+    from url_rag.client.utils import read_yaml_file
 
     # llm provider
     llm = default_llm.chat_model
     embedder = OpenAIEmbeddingProvider().embeddings
 
     # read config
-    config = read_yaml_file("url_rag/utility/config.yaml")
+    config = read_yaml_file("url_rag/client/config.yaml")
     print(config)
 
     history_index_name = config["history_index_name"]

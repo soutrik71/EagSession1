@@ -23,7 +23,7 @@ load_dotenv()
 # Local imports
 from url_rag.client.perception import WebContentSearch, get_perception_chain
 from url_rag.client.memory import ConversationMemory
-from url_rag.utility.llm_provider import default_llm
+from eag_agentic_rag.url_rag.client.llm_provider import default_llm
 from url_rag.utility.embedding_provider import OpenAIEmbeddingProvider
 from url_rag.utility.utils import read_yaml_file
 

@@ -3,7 +3,7 @@ import ssl
 import warnings
 import asyncio
 import traceback
-from llm_provider import (
+from eag_agentic_rag.url_rag.client.llm_provider import (
     default_llm,
     test_ssl_config,
     create_insecure_http_client,

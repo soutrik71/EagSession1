@@ -19,9 +19,9 @@ from mcp.server.fastmcp import FastMCP
 from tools import get_retrieved_docs
 from loguru import logger
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import List
 
-mcp = FastMCP("eag_agentic_arch")
+mcp = FastMCP("eag_agentic_rag")
 
 
 class WebsearchRequest(BaseModel):
@@ -54,7 +54,8 @@ def web_vector_search(request: WebsearchRequest) -> WebsearchResponse:
     Perform advanced web search using vector database and return the results.
 
     Args:
-        request: The search parameters with query and k (number of results) in the format of WebsearchRequest pydantic model
+        request: The search parameters with query and k (number of results)
+                in the format of WebsearchRequest pydantic model
     Returns:
         WebsearchResponse with web_url and page_content lists in the format of WebsearchResponse pydantic model
     """
