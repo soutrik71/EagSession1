@@ -1,0 +1,22 @@
+{
+  "id": "c8b102adbb6346ef90e47f691c1ffe2f",
+  "timestamp": "2025-05-08T14:36:19.480411",
+  "query": "What are helm charts and its uses?",
+  "messages": [
+    {
+      "type": "HumanMessage",
+      "content": "What are helm charts and its uses?",
+      "has_tool_calls": false
+    },
+    {
+      "type": "AIMessage",
+      "content": "I'll help with that by using: web_search_tool",
+      "has_tool_calls": false
+    },
+    {
+      "type": "AIMessage",
+      "content": "{\n  \"urls\": [\n    \"https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/\"\n  ],\n  \"contents\": [\n    \"Search  Submit your search query\\n\\nForum Donate\\n\\nMarch 9, 2021  / #charts\\n\\n# What is a Helm Chart? A Tutorial for Kubernetes Beginners\\n\\nBy Lucas Santos\\n\\nKubernetes is a very helpful tool for cloud-native developers. But it doesn't\\ncover all the bases on its own \\u2013 there are some things that Kubernetes cannot\\nsolve or that are outside its scope.\\n\\nThis is one of the reasons why open source projects are so great. They help\\namazing tools become even more amazing when we combine them with other awesome\\nopen-source tools. And often these tools were developed for the sole purpose\\nof filling the gaps. One of these tools is Helm.\\n\\n## What is Helm?\\n\\nHelm is widely known as \\\"the package manager for Kubernetes\\\". Although it\\npresents itself like this, its scope goes way beyond that of a simple package\\nmanager. However, let's start at the beginning.\\n\\nHelm is an open-source project which was originally created by DeisLabs and\\ndonated to CNCF, which now maintains it. The original goal of Helm was to\\nprovide users with a better way to manage all the Kubernetes YAML files we\\ncreate on Kubernetes projects.\\n\\nThe path Helm took to solve this issue was to create Helm **Charts**. Each\\nchart is a bundle with one or more Kubernetes manifests \\u2013 a chart can have\\nchild charts and dependent charts as well.\\n\\nThis means that Helm installs the whole dependency tree of a project if you\\nrun the install command for the top-level chart. You just a single command to\\ninstall your entire application, instead of listing the files to install via\\n`kubectl`.\\n\\nCharts allow you to version your manifest files too, just like we do with\\nNode.js or any other package. This lets you install specific chart versions,\\nwhich means keeping specific configurations for your infrastructure in the\\nform of code.\\n\\nHelm also keeps a release history of all deployed charts, so you can go back\\nto a previous release if something went wrong.\\n\\nHelm supports Kubernetes natively, which means you don't have to write any\\ncomplex syntax files or anything to start using Helm. Just drop your template\\nfiles into a new chart and you're good to go.\\n\\nBut why should we use it? Managing application manifests can be easily done\\nwith a few combinations of commands.\\n\\n## Why Should You Use Helm?\\n\\nHelm really shines where Kubernetes didn't go. For instance, templating. The\\nscope of the Kubernetes project\"\n  ],\n  \"count\": 1\n}",
+      "has_tool_calls": false
+    }
+  ]
+}

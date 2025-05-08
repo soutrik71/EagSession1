@@ -1,0 +1,25 @@
+{
+  "session_id": "c8b102adbb6346ef90e47f691c1ffe2f",
+  "timestamp": "2025-05-08T14:36:23.177318",
+  "queries_count": 3,
+  "conversations": [
+    {
+      "id": "c8b102adbb6346ef90e47f691c1ffe2f",
+      "query": "What is docker?",
+      "message_count": 3,
+      "steps_completed": 5
+    },
+    {
+      "id": "c8b102adbb6346ef90e47f691c1ffe2f",
+      "query": "What is the use for the same?",
+      "message_count": 3,
+      "steps_completed": 5
+    },
+    {
+      "id": "c8b102adbb6346ef90e47f691c1ffe2f",
+      "query": "What are helm charts and its uses?",
+      "message_count": 3,
+      "steps_completed": 5
+    }
+  ]
+}
