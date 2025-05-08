@@ -206,11 +206,12 @@ def retrieve_documents(input_data: RetrieveDocumentsInput) -> str:
             for url, content in zip(web_urls, page_contents)
         ]
 
-        # Create the output model
-        result = RetrieveDocumentsOutput(documents=documents, count=len(documents))
-
         # Convert to dictionary first for simple JSON serialization
-        response = {"urls": web_urls, "contents": page_contents, "count": len(web_urls)}
+        response = {
+            "urls": web_urls,
+            "contents": page_contents,
+            "count": len(documents),
+        }
 
         # Return the response as a JSON string
         return json.dumps(response, indent=2)

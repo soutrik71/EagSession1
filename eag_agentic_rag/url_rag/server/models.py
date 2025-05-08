@@ -157,3 +157,17 @@ class RetrieveDocumentsOutput(BaseModel):
 
     documents: List[Document] = Field(..., description="The retrieved documents")
     count: int = Field(..., description="The number of documents retrieved")
+
+
+# Vector Store related models
+class VectorStoreInput(BaseModel):
+    """Input schema for the vector store operations."""
+
+    index_name: str = Field("", description="The name of the index to load (optional)")
+
+
+class DocumentItem(BaseModel):
+    """A document retrieved from the vector store."""
+
+    url: str = Field(..., description="The URL of the document")
+    content: str = Field(..., description="The content of the document")
