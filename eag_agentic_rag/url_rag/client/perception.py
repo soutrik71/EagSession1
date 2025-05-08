@@ -1,8 +1,11 @@
 import sys
 import os
 
-# Ensure we're using the system path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+# Add the parent directory (eag_agentic_rag) to the Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "../.."))
+sys.path.append(project_root)
+
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -135,6 +138,7 @@ if __name__ == "__main__":
         # llm provider
         llm = default_llm.chat_model
         embedder = OpenAIEmbeddingProvider().embeddings
+
         # read config
         config = read_yaml_file("url_rag/client/config.yaml")
         print(config)

@@ -5,6 +5,13 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 import faiss
 from utils import check_and_reset_index
 from dotenv import load_dotenv
+import sys
+
+# Add the parent directory (eag_agentic_rag) to the Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "../.."))
+sys.path.append(project_root)
+
 
 # Load environment variables
 load_dotenv()
@@ -130,6 +137,8 @@ class ConversationMemory:
                 lc_messages.append({"role": "human", "content": doc.page_content})
             elif sender == "ai":
                 lc_messages.append({"role": "ai", "content": doc.page_content})
+            elif sender == "tool":
+                lc_messages.append({"role": "tool", "content": doc.page_content})
             else:
                 # fallback: treat as human
                 lc_messages.append({"role": "human", "content": doc.page_content})
@@ -167,7 +176,13 @@ if __name__ == "__main__":
 
     # test the memory store
     memory_store.store_conversation(
-        "test_conversation", [{"sender": "human", "content": "Hello, how are you?"}]
+        "test_conversation",
+        [
+            {"sender": "human", "content": "Hello, how are you?"},
+            {"sender": "ai", "content": "I'm good, thank you!"},
+            {"sender": "tool", "content": "Tool output"},
+        ],
     )
+
     print(memory_store.get_conversation("test_conversation"))
     print(memory_store.get_conversation_as_lc_messages("test_conversation"))
