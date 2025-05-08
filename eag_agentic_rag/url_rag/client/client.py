@@ -84,7 +84,7 @@ def load_config():
     if "history_index_name" in config:
         if not os.path.isabs(config["history_index_name"]):
             config["history_index_name"] = os.path.join(
-                os.getcwd(), config["history_index_name"]
+                os.getcwd(), "url_rag", config["history_index_name"]
             )
 
     return config
@@ -92,17 +92,17 @@ def load_config():
 
 # Load config once at startup
 config = load_config()
+print(f"Config: {config}")
 
 # Initialize memory store if embeddings are available
 memory_store = None
 if embedder:
     try:
         reset_index = config.get("reset_index", False)
-        index_folder = os.path.join(os.getcwd(), config["history_index_name"])
         memory_store = ConversationMemory(
-            embedder, index_folder=index_folder, reset_index=reset_index
+            embedder, index_folder=config["history_index_name"], reset_index=reset_index
         )
-        log(f"Memory store initialized with index: {index_folder}")
+        log(f"Memory store initialized with index: {config['history_index_name']}")
     except Exception as e:
         log(f"Error initializing memory store: {e}")
 else:

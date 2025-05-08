@@ -1,0 +1,19 @@
+{
+  "session_id": "ff439329c97a4d32b1dfda3dd8f1111a",
+  "timestamp": "2025-05-08T14:03:58.590004",
+  "queries_count": 2,
+  "conversations": [
+    {
+      "id": "ff439329c97a4d32b1dfda3dd8f1111a",
+      "query": "What is docker?",
+      "message_count": 3,
+      "steps_completed": 5
+    },
+    {
+      "id": "ff439329c97a4d32b1dfda3dd8f1111a",
+      "query": "What are the benifits for the same?",
+      "message_count": 3,
+      "steps_completed": 5
+    }
+  ]
+}
