@@ -507,3 +507,45 @@
 2025-05-08 16:34:17 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
 2025-05-08 16:34:17 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x0000028CAF214910>, {0: '6a6de207-75d3-4c54-aef0-b3c03d12c5eb', 1: '85c5c9cc-1f3f-440d-9681-72bdd496485a', 2: '0e7aa61e-6ad6-49c4-8576-8f395ce0adb2', 3: 'a5ea3147-6e7b-4f80-b3f4-8dab688d32b0', 4: 'd5ca33b7-23f4-4e13-9491-621c26ca88fb', 5: '83b3fd68-3020-488c-8181-552b6041d3d2', 6: 'd0438840-b069-404d-96e1-7c2139cd308c', 7: 'e4f865ca-935e-4ff6-b328-0ddabc6be5e7', 8: 'f1dd24a4-2f2a-4a19-ba30-fdd8131c56dd', 9: '4ab171cc-61a8-4843-95ea-b1b19123f9eb', 10: '2da7d7e7-a5d8-498a-986d-4a1a366c835e', 11: 'b08157c2-1de5-41a1-a48c-7e8a5a61d19e', 12: '572cb54a-ae64-426a-8a30-0dc9938f0c3a', 13: '93b8892e-6af5-44f7-abe9-db572be22dba', 14: 'e0b95ca1-d895-4d72-a09d-3fe469841aa5', 15: '64b3717d-c12a-40bd-818a-fbbe148aee02', 16: '1d789a40-eb2f-493c-ad20-25ee486b0605'})
 2025-05-08 16:34:17 | SUCCESS  | __main__:<module>:507 - Script execution completed
+2025-05-08 17:31:35 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 17:31:35 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 17:31:35 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 17:32:29 | INFO     | __main__:<module>:473 - Processing 2 user-provided URLs...
+2025-05-08 17:32:29 | INFO     | __main__:batch_process_urls:411 - Batch processing 2 URLs
+2025-05-08 17:32:29 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 17:32:29 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 17:32:29 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 17:32:29 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 17:32:34 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 17:32:34 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/2: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 17:32:34 | INFO     | __main__:process_url:326 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 17:32:34 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 17:32:34 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 17:32:34 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 17:32:35 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.geeksforgeeks.org/docker-tutorial/, got 1 documents
+2025-05-08 17:32:35 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 17:32:35 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 12 chunks extracted from 1 original documents
+2025-05-08 17:32:35 | INFO     | __main__:add_documents_to_faiss_index:274 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-08 17:32:37 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 17:32:38 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 12 documents to the vector store
+2025-05-08 17:32:38 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 17:32:38 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.geeksforgeeks.org/docker-tutorial/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 17:32:39 | INFO     | __main__:batch_process_urls:438 - Processing URL 2/2: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 17:32:39 | INFO     | __main__:process_url:326 - Processing URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 17:32:39 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 17:32:39 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 17:32:39 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 17:32:39 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/, got 1 documents
+2025-05-08 17:32:39 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 17:32:39 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 8 chunks extracted from 1 original documents
+2025-05-08 17:32:39 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 17:32:40 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 17:32:41 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 8 documents to the vector store
+2025-05-08 17:32:41 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 17:32:41 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 17:32:42 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 2/2
+2025-05-08 17:32:42 | INFO     | __main__:<module>:490 - Processing complete. Successful: 2, Failed: 0
+2025-05-08 17:32:42 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 17:32:42 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 17:32:42 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000002187DBB8E90>, {0: '817ae4d9-0173-4b78-a17c-b95eb7e6dcef', 1: '826d0776-b1a7-4e7e-9acd-6465f92f212c', 2: 'e6ea0161-f5df-427f-ba68-bd279c9367a8', 3: 'd14baf30-e2db-43e9-a34f-9ef94e219e32', 4: 'cadb2d4a-8bb9-4546-9543-1120fa988a85', 5: '2cb8a3fb-fcb5-4b84-ba79-92f72f3c08f9', 6: 'd0ea402f-b629-4013-9986-42cdc1ea38e5', 7: 'f37cf6a1-d186-4785-a261-0b30c31e393d', 8: 'fb5698ee-38b1-4f33-86ee-30dff2076b33', 9: '6bdb957d-ef8c-45e3-9bd9-b70965c6334e', 10: '9eaa1d18-5979-4d45-9692-14285b1cb1d3', 11: 'decee617-43c8-4e95-be2e-6fbbea74a4e9', 12: '182529d8-f60a-474b-b522-6e128ebb0d11', 13: 'cf559fb7-fbce-4a6d-b2ab-1d71870eae4d', 14: 'b165de07-80b0-4e04-ba2e-180f6d0cd04c', 15: '424c3025-a901-40d6-93c5-e167fcfbb4d7', 16: 'e6610325-9284-43c2-93a8-4f7c31167063', 17: '0c01e580-d32e-4d52-8b27-b655722651ac', 18: 'cf081578-a753-45ff-b68b-4e5864bb9aba', 19: '0eba6e85-1edc-4ff4-934a-4705b585f240'})
+2025-05-08 17:32:42 | SUCCESS  | __main__:<module>:507 - Script execution completed
