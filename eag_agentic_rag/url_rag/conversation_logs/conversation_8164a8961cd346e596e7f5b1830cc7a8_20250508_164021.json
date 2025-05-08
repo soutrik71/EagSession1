@@ -1,0 +1,22 @@
+{
+  "id": "8164a8961cd346e596e7f5b1830cc7a8",
+  "timestamp": "2025-05-08T16:40:21.713412",
+  "query": "What is helm and what is its utility?",
+  "messages": [
+    {
+      "type": "HumanMessage",
+      "content": "What is helm and what is its utility?",
+      "has_tool_calls": false
+    },
+    {
+      "type": "AIMessage",
+      "content": "I'll help with that by using: web_search_tool",
+      "has_tool_calls": false
+    },
+    {
+      "type": "AIMessage",
+      "content": "{\n  \"urls\": [\n    \"https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425\"\n  ],\n  \"contents\": [\n    \"Open in app\\n\\nSign up\\n\\nSign in\\n\\nWrite\\n\\nSign up\\n\\nSign in\\n\\n##\\n\\nProdOpsIO\\n\\n\\u00b7\\n\\nFusion of Engineering and Operations\\n\\n# A 6-minute introduction to HELM\\n\\n## Simplifying Kubernetes application management\\n\\nOmer Hamerman\\n\\nFollow\\n\\n6 min read\\n\\n\\u00b7\\n\\nJan 31, 2019\\n\\n\\\\--\\n\\n2\\n\\nListen\\n\\nShare\\n\\nPhoto by pexels.com\\n\\n> After completing a 4-month period on a client\\u2019s project that included a\\n> complete migration from \\u201craw\\u201d K8S-yaml-files to Helm Charts, I figured I\\n> need to put the things I\\u2019ve learned in writing for others to read, and for\\n> me to better learn.\\n\\n## TL;DR of \\u201cwhy do I need it\\u201d\\n\\nYou can install dependencies and proprietary software on your K8S cluster with\\na simple: `helm install stable/mysql`, there are hundreds of available\\ninstallations like this one, but you can also do that with **your own**\\nproduct/services!\\n\\n## What\\u2019s HELM?\\n\\n  1. \\u201cA _helmsman_ or \\u201chelm\\u201d is a person who steers a ship, sailboat, submarine, other types of maritime vessel, or spacecraft.\\u201d \\u2014 Wikipedia\\n  2. \\u201cThe package manager for Kubernetes; Helm is the best way to find, share, and use software built for Kubernetes.\\u201d \\u2014 Helm.sh\\n\\n> Are you not yet completely familiar with Kubernetes (K8S)?  \\n> I previously wrote a quick introduction post that can bring you up to speed\\n> in terms of need-to-know, as a basic layer to this post.\\n\\n## Why do we need it?\\n\\nA question I asked myself multiple times trying to understand how this magical\\ninstaller thing is making my K8S life better.  \\nWell, Helm lets you fetch, deploy and manage the lifecycle of applications,\\nboth 3rd party products and your own.\\n\\nNo more maintaining random groups of YAML files (or very long ones) describing\\npods, replica sets, services, RBAC settings, etc. With helm, there is a\\nstructure and a convention for a software package that defines a layer of YAML\\n**templates** and another layer that changes the templates called **values.**\\nValues are injected into templates, thus allowing a separation of\\nconfiguration, and defines where changes are allowed. This whole package is\\ncalled a **Helm** **Chart**.\\n\\nEssentially you create\"\n  ],\n  \"count\": 1\n}",
+      "has_tool_calls": false
+    }
+  ]
+}

@@ -465,3 +465,45 @@
 2025-05-08 14:30:21 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
 2025-05-08 14:30:22 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001A634390510>, {0: '6218e248-c84c-4be0-9fc5-7967601be645', 1: '0e73c794-c7ee-4872-b4d9-9935df298c1f', 2: '4acaf45c-5fd2-43a2-8f48-8c31cc092265', 3: 'c7f34875-ae51-423a-86b0-055c6ce87b9a', 4: '85275174-3132-4bf6-831f-4c44213172f1', 5: '4f9522a8-39a7-4b96-aea8-ce9a237a45c1', 6: '3c9a6cf5-9f1c-4ec3-a5e4-8b0897512c0c', 7: '8f72d184-bfce-439b-affe-bd539f6e3319', 8: '0e91384f-01e0-4f9c-84a9-68a1f23f3bca', 9: '141e322c-5cf1-4577-89fb-aa4feac963a3', 10: 'dcdb11f1-6bff-4457-b9f6-912edfc6ac6b', 11: '503dd3dd-fee5-4154-b294-bf789ca9242e', 12: '782efb6e-71d5-4f3a-a7b4-9e009604e5b3', 13: '60e83282-1763-489e-b2f3-e26170c7f1a3', 14: 'a03a59eb-24e8-4403-b344-b5915f308ac8', 15: 'b49abf40-9f5c-48d3-9016-b921d4562197', 16: 'f29dabe8-5ed9-4e3b-8771-927983f33617', 17: 'b0338d94-4672-4f1c-ac3d-bff66827462c', 18: '7aa08ee0-70ff-4472-8fa7-fa7ddc1211d0', 19: 'f165c6d8-fbfc-4b93-b44b-27bfbd6e30e6'})
 2025-05-08 14:30:22 | SUCCESS  | __main__:<module>:507 - Script execution completed
+2025-05-08 16:33:31 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 16:33:31 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 16:33:31 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 16:34:06 | INFO     | __main__:<module>:473 - Processing 2 user-provided URLs...
+2025-05-08 16:34:06 | INFO     | __main__:batch_process_urls:411 - Batch processing 2 URLs
+2025-05-08 16:34:06 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 16:34:06 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 16:34:06 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 16:34:06 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 16:34:08 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 16:34:08 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/2: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 16:34:08 | INFO     | __main__:process_url:326 - Processing URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 16:34:08 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 16:34:08 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 16:34:08 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 16:34:08 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425, got 1 documents
+2025-05-08 16:34:08 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 16:34:09 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 5 chunks extracted from 1 original documents
+2025-05-08 16:34:09 | INFO     | __main__:add_documents_to_faiss_index:274 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-08 16:34:10 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 16:34:11 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 5 documents to the vector store
+2025-05-08 16:34:11 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 16:34:11 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425 and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 16:34:12 | INFO     | __main__:batch_process_urls:438 - Processing URL 2/2: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 16:34:12 | INFO     | __main__:process_url:326 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 16:34:12 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 16:34:12 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 16:34:12 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 16:34:12 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.geeksforgeeks.org/docker-tutorial/, got 1 documents
+2025-05-08 16:34:12 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 16:34:12 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 12 chunks extracted from 1 original documents
+2025-05-08 16:34:12 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 16:34:12 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 16:34:16 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 12 documents to the vector store
+2025-05-08 16:34:16 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 16:34:16 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.geeksforgeeks.org/docker-tutorial/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 16:34:17 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 2/2
+2025-05-08 16:34:17 | INFO     | __main__:<module>:490 - Processing complete. Successful: 2, Failed: 0
+2025-05-08 16:34:17 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 16:34:17 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 16:34:17 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x0000028CAF214910>, {0: '6a6de207-75d3-4c54-aef0-b3c03d12c5eb', 1: '85c5c9cc-1f3f-440d-9681-72bdd496485a', 2: '0e7aa61e-6ad6-49c4-8576-8f395ce0adb2', 3: 'a5ea3147-6e7b-4f80-b3f4-8dab688d32b0', 4: 'd5ca33b7-23f4-4e13-9491-621c26ca88fb', 5: '83b3fd68-3020-488c-8181-552b6041d3d2', 6: 'd0438840-b069-404d-96e1-7c2139cd308c', 7: 'e4f865ca-935e-4ff6-b328-0ddabc6be5e7', 8: 'f1dd24a4-2f2a-4a19-ba30-fdd8131c56dd', 9: '4ab171cc-61a8-4843-95ea-b1b19123f9eb', 10: '2da7d7e7-a5d8-498a-986d-4a1a366c835e', 11: 'b08157c2-1de5-41a1-a48c-7e8a5a61d19e', 12: '572cb54a-ae64-426a-8a30-0dc9938f0c3a', 13: '93b8892e-6af5-44f7-abe9-db572be22dba', 14: 'e0b95ca1-d895-4d72-a09d-3fe469841aa5', 15: '64b3717d-c12a-40bd-818a-fbbe148aee02', 16: '1d789a40-eb2f-493c-ad20-25ee486b0605'})
+2025-05-08 16:34:17 | SUCCESS  | __main__:<module>:507 - Script execution completed
