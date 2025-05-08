@@ -1,10 +1,8 @@
 # Example of how to use the decision making and action layers with perception and memory
 import sys
 import os
-import json
 import asyncio
-from datetime import datetime
-from typing import List, Dict, Any, Optional, Tuple
+import uuid
 
 # Add the parent directory (eag_agentic_rag) to the Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -33,21 +31,25 @@ try:
     from url_rag.client.action import execute_actions, print_message_chain
     from url_rag.client.memory import ConversationMemory
 
+    # Import utility functions
+    from url_rag.client.utils import (
+        read_yaml_file,
+        log,
+        filter_chat_history,
+        save_conversation,
+        display_conversation_history,
+        print_conversation_summary,
+        save_session_summary,
+    )
+
     # Only try to import embedding provider if LLM imports succeeded
     try:
-        from url_rag.client.utils import read_yaml_file
         from url_rag.client.embedding_provider import OpenAIEmbeddingProvider
 
         embedder = OpenAIEmbeddingProvider().embeddings
     except ImportError as e:
-        print(f"Embedding provider not available: {e}")
+        log(f"Embedding provider not available: {e}")
         embedder = None
-
-        # Define a simple read_yaml_file function as fallback
-        def read_yaml_file(path):
-            print(f"WARNING: Cannot read yaml file {path}")
-            return {}
-
 except ImportError as e:
     print(f"Critical import error: {e}")
     print("Application cannot run without core modules")
@@ -57,18 +59,8 @@ except ImportError as e:
 llm = default_llm.chat_model
 
 # Create output directory for conversation logs
-OUTPUT_DIR = os.path.join(os.getcwd(), "conversation_logs")
+OUTPUT_DIR = os.path.join(os.getcwd(), "url_rag", "conversation_logs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-
-# Helper function for consistent timestamps
-def get_timestamp(format="%H:%M:%S"):
-    return datetime.now().strftime(format)
-
-
-# Helper for logging with timestamps
-def log(message):
-    print(f"[{get_timestamp()}] {message}")
 
 
 # Load config with smart defaults
@@ -106,10 +98,11 @@ memory_store = None
 if embedder:
     try:
         reset_index = config.get("reset_index", False)
+        index_folder = os.path.join(os.getcwd(), config["history_index_name"])
         memory_store = ConversationMemory(
-            embedder, index_folder=config["history_index_name"], reset_index=reset_index
+            embedder, index_folder=index_folder, reset_index=reset_index
         )
-        log(f"Memory store initialized with index: {config['history_index_name']}")
+        log(f"Memory store initialized with index: {index_folder}")
     except Exception as e:
         log(f"Error initializing memory store: {e}")
 else:
@@ -130,32 +123,6 @@ server_params = StdioServerParameters(
 )
 
 
-def format_json_content(content):
-    """Format JSON content for display"""
-    if not isinstance(content, str):
-        return content
-
-    if content.startswith("{") or content.startswith("["):
-        try:
-            parsed_json = json.loads(content)
-            return json.dumps(parsed_json, indent=2)
-        except json.JSONDecodeError:
-            pass
-    return content
-
-
-def filter_chat_history(chat_history):
-    """Filter chat history to only include human and AI messages"""
-    if not chat_history:
-        return []
-
-    return [
-        msg
-        for msg in chat_history
-        if isinstance(msg, dict) and msg.get("role") in ["human", "ai"]
-    ]
-
-
 def convert_messages_to_memory_format(messages):
     """Convert LangChain message objects to the format expected by ConversationMemory"""
     memory_messages = []
@@ -169,63 +136,6 @@ def convert_messages_to_memory_format(messages):
                 # Default to tool for other message types
                 memory_messages.append({"sender": "tool", "content": msg.content})
     return memory_messages
-
-
-def save_conversation(conversation_id, query, messages, output_dir=OUTPUT_DIR):
-    """Save conversation messages to a file"""
-    timestamp = get_timestamp("%Y%m%d_%H%M%S")
-    filename = f"conversation_{conversation_id}_{timestamp}.json"
-    filepath = os.path.join(output_dir, filename)
-
-    # Create a structured representation of the conversation
-    conversation_data = {
-        "id": conversation_id,
-        "timestamp": datetime.now().isoformat(),
-        "query": query,
-        "messages": [
-            {
-                "type": type(msg).__name__,
-                "content": msg.content if hasattr(msg, "content") else str(msg),
-                "has_tool_calls": hasattr(msg, "tool_calls") and bool(msg.tool_calls),
-            }
-            for msg in messages
-        ],
-    }
-
-    # Save to file
-    with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(conversation_data, f, indent=2)
-
-    log(f"Conversation saved to: {filepath}")
-    return filepath
-
-
-def display_conversation_history(conversation_id):
-    """Display the conversation history from the memory store"""
-    if not memory_store:
-        log("Memory store not available, cannot display conversation history")
-        return
-
-    print("\n" + "=" * 50)
-    print(f"CONVERSATION HISTORY: {conversation_id}")
-    print("=" * 50)
-
-    # Get the conversation from memory
-    conversation = memory_store.get_conversation(conversation_id)
-
-    if not conversation:
-        print("No conversation history found")
-        return
-
-    for i, msg in enumerate(conversation, 1):
-        sender = msg.get("sender", "unknown").upper()
-        content = format_json_content(msg.get("content", ""))
-
-        print(f"\n{i}. {sender}:")
-        print("-" * 40)
-        print(content)
-
-    print("\n" + "=" * 50)
 
 
 async def process_step(step_name, outputs, func, *args, **kwargs):
@@ -248,7 +158,7 @@ async def main(query: str, conversation_id=None, chat_history=None):
     """Main function that coordinates the decision making and action layers for a single query."""
     # Generate a conversation ID if none provided
     if conversation_id is None:
-        conversation_id = get_timestamp("%Y%m%d%H%M%S")
+        conversation_id = uuid.uuid4().hex
 
     # Use provided chat history or initialize empty list
     if chat_history is None:
@@ -342,7 +252,7 @@ async def main(query: str, conversation_id=None, chat_history=None):
                 print_message_chain(messages)
 
                 # Save conversation
-                save_conversation(conversation_id, query, messages)
+                save_conversation(conversation_id, query, messages, OUTPUT_DIR)
                 step_outputs["steps"].append(
                     {"name": "Saving conversation", "status": "completed"}
                 )
@@ -380,60 +290,36 @@ async def main(query: str, conversation_id=None, chat_history=None):
         return error_msg, [HumanMessage(content=query), error_msg], step_outputs
 
 
-def print_conversation_summary(
-    conversation_id, query, response, messages, step_outputs
-):
-    """Print a summary of the conversation results"""
-    print("\n" + "=" * 50)
-    print(f"CONVERSATION SUMMARY: {conversation_id}")
-    print("=" * 50)
-    print(f"Query: {query}")
-
-    # Print step completion
-    print("\nProcessing Steps:")
-    for i, step in enumerate(step_outputs["steps"], 1):
-        status_icon = "✅" if step["status"] == "completed" else "❌"
-        print(f"{i}. {status_icon} {step['name']}")
-
-    # Print message chain summary
-    print("\nMessage Chain:")
-    for i, msg in enumerate(messages, 1):
-        msg_type = type(msg).__name__
-        content_preview = (
-            msg.content[:100] + "..." if len(msg.content) > 100 else msg.content
-        )
-        print(f"{i}. {msg_type}: {content_preview}")
-
-    # Final result stats
-    print("\nFinal answer source count:", end=" ")
-    for msg in messages:
-        if hasattr(msg, "content") and isinstance(msg.content, str):
-            if msg.content.startswith("{") and "urls" in msg.content:
-                try:
-                    content_json = json.loads(msg.content)
-                    if "urls" in content_json:
-                        print(f"{len(content_json['urls'])} URLs retrieved")
-                except json.JSONDecodeError:
-                    pass
-
-    print("=" * 50)
-    print("To view full conversation details, check the saved conversation file.")
-    print("=" * 50)
-
-
 async def run_conversation():
     """Run a conversation with multiple queries."""
-    # List of example queries to process in sequence
-    queries = [
-        "What is the use of docker?",
-        # "Give me the importance of helm in kubernetes?",
-        # "How does docker relate to kubernetes?",
-        # "What are containers used for in cloud computing?",
-    ]
-
     # Generate a unique conversation ID for this session
-    conversation_id = get_timestamp("%Y%m%d%H%M%S")
+    conversation_id = uuid.uuid4().hex
     log(f"Starting conversation with ID: {conversation_id}")
+
+    # Get user input for queries
+    print("\nEnter your questions (one per line, press Enter twice to finish):")
+    user_queries = []
+    while True:
+        query = input()
+        if not query:
+            if user_queries:  # If we have at least one query already
+                break
+            else:
+                print("Please enter at least one question:")
+                continue
+        user_queries.append(query)
+
+    # Use user-provided queries or fallback to examples if none provided
+    queries = (
+        user_queries
+        if user_queries
+        else [
+            "What is the use of docker?",
+            "What are the benefits of the same?",
+        ]
+    )
+
+    log(f"Processing {len(queries)} queries")
 
     # Process each query in sequence
     results = []
@@ -474,33 +360,12 @@ async def run_conversation():
     log(f"Conversation session complete. Processed {len(queries)} queries.")
 
     # Save session summary
-    session_summary = {
-        "session_id": conversation_id,
-        "timestamp": datetime.now().isoformat(),
-        "queries_count": len(queries),
-        "conversations": [
-            {
-                "id": conversation_id,
-                "query": r["query"],
-                "message_count": len(r["messages"]),
-                "steps_completed": sum(
-                    1 for s in r["step_outputs"]["steps"] if s["status"] == "completed"
-                ),
-            }
-            for r in results
-        ],
-    }
-
-    session_file = os.path.join(OUTPUT_DIR, f"session_{conversation_id}.json")
-    with open(session_file, "w", encoding="utf-8") as f:
-        json.dump(session_summary, f, indent=2)
-
-    log(f"Session summary saved to: {session_file}")
+    save_session_summary(conversation_id, queries, results, OUTPUT_DIR)
 
     # Display full conversation history at the end
     if memory_store:
         print("\nFull conversation history from memory store:")
-        display_conversation_history(conversation_id)
+        display_conversation_history(conversation_id, memory_store)
 
     return results
 

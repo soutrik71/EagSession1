@@ -58,3 +58,5 @@ eag_agentic_rag/conversation_logs/
 eag_agentic_rag/conversation_logs/*.json
 eag_agentic_rag/history_index/
 eag_agentic_rag/history_index/*
+eag_agentic_rag/url_rag/server/weburl_index/
+eag_agentic_rag/history_index/

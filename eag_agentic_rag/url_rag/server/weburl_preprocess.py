@@ -10,6 +10,7 @@ import uuid
 import yaml
 import sys
 import time
+import pickle
 import requests
 from requests.exceptions import RequestException
 from typing import List, Dict, Any, Optional
@@ -19,7 +20,6 @@ from loguru import logger
 from utils import check_and_reset_index
 
 # Import necessary libraries
-from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_transformers import Html2TextTransformer
 from langchain_text_splitters import TokenTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -153,7 +153,9 @@ def setup_embedding_provider():
 def extract_text_from_url(url: str) -> List[Document]:
     """
     Extract and return plain text Document(s) from a given URL.
-    Uses LangChain's AsyncHtmlLoader and Html2TextTransformer.
+    Uses requests directly with disabled SSL verification to fetch content,
+    then processes it with Html2TextTransformer.
+
     Args:
         url: The URL to extract content from
     Returns:
@@ -161,29 +163,44 @@ def extract_text_from_url(url: str) -> List[Document]:
     """
     try:
         logger.info(f"Extracting text from URL: {url}")
-        # Check if URL is reachable before attempting to load
+        # Disable SSL warnings
+        import urllib3
+
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        logger.warning("SSL certificate verification is disabled for this request")
+
+        # Fetch the content directly using requests with SSL verification disabled
         try:
-            response = requests.head(url, timeout=10, allow_redirects=True)
-            if response.status_code >= 400:
-                logger.error(f"URL unreachable (status {response.status_code}): {url}")
+            response = requests.get(url, timeout=15, verify=False)
+            response.raise_for_status()  # Raise exception for 4XX/5XX status codes
+
+            # Create a Document object from the fetched HTML content
+            html_content = response.text
+            if not html_content:
+                logger.warning(f"No content fetched from {url}")
                 return []
+
+            # Create a LangChain Document
+            doc = Document(page_content=html_content, metadata={"source": url})
+
+            # Transform the HTML to text
+            html2text = Html2TextTransformer()
+            docs_transformed = html2text.transform_documents([doc])
+
+            if not docs_transformed or not docs_transformed[0].page_content.strip():
+                logger.warning(f"Extracted content is empty or malformed for {url}")
+                return []
+
+            logger.success(
+                f"Successfully extracted text from {url}, got {len(docs_transformed)} documents"
+            )
+            return docs_transformed
+
         except RequestException as e:
-            logger.error(f"Network error reaching URL {url}: {e}")
+            logger.error(f"Error fetching content from {url}: {e}")
             return []
-        loader = AsyncHtmlLoader([url])
-        docs = loader.load()
-        if not docs:
-            logger.warning(f"No content fetched from {url}")
-            return []
-        html2text = Html2TextTransformer()
-        docs_transformed = html2text.transform_documents(docs)
-        if not docs_transformed or not docs_transformed[0].page_content.strip():
-            logger.warning(f"Extracted content is empty or malformed for {url}")
-            return []
-        logger.success(
-            f"Successfully extracted text from {url}, got {len(docs_transformed)} documents"
-        )
-        return docs_transformed
+
     except Exception as e:
         logger.error(f"Error extracting text from URL {url}: {e}")
         return []
@@ -429,15 +446,42 @@ def batch_process_urls(urls: List[str], config_path: str = "config.yaml") -> Lis
     return results
 
 
-if __name__ == "__main__":
-    # Example usage
-    urls = [
-        "https://geshan.com.np/blog/2018/11/4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade",
-        "https://www.ibm.com/think/topics/docker",
-        "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425",
-    ]
+def get_user_input():
+    """
+    Get URLs as user input.
 
-    logger.info(f"Processing {len(urls)} URLs...")
+    Returns:
+        List of URLs provided by the user
+    """
+    print("Enter URLs to process (one per line, enter empty line to finish):")
+    urls = []
+    while True:
+        url = input().strip()
+        if not url:
+            break
+        urls.append(url)
+    return urls
+
+
+if __name__ == "__main__":
+    # Get URLs from user input
+    user_urls = get_user_input()
+
+    # Use provided URLs or fall back to examples if none provided
+    if user_urls:
+        urls = user_urls
+        logger.info(f"Processing {len(urls)} user-provided URLs...")
+    else:
+        # Example URLs as fallback
+        urls = [
+            "https://geshan.com.np/blog/2018/11/"
+            "4-ways-docker-changed-the-way-software-engineers-work-in-past-half-decade",
+            "https://www.ibm.com/think/topics/docker",
+            "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425",
+            "https://www.docker.com/products/docker-desktop/",
+        ]
+        logger.info(f"No URLs provided, using {len(urls)} example URLs...")
+
     results = batch_process_urls(urls)
 
     # Summarize results
@@ -455,7 +499,6 @@ if __name__ == "__main__":
         if os.path.exists(f"{index_name}/index.pkl"):
             logger.info(f"Index file exists at {index_name}/index.pkl")
             # Example of how to access index details if needed
-            import pickle
 
             with open(f"{index_name}/index.pkl", "rb") as f:
                 index = pickle.load(f)

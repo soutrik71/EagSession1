@@ -162,3 +162,262 @@
 2025-05-07 11:27:38 | INFO     | __main__:<module>:456 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
 2025-05-07 11:27:38 | INFO     | __main__:<module>:462 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001DDFA5343D0>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
 2025-05-07 11:27:38 | SUCCESS  | __main__:<module>:464 - Script execution completed
+2025-05-08 12:44:27 | INFO     | __main__:<module>:52 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 12:44:27 | DEBUG    | __main__:<module>:57 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 12:44:27 | DEBUG    | __main__:<module>:61 - Loaded environment variables
+2025-05-08 12:44:36 | INFO     | __main__:<module>:457 - Processing 1 user-provided URLs...
+2025-05-08 12:44:36 | INFO     | __main__:batch_process_urls:395 - Batch processing 1 URLs
+2025-05-08 12:44:36 | DEBUG    | __main__:load_config:77 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:44:36 | DEBUG    | __main__:setup_embedding_provider:104 - Attempting to import from client.embedding_provider
+2025-05-08 12:44:36 | DEBUG    | __main__:setup_embedding_provider:112 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 12:44:36 | DEBUG    | __main__:setup_embedding_provider:117 - Attempting direct import from client.embedding_provider
+2025-05-08 12:44:37 | INFO     | __main__:setup_embedding_provider:120 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 12:44:37 | INFO     | utils:check_and_reset_index:34 - reset_index is set to False. Keeping existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 12:44:37 | INFO     | __main__:batch_process_urls:422 - Processing URL 1/1: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:44:37 | INFO     | __main__:process_url:310 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:44:37 | INFO     | __main__:process_url:314 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 12:44:37 | INFO     | __main__:extract_text_from_url:164 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:44:42 | ERROR    | __main__:extract_text_from_url:189 - Error extracting text from URL https://www.geeksforgeeks.org/docker-tutorial/: Cannot connect to host www.geeksforgeeks.org:443 ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1006)')]
+2025-05-08 12:44:42 | WARNING  | __main__:process_url:322 - Skipping URL due to extraction failure: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:44:43 | INFO     | __main__:batch_process_urls:429 - Batch processing complete. Success: 0/1
+2025-05-08 12:44:43 | INFO     | __main__:<module>:472 - Processing complete. Successful: 0, Failed: 1
+2025-05-08 12:44:43 | DEBUG    | __main__:load_config:77 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:44:43 | INFO     | __main__:<module>:482 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 12:44:43 | INFO     | __main__:<module>:487 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001BC59B0FD90>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
+2025-05-08 12:44:43 | SUCCESS  | __main__:<module>:489 - Script execution completed
+2025-05-08 12:48:33 | INFO     | __main__:<module>:54 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 12:48:33 | DEBUG    | __main__:<module>:59 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 12:48:33 | DEBUG    | __main__:<module>:63 - Loaded environment variables
+2025-05-08 12:48:42 | INFO     | __main__:<module>:478 - Processing 1 user-provided URLs...
+2025-05-08 12:48:42 | INFO     | __main__:batch_process_urls:416 - Batch processing 1 URLs
+2025-05-08 12:48:42 | DEBUG    | __main__:load_config:79 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:48:42 | DEBUG    | __main__:setup_embedding_provider:106 - Attempting to import from client.embedding_provider
+2025-05-08 12:48:42 | DEBUG    | __main__:setup_embedding_provider:114 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 12:48:42 | DEBUG    | __main__:setup_embedding_provider:119 - Attempting direct import from client.embedding_provider
+2025-05-08 12:48:42 | INFO     | __main__:setup_embedding_provider:122 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 12:48:42 | INFO     | utils:check_and_reset_index:34 - reset_index is set to False. Keeping existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 12:48:42 | INFO     | __main__:batch_process_urls:443 - Processing URL 1/1: https://www.geeksforgeeks.org/docker-tutorial
+2025-05-08 12:48:42 | INFO     | __main__:process_url:331 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial
+2025-05-08 12:48:42 | INFO     | __main__:process_url:335 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 12:48:42 | INFO     | __main__:extract_text_from_url:166 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial
+2025-05-08 12:48:43 | ERROR    | __main__:extract_text_from_url:210 - Error extracting text from URL https://www.geeksforgeeks.org/docker-tutorial: no running event loop
+2025-05-08 12:48:43 | WARNING  | __main__:process_url:343 - Skipping URL due to extraction failure: https://www.geeksforgeeks.org/docker-tutorial
+2025-05-08 12:48:44 | INFO     | __main__:batch_process_urls:450 - Batch processing complete. Success: 0/1
+2025-05-08 12:48:44 | INFO     | __main__:<module>:493 - Processing complete. Successful: 0, Failed: 1
+2025-05-08 12:48:44 | DEBUG    | __main__:load_config:79 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:48:44 | INFO     | __main__:<module>:503 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 12:48:44 | INFO     | __main__:<module>:508 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000001D9FFD47C90>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
+2025-05-08 12:48:44 | SUCCESS  | __main__:<module>:510 - Script execution completed
+2025-05-08 12:48:54 | INFO     | __main__:<module>:54 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 12:48:54 | DEBUG    | __main__:<module>:59 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 12:48:54 | DEBUG    | __main__:<module>:63 - Loaded environment variables
+2025-05-08 12:56:19 | INFO     | __main__:<module>:478 - Processing 1 user-provided URLs...
+2025-05-08 12:56:19 | INFO     | __main__:batch_process_urls:416 - Batch processing 1 URLs
+2025-05-08 12:56:19 | DEBUG    | __main__:load_config:79 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:56:19 | DEBUG    | __main__:setup_embedding_provider:106 - Attempting to import from client.embedding_provider
+2025-05-08 12:56:19 | DEBUG    | __main__:setup_embedding_provider:114 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 12:56:19 | DEBUG    | __main__:setup_embedding_provider:119 - Attempting direct import from client.embedding_provider
+2025-05-08 12:56:20 | INFO     | __main__:setup_embedding_provider:122 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 12:56:20 | INFO     | utils:check_and_reset_index:34 - reset_index is set to False. Keeping existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 12:56:20 | INFO     | __main__:batch_process_urls:443 - Processing URL 1/1: https://www.geeksforgeeks.org/docker-tutorial/https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:56:20 | INFO     | __main__:process_url:331 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:56:20 | INFO     | __main__:process_url:335 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 12:56:20 | INFO     | __main__:extract_text_from_url:166 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:56:20 | ERROR    | __main__:extract_text_from_url:174 - URL unreachable (status 404): https://www.geeksforgeeks.org/docker-tutorial/https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:56:20 | WARNING  | __main__:process_url:343 - Skipping URL due to extraction failure: https://www.geeksforgeeks.org/docker-tutorial/https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:56:21 | INFO     | __main__:batch_process_urls:450 - Batch processing complete. Success: 0/1
+2025-05-08 12:56:21 | INFO     | __main__:<module>:493 - Processing complete. Successful: 0, Failed: 1
+2025-05-08 12:56:21 | DEBUG    | __main__:load_config:79 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:56:21 | INFO     | __main__:<module>:503 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 12:56:21 | INFO     | __main__:<module>:508 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x00000233FB0B9C10>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
+2025-05-08 12:56:21 | SUCCESS  | __main__:<module>:510 - Script execution completed
+2025-05-08 12:58:28 | INFO     | __main__:<module>:53 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 12:58:28 | DEBUG    | __main__:<module>:58 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 12:58:28 | DEBUG    | __main__:<module>:62 - Loaded environment variables
+2025-05-08 12:59:31 | INFO     | __main__:<module>:481 - Processing 1 user-provided URLs...
+2025-05-08 12:59:31 | INFO     | __main__:batch_process_urls:419 - Batch processing 1 URLs
+2025-05-08 12:59:31 | DEBUG    | __main__:load_config:78 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:59:31 | DEBUG    | __main__:setup_embedding_provider:105 - Attempting to import from client.embedding_provider
+2025-05-08 12:59:31 | DEBUG    | __main__:setup_embedding_provider:113 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 12:59:31 | DEBUG    | __main__:setup_embedding_provider:118 - Attempting direct import from client.embedding_provider
+2025-05-08 12:59:32 | INFO     | __main__:setup_embedding_provider:121 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 12:59:32 | INFO     | utils:check_and_reset_index:34 - reset_index is set to False. Keeping existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 12:59:32 | INFO     | __main__:batch_process_urls:446 - Processing URL 1/1: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:59:32 | INFO     | __main__:process_url:334 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:59:32 | INFO     | __main__:process_url:338 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 12:59:32 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:59:32 | WARNING  | __main__:extract_text_from_url:182 - SSL certificate verification is disabled for this request
+2025-05-08 12:59:37 | ERROR    | __main__:extract_text_from_url:213 - Error extracting text from URL https://www.geeksforgeeks.org/docker-tutorial/: Cannot connect to host www.geeksforgeeks.org:443 ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1006)')]
+2025-05-08 12:59:37 | WARNING  | __main__:process_url:346 - Skipping URL due to extraction failure: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 12:59:38 | INFO     | __main__:batch_process_urls:453 - Batch processing complete. Success: 0/1
+2025-05-08 12:59:38 | INFO     | __main__:<module>:497 - Processing complete. Successful: 0, Failed: 1
+2025-05-08 12:59:38 | DEBUG    | __main__:load_config:78 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 12:59:38 | INFO     | __main__:<module>:507 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 12:59:38 | INFO     | __main__:<module>:512 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x0000024CFF2A2590>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953'})
+2025-05-08 12:59:38 | SUCCESS  | __main__:<module>:514 - Script execution completed
+2025-05-08 13:00:54 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 13:00:54 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 13:00:54 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 13:01:05 | INFO     | __main__:<module>:473 - Processing 1 user-provided URLs...
+2025-05-08 13:01:05 | INFO     | __main__:batch_process_urls:411 - Batch processing 1 URLs
+2025-05-08 13:01:05 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:01:05 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 13:01:05 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 13:01:05 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 13:01:06 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 13:01:06 | INFO     | utils:check_and_reset_index:34 - reset_index is set to False. Keeping existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:01:06 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/1: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:01:06 | INFO     | __main__:process_url:326 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:01:06 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:01:06 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:01:06 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:01:06 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.geeksforgeeks.org/docker-tutorial/, got 1 documents
+2025-05-08 13:01:06 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:01:06 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 12 chunks extracted from 1 original documents
+2025-05-08 13:01:06 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 13:01:06 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:01:09 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 12 documents to the vector store
+2025-05-08 13:01:09 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:01:09 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.geeksforgeeks.org/docker-tutorial/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:01:10 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 1/1
+2025-05-08 13:01:10 | INFO     | __main__:<module>:489 - Processing complete. Successful: 1, Failed: 0
+2025-05-08 13:01:10 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:01:10 | INFO     | __main__:<module>:499 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 13:01:10 | INFO     | __main__:<module>:504 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x000002277EA2BAD0>, {0: 'e72e0673-e00b-4547-ae49-308d42e6ec8f', 1: '461d5276-73ac-41c8-8e93-2653d52ca508', 2: '8ec74b39-c297-4742-955b-2cd5dbfc2bf9', 3: '9e9518d7-08fa-42e3-8231-ce04a15f0d42', 4: '81ad9a5a-858f-4151-9705-18f9d9f0de7d', 5: 'eac76998-cfb6-4959-ad40-2b5eec69aef0', 6: '7bdbe154-60ba-4549-958e-699c89fffd68', 7: '1580f45c-f2a7-4118-8f93-ed78842a2fcb', 8: 'be97a3df-4192-4c6e-a1fd-2e76d5c26178', 9: 'f2c4fdae-d6dc-45e0-9ec8-5fafbc5bea65', 10: 'fa47a0d2-3f1f-4027-91a1-a27bb07db8cb', 11: 'a385398f-013d-4bd9-a50f-90cc2fdfe77b', 12: '58cca245-81d9-4b55-96a7-97074a43760d', 13: '26a21826-b9a7-4329-ab5a-3bab84d1cd15', 14: '1703ccb1-6480-46ba-bccb-03104e4e9bd2', 15: 'cd3e67ff-def7-464b-a47f-6ff79af735c7', 16: '00c96afa-9f0e-4b4f-a26e-fc26f32d4c20', 17: 'be279e46-c42b-4553-b43c-68c9c9d04953', 18: 'c5997f32-6e65-4b1b-88f8-644dd61bc9b3', 19: '585021b1-e0a2-45e1-9be4-31be8297bb84', 20: '8f592789-2489-4d25-8de2-49f8f6ecf6d7', 21: '1bb7fe21-f8de-45fe-88dd-20a53647aafa', 22: '848cc37d-6e64-4663-bd06-6f9da0cbe10b', 23: '1cb841e7-f4b8-4886-9c23-10ba43505d4d', 24: '188c43b8-ed40-4930-ac7e-781cd23190c2', 25: 'd5ee304a-9460-454c-a0e5-0b054ecc84ac', 26: '47c039f0-2cb4-4d22-a2a1-94eabeedebc0', 27: 'a02ef9a5-dbae-4c2a-a939-7dd1198e37eb', 28: 'a4000c86-f5f5-4d44-87e3-23b20ddf35d1', 29: 'adb2ae65-cb9f-45ad-ac4e-39cb703923c1'})
+2025-05-08 13:01:10 | SUCCESS  | __main__:<module>:506 - Script execution completed
+2025-05-08 13:25:43 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 13:25:43 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 13:25:43 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 13:26:20 | INFO     | __main__:<module>:473 - Processing 3 user-provided URLs...
+2025-05-08 13:26:20 | INFO     | __main__:batch_process_urls:411 - Batch processing 3 URLs
+2025-05-08 13:26:20 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:26:20 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 13:26:20 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 13:26:20 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 13:26:21 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 13:26:21 | WARNING  | utils:check_and_reset_index:25 - reset_index is set to True. Deleting existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:26:21 | SUCCESS  | utils:check_and_reset_index:30 - Successfully deleted index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:26:21 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/3: "https://www.ibm.com/think/topics/docker"
+2025-05-08 13:26:21 | INFO     | __main__:process_url:326 - Processing URL: "https://www.ibm.com/think/topics/docker"
+2025-05-08 13:26:21 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:26:21 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: "https://www.ibm.com/think/topics/docker"
+2025-05-08 13:26:21 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:26:21 | ERROR    | __main__:extract_text_from_url:201 - Error fetching content from "https://www.ibm.com/think/topics/docker": No connection adapters were found for '"https://www.ibm.com/think/topics/docker"'
+2025-05-08 13:26:21 | WARNING  | __main__:process_url:338 - Skipping URL due to extraction failure: "https://www.ibm.com/think/topics/docker"
+2025-05-08 13:26:22 | INFO     | __main__:batch_process_urls:438 - Processing URL 2/3: "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425"
+2025-05-08 13:26:22 | INFO     | __main__:process_url:326 - Processing URL: "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425"
+2025-05-08 13:26:22 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:26:22 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425"
+2025-05-08 13:26:22 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:26:22 | ERROR    | __main__:extract_text_from_url:201 - Error fetching content from "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425": No connection adapters were found for '"https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425"'
+2025-05-08 13:26:22 | WARNING  | __main__:process_url:338 - Skipping URL due to extraction failure: "https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425"
+2025-05-08 13:26:23 | INFO     | __main__:batch_process_urls:438 - Processing URL 3/3: "https://www.docker.com/products/docker-desktop/"
+2025-05-08 13:26:23 | INFO     | __main__:process_url:326 - Processing URL: "https://www.docker.com/products/docker-desktop/"
+2025-05-08 13:26:23 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:26:23 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: "https://www.docker.com/products/docker-desktop/"
+2025-05-08 13:26:23 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:26:23 | ERROR    | __main__:extract_text_from_url:201 - Error fetching content from "https://www.docker.com/products/docker-desktop/": No connection adapters were found for '"https://www.docker.com/products/docker-desktop/"'
+2025-05-08 13:26:23 | WARNING  | __main__:process_url:338 - Skipping URL due to extraction failure: "https://www.docker.com/products/docker-desktop/"
+2025-05-08 13:26:24 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 0/3
+2025-05-08 13:26:24 | INFO     | __main__:<module>:489 - Processing complete. Successful: 0, Failed: 3
+2025-05-08 13:26:24 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:26:24 | SUCCESS  | __main__:<module>:506 - Script execution completed
+2025-05-08 13:26:34 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 13:26:34 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 13:26:34 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 13:27:11 | INFO     | __main__:<module>:473 - Processing 3 user-provided URLs...
+2025-05-08 13:27:11 | INFO     | __main__:batch_process_urls:411 - Batch processing 3 URLs
+2025-05-08 13:27:11 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:27:11 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 13:27:11 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 13:27:11 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 13:27:11 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 13:27:12 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/3: https://www.ibm.com/think/topics/docker
+2025-05-08 13:27:12 | INFO     | __main__:process_url:326 - Processing URL: https://www.ibm.com/think/topics/docker
+2025-05-08 13:27:12 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:12 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.ibm.com/think/topics/docker
+2025-05-08 13:27:12 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:27:13 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.ibm.com/think/topics/docker, got 1 documents
+2025-05-08 13:27:13 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:27:13 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 10 chunks extracted from 1 original documents
+2025-05-08 13:27:13 | INFO     | __main__:add_documents_to_faiss_index:274 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-08 13:27:15 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:16 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 10 documents to the vector store
+2025-05-08 13:27:16 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:16 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.ibm.com/think/topics/docker and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:17 | INFO     | __main__:batch_process_urls:438 - Processing URL 2/3: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 13:27:17 | INFO     | __main__:process_url:326 - Processing URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 13:27:17 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:17 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425
+2025-05-08 13:27:17 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:27:18 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425, got 1 documents
+2025-05-08 13:27:18 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:27:18 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 5 chunks extracted from 1 original documents
+2025-05-08 13:27:18 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 13:27:18 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:20 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 5 documents to the vector store
+2025-05-08 13:27:20 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:20 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://medium.com/prodopsio/a-6-minute-introduction-to-helm-ab5949bf425 and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:21 | INFO     | __main__:batch_process_urls:438 - Processing URL 3/3: https://www.docker.com/products/docker-desktop/
+2025-05-08 13:27:21 | INFO     | __main__:process_url:326 - Processing URL: https://www.docker.com/products/docker-desktop/
+2025-05-08 13:27:21 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:21 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.docker.com/products/docker-desktop/
+2025-05-08 13:27:21 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:27:22 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.docker.com/products/docker-desktop/, got 1 documents
+2025-05-08 13:27:22 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:27:22 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 5 chunks extracted from 1 original documents
+2025-05-08 13:27:22 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 13:27:22 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:23 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 5 documents to the vector store
+2025-05-08 13:27:23 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:27:23 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.docker.com/products/docker-desktop/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:27:24 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 3/3
+2025-05-08 13:27:24 | INFO     | __main__:<module>:490 - Processing complete. Successful: 3, Failed: 0
+2025-05-08 13:27:24 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:27:24 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 13:27:24 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x00000197CA32E410>, {0: 'c1fae5c5-7357-44df-83fe-71003b05548a', 1: 'f9266350-102d-4e8b-8986-59506529629d', 2: '4e774ff1-e5bb-4576-b12a-e09be9fcb793', 3: '59d2ab27-1ab1-45a6-bf4e-d4c93353fb82', 4: '76829c80-1d65-4aa5-9a08-45b97f92a702', 5: '28edcb3b-9897-4f67-ad73-fb0942ef9f97', 6: '0632f9d1-cd11-4dee-8c04-4effaf267454', 7: 'a98763c1-e09a-49bc-9c08-e50738cf8909', 8: 'fafde904-4854-4893-9c07-2bd5be20ce3c', 9: 'b8257f67-08ea-4ee7-8a69-4ddaeec1c90f', 10: '6bc83002-906f-4fb1-ba8e-d7bb035859d0', 11: 'c4d53583-a5cd-4f84-bdae-c073fd53690b', 12: 'ced10836-f7c8-4ab3-ab39-c9f938113c27', 13: '0148b1d1-7557-4916-8bf1-7c32c7e48279', 14: '5c91976b-4c62-4156-b8eb-c305bdc19a90', 15: 'd54c8be8-14d5-44c3-b12e-c450e8a4eed1', 16: '7c224f2f-51e8-48a4-8935-963966880392', 17: 'c8377e98-001d-4d7a-ad2d-7cf463bd8f4e', 18: '3e010aa3-fd2c-4cea-a474-fa56c2627066', 19: '192cb409-5812-491a-aaea-a66123964882'})
+2025-05-08 13:27:24 | SUCCESS  | __main__:<module>:507 - Script execution completed
+2025-05-08 13:51:50 | INFO     | __main__:<module>:51 - Starting weburl_preprocess script from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_preprocess.py
+2025-05-08 13:51:50 | DEBUG    | __main__:<module>:56 - Removed SSL_CERT_FILE from environment variables
+2025-05-08 13:51:50 | DEBUG    | __main__:<module>:60 - Loaded environment variables
+2025-05-08 13:51:58 | INFO     | __main__:<module>:473 - Processing 2 user-provided URLs...
+2025-05-08 13:51:58 | INFO     | __main__:batch_process_urls:411 - Batch processing 2 URLs
+2025-05-08 13:51:58 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:51:58 | DEBUG    | __main__:setup_embedding_provider:103 - Attempting to import from client.embedding_provider
+2025-05-08 13:51:58 | DEBUG    | __main__:setup_embedding_provider:111 - Failed to import from client.embedding_provider: No module named 'client'
+2025-05-08 13:51:58 | DEBUG    | __main__:setup_embedding_provider:116 - Attempting direct import from client.embedding_provider
+2025-05-08 13:52:00 | INFO     | __main__:setup_embedding_provider:119 - Successfully imported OpenAIEmbeddingProvider directly
+2025-05-08 13:52:00 | WARNING  | utils:check_and_reset_index:25 - reset_index is set to True. Deleting existing index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:00 | SUCCESS  | utils:check_and_reset_index:30 - Successfully deleted index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:00 | INFO     | __main__:batch_process_urls:438 - Processing URL 1/2: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:52:00 | INFO     | __main__:process_url:326 - Processing URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:52:00 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:52:00 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.geeksforgeeks.org/docker-tutorial/
+2025-05-08 13:52:00 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:52:00 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.geeksforgeeks.org/docker-tutorial/, got 1 documents
+2025-05-08 13:52:00 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:52:00 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 12 chunks extracted from 1 original documents
+2025-05-08 13:52:00 | INFO     | __main__:add_documents_to_faiss_index:274 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' does not exist. Creating a new index.
+2025-05-08 13:52:01 | SUCCESS  | __main__:add_documents_to_faiss_index:287 - Created new FAISS index at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:03 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 12 documents to the vector store
+2025-05-08 13:52:03 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:03 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.geeksforgeeks.org/docker-tutorial/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:52:04 | INFO     | __main__:batch_process_urls:438 - Processing URL 2/2: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 13:52:04 | INFO     | __main__:process_url:326 - Processing URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 13:52:04 | INFO     | __main__:process_url:330 - Using configuration: chunk_size=500, chunk_overlap=50, model_name=gpt-4o, index_name=C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:52:04 | INFO     | __main__:extract_text_from_url:165 - Extracting text from URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/
+2025-05-08 13:52:04 | WARNING  | __main__:extract_text_from_url:171 - SSL certificate verification is disabled for this request
+2025-05-08 13:52:05 | SUCCESS  | __main__:extract_text_from_url:195 - Successfully extracted text from https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/, got 1 documents
+2025-05-08 13:52:05 | INFO     | __main__:chunk_text_documents:232 - Chunking 1 documents with chunk_size=500, chunk_overlap=50
+2025-05-08 13:52:05 | SUCCESS  | __main__:chunk_text_documents:242 - Chunked documents: 8 chunks extracted from 1 original documents
+2025-05-08 13:52:05 | INFO     | __main__:add_documents_to_faiss_index:289 - Index folder 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index' exists. Loading existing index.
+2025-05-08 13:52:05 | SUCCESS  | __main__:add_documents_to_faiss_index:294 - Loaded existing FAISS index from 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:06 | SUCCESS  | __main__:add_documents_to_faiss_index:300 - Added 8 documents to the vector store
+2025-05-08 13:52:06 | SUCCESS  | __main__:add_documents_to_faiss_index:304 - Index saved at 'C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index'
+2025-05-08 13:52:06 | SUCCESS  | __main__:process_url:353 - Successfully processed URL: https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/ and added to index C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index
+2025-05-08 13:52:07 | INFO     | __main__:batch_process_urls:445 - Batch processing complete. Success: 2/2
+2025-05-08 13:52:07 | INFO     | __main__:<module>:490 - Processing complete. Successful: 2, Failed: 0
+2025-05-08 13:52:07 | DEBUG    | __main__:load_config:76 - Loaded configuration from C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\config.yaml
+2025-05-08 13:52:07 | INFO     | __main__:<module>:500 - Index file exists at C:\workspace\EagSession1\eag_agentic_rag\url_rag\server\weburl_index/index.pkl
+2025-05-08 13:52:07 | INFO     | __main__:<module>:505 - Index details: (<langchain_community.docstore.in_memory.InMemoryDocstore object at 0x0000019A7CF09990>, {0: '1719f075-23e3-4bad-ac56-1d14eaebb2bb', 1: 'fa64a5b3-8a1f-40ee-97ee-4a545201d873', 2: '639ad1d0-28a3-41d6-beaf-625cb28177bf', 3: '351a242d-1d9d-42cd-8194-bc06f097bd1b', 4: '9ab9ac1f-eccc-4afd-b888-5ca53fc1b9fb', 5: 'fd47e45f-23b6-4a3c-9a30-81f10786cfad', 6: '57287494-a9ff-4d15-a148-204f45d8a8c4', 7: 'd2a41a7a-98c7-4838-ba25-eba6c4d0be57', 8: '7457c158-ee3c-44f7-bb8f-e8d0f5ac4095', 9: 'eea8c2da-f35f-4ed7-a181-d8cc9904febe', 10: '7731ce6a-1bf6-47f1-81b0-6985402ecf4d', 11: '4794e54d-5234-4b2e-afdb-065024e22724', 12: '861128ba-9a01-439f-87b0-962c53e4f812', 13: 'c902d92f-0244-4b3f-b6c3-2d72f1d8637d', 14: '4d549911-12a7-459d-8860-b92a92972a46', 15: '2cd0d2f3-9be0-4cf1-a3d0-a3dabff4ed76', 16: '03f1b6d1-b9c7-47c2-aa40-d0156fdfa285', 17: '20d6dde7-ef6f-479b-aa67-ab8e55e1b680', 18: 'bff2620d-7495-409f-b29d-c4a95dcf9def', 19: '3c50aad0-6a19-4feb-8037-b3d889d9d328'})
+2025-05-08 13:52:07 | SUCCESS  | __main__:<module>:507 - Script execution completed
