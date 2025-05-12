@@ -2,6 +2,7 @@ from mcp.server.fastmcp import FastMCP, Context
 from gsuite_tools.gsheet_builder import create_gsheet_from_json
 import logging
 import os
+from typing import Optional
 
 # Configure logging
 logging.basicConfig(
@@ -17,13 +18,16 @@ mcp = FastMCP("gsuite-tools")
 async def create_gsheet(
     json_path: str,
     ctx: Context,
+    email: str,
 ) -> str:
     """
     Create a Google Sheet from a JSON file containing search results and save it in a text file.
+    This tool is to be triggered whenever the user wants to create a Google Sheet from a JSON file.
 
     Args:
         json_path: Path to the JSON file to convert to a Google Sheet
         ctx: MCP context for logging
+        email: Email address to share the Google Sheet with and gmail would be used to send the sheet to the user
 
     Returns:
         String with the URL of the created Google Sheet
@@ -60,7 +64,7 @@ async def create_gsheet(
         sheet_url = create_gsheet_from_json(
             json_path=json_path,
             credentials_path=credentials_path,
-            email=None,  # Will use EMAIL env var
+            email=email,
             sheet_prefix=sheet_prefix,
             save_url_to_folder=save_url_folder,
         )
@@ -102,4 +106,5 @@ async def create_gsheet(
 
 
 if __name__ == "__main__":
+    print("Starting gsuite server")
     mcp.run(transport="stdio")

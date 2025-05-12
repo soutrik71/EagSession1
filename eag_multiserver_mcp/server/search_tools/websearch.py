@@ -55,8 +55,9 @@ def save_search_results(
     # Create a sanitized filename from the query and timestamp
     # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     sanitized_query = "".join(c if c.isalnum() else "_" for c in query)
-    # filename = f"{sanitized_query}_{timestamp}.json"
     filename = f"{sanitized_query}.json"
+    # hardcoded filename for consistency
+    # filename = "formula_1_2025_driver_standings.json"
     os.makedirs(output_dir, exist_ok=True)
     # create file path using unix path separator
     filepath = f"{output_dir}/{filename}"

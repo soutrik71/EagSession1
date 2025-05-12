@@ -17,6 +17,7 @@ websearch = WebSearch()
 async def search_web(query: str, ctx: Context, max_urls: int = 3) -> str:
     """
     Search the web for the given query and return the best content.
+    This tool is to be triggered whenever the user wants to search the web for information.
 
     Args:
         query: The search query string
@@ -25,6 +26,7 @@ async def search_web(query: str, ctx: Context, max_urls: int = 3) -> str:
 
     Returns:
         String with search results and path to saved JSON file
+
     """
     try:
         await ctx.info(f"Starting web search for query: {query}")
@@ -96,4 +98,5 @@ async def search_web(query: str, ctx: Context, max_urls: int = 3) -> str:
 
 
 if __name__ == "__main__":
+    print("Starting websearch server")
     mcp.run(transport="stdio")

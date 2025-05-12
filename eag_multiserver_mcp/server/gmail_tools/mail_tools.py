@@ -15,6 +15,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import sys
+
+# add the root path to the python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Configure logging
@@ -168,6 +172,16 @@ class GmailService:
             )
 
             logger.info(f"Message sent: {send_message['id']}")
+            # write a confirmation message to the outputs folder
+            os.makedirs(os.path.join(os.getcwd(), "server", "outputs"), exist_ok=True)
+            with open(
+                os.path.join(
+                    os.getcwd(), "server", "outputs", "email_confirmation.txt"
+                ),
+                "w",
+            ) as f:
+                f.write(f"Email sent successfully! Message ID: {send_message['id']}")
+
             return {"status": "success", "message_id": send_message["id"]}
 
         except HttpError as error:
@@ -477,9 +491,9 @@ async def test_gmail_service():
 
     # Send the email
     result = await gmail_service.send_email(
-        "soutrik1991@gmail.com",
-        "Test Email from Gmail API Integration",
-        "This is an automated test email sent from the Gmail API integration.\n\n"
+        recipient_id="soutrik1991@gmail.com",
+        subject="Test Email from Gmail API Integration",
+        message="This is an automated test email sent from the Gmail API integration.\n\n"
         "This email may contain an attachment if one was specified and found.\n\n"
         "Regards,\nAutomated Testing System",
         attachments=attachments,
