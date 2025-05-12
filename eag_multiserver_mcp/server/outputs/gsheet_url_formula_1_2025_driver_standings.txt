@@ -1,0 +1,3 @@
+Google Sheet URL: https://docs.google.com/spreadsheets/d/1YBquXSoPnNEXJm3X3glOW4DLX5JenSQWLVqy-U5FmYo
+Created from: ./server/outputs/formula_1_2025_driver_standings.json
+Created on: 2025-05-12 08:20:21
