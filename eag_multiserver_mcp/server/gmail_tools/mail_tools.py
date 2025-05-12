@@ -8,7 +8,7 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.header import decode_header
 import mimetypes
-import email
+import email.encoders
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -419,8 +419,8 @@ async def test_gmail_service():
         print(f"Found {len(unread)} unread emails")
 
         # Display email IDs
-        for i, email in enumerate(unread[:3]):  # Show first 3 only
-            print(f"  Email {i+1} ID: {email['id']}")
+        for i, msg in enumerate(unread[:3]):  # Show first 3 only
+            print(f"  Email {i+1} ID: {msg['id']}")
 
         # Read first email if available
         if unread:

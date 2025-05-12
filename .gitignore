@@ -69,3 +69,7 @@ eag_multiserver_mcp/downloads/INV-KA-B1-144737122-102350458697-MAY-2025.html
 eag_multiserver_mcp/server/oauth.json
 eag_multiserver_mcp/server/token.json
 eag_multiserver_mcp/server/credentials.json
+eag_multiserver_mcp/Session.session
+eag_multiserver_mcp/Session.session-journal
+eag_multiserver_mcp/Session.session
+eag_multiserver_mcp/server/Session.session

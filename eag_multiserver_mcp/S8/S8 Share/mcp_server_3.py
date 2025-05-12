@@ -241,11 +241,10 @@ async def fetch_content(url: str, ctx: Context) -> str:
     return await fetcher.fetch_and_parse(url, ctx)
 
 
-
 if __name__ == "__main__":
     print("mcp_server_3.py starting")
     if len(sys.argv) > 1 and sys.argv[1] == "dev":
-            mcp.run()  # Run without transport for dev server
+        mcp.run()  # Run without transport for dev server
     else:
         mcp.run(transport="stdio")  # Run with stdio for direct execution
         print("\nShutting down...")
