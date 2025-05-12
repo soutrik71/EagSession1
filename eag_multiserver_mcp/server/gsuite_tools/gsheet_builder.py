@@ -204,6 +204,8 @@ def create_gsheet_from_json(
                 f.write(f"Google Sheet URL: {spreadsheet.url}\n")
                 f.write(f"Created from: {json_path}\n")
                 f.write(f"Created on: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write(f"Created by: {email}\n")
+                f.write(f"Query: {data.get('query', '')}\n")
 
             print(f"Sheet URL saved to: {url_file_path}")
 

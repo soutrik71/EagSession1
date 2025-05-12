@@ -21,6 +21,12 @@ from tenacity import (
 )
 import logging
 
+# add the root path to the python path
+import sys
+
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -29,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 
 def save_search_results(
-    query: str, text: str, tables: List[Dict], output_dir: str = "./outputs"
+    query: str, text: str, tables: List[Dict], output_dir: str = "./server/outputs"
 ) -> str:
     """
     Save search results to a JSON file in the specified directory.
@@ -44,7 +50,7 @@ def save_search_results(
         str: Path to the saved file
     """
     # Create the output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(os.path.join(os.getcwd(), output_dir), exist_ok=True)
 
     # Create a sanitized filename from the query and timestamp
     # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -92,8 +98,8 @@ class WebSearch:
             | retry_if_exception_type(TimeoutException)
             | retry_if_exception_type(DuckDuckGoSearchException)
         ),
-        wait=wait_exponential(multiplier=1, min=4, max=60),
-        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=10, max=60),
+        stop=stop_after_attempt(3),
         before_sleep=before_sleep_log(logger, logging.INFO),
     )
     def news_search(
