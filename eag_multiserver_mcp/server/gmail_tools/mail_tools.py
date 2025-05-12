@@ -3,14 +3,12 @@ import os
 import asyncio
 import logging
 import base64
-from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.header import decode_header
-from base64 import urlsafe_b64decode
-from email import message_from_bytes
 import mimetypes
+import email
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -147,8 +145,8 @@ class GmailService:
                         attachment = MIMEBase(main_type, sub_type)
                         attachment.set_payload(fp.read())
 
-                    # Encode in base64
-                    base64.encodebytes(attachment.get_payload())
+                    # Encode the attachment in Base64
+                    email.encoders.encode_base64(attachment)
 
                     # Add headers
                     filename = os.path.basename(file_path)
@@ -157,11 +155,9 @@ class GmailService:
                     )
                     email_message.attach(attachment)
 
-            # Encode the message
-            encoded_message = base64.urlsafe_b64encode(
-                email_message.as_bytes()
-            ).decode()
-            create_message = {"raw": encoded_message}
+            # Convert the email message to a string and then encode it
+            raw_message = base64.urlsafe_b64encode(email_message.as_bytes()).decode()
+            create_message = {"raw": raw_message}
 
             # Send the message
             send_message = await asyncio.to_thread(
@@ -401,48 +397,101 @@ class GmailService:
             return f"An HttpError occurred: {str(error)}"
 
 
-async def test_email_service(creds_file_path: str, token_path: str):
+async def test_gmail_service():
     """
-    Test function for the GmailService class.
+    Test all Gmail API functions
+    """
+    # Define paths for credentials and token
+    creds_file_path = "./server/oauth.json"
+    token_path = "./server/token.json"
 
-    Args:
-        creds_file_path: Path to the OAuth credentials file
-        token_path: Path to store/retrieve OAuth tokens
-    """
+    # Initialize Gmail service
     gmail_service = GmailService(creds_file_path, token_path)
+    print(f"Using credentials from: {creds_file_path}")
+    print(f"Using token from: {token_path}")
+    print(f"Authenticated as: {gmail_service.user_email}")
 
-    # Example: Get unread emails
+    # PART 1: Test reading emails
+    print("\n--- TEST: Reading Emails ---")
     unread = await gmail_service.get_unread_emails(max_results=5)
-    print(f"Unread emails: {unread}")
 
-    # If there are unread emails, read the first one
-    if isinstance(unread, list) and unread:
-        email_id = unread[0]["id"]
-        email_content = await gmail_service.read_email(email_id)
-        print(f"Email content: {email_content}")
+    if isinstance(unread, list):
+        print(f"Found {len(unread)} unread emails")
 
-        # If there are attachments, download the first one
-        if isinstance(email_content, dict) and email_content.get("attachments"):
-            attachment = email_content["attachments"][0]
-            save_result = await gmail_service.save_attachment(
-                email_id, attachment["id"], f"downloads/{attachment['filename']}"
-            )
-            print(save_result)
+        # Display email IDs
+        for i, email in enumerate(unread[:3]):  # Show first 3 only
+            print(f"  Email {i+1} ID: {email['id']}")
 
-    # Example: Send an email with attachment
-    # result = await gmail_service.send_email(
-    #     "recipient@example.com",
-    #     "Test Email with Attachment",
-    #     "This is a test email with an attachment.",
-    #     attachments=["path/to/file.pdf"]
-    # )
-    # print(f"Send result: {result}")
+        # Read first email if available
+        if unread:
+            email_id = unread[0]["id"]
+            print(f"\nReading email {email_id}...")
+            email_content = await gmail_service.read_email(email_id)
+
+            if isinstance(email_content, dict):
+                print(f"From: {email_content.get('from', 'Unknown')}")
+                print(f"Subject: {email_content.get('subject', 'No Subject')}")
+                print(f"Attachments: {len(email_content.get('attachments', []))}")
+
+                # Download attachments if available
+                if email_content.get("attachments"):
+                    attachment = email_content["attachments"][0]
+                    downloads_dir = "./server/downloads"
+                    os.makedirs(downloads_dir, exist_ok=True)
+                    save_path = f"{downloads_dir}/{attachment['filename']}"
+
+                    print(f"\nDownloading attachment: {attachment['filename']}...")
+                    save_result = await gmail_service.save_attachment(
+                        email_id, attachment["id"], save_path
+                    )
+                    print(save_result)
+            else:
+                print(f"Error reading email: {email_content}")
+    else:
+        print(f"Error getting unread emails: {unread}")
+
+    # PART 2: Test sending email
+    print("\n--- TEST: Sending Email ---")
+
+    # Define attachment path
+    attachment_path = "./server/outputs/gsheet_url_formula_1_2025_driver_standings.txt"
+
+    # Create test file if it doesn't exist
+    if not os.path.exists(attachment_path):
+        print(f"Attachment file not found: {attachment_path}")
+        print("Creating test attachment file...")
+        os.makedirs(os.path.dirname(attachment_path), exist_ok=True)
+        with open(attachment_path, "w") as f:
+            f.write("Formula 1 2025 Driver Standings\n")
+            f.write("=================================\n")
+            f.write("1. Max Verstappen - Red Bull Racing\n")
+            f.write("2. Lewis Hamilton - Mercedes\n")
+            f.write("3. Charles Leclerc - Ferrari\n")
+            f.write("4. Lando Norris - McLaren\n")
+            f.write("5. George Russell - Mercedes\n")
+        print(f"Created test file at {attachment_path}")
+        attachments = [attachment_path]
+    else:
+        print(f"Using attachment: {attachment_path}")
+        attachments = [attachment_path]
+
+    # Send the email
+    result = await gmail_service.send_email(
+        "soutrik1991@gmail.com",
+        "Test Email from Gmail API Integration",
+        "This is an automated test email sent from the Gmail API integration.\n\n"
+        "This email may contain an attachment if one was specified and found.\n\n"
+        "Regards,\nAutomated Testing System",
+        attachments=attachments,
+    )
+
+    if result["status"] == "success":
+        print(f"Email sent successfully! Message ID: {result['message_id']}")
+    else:
+        print(f"Failed to send email: {result['error_message']}")
+
+    print("\nAll tests completed!")
 
 
 if __name__ == "__main__":
-    asyncio.run(
-        test_email_service(
-            "./server/oauth.json",
-            "./server/token.json",
-        )
-    )
+    asyncio.run(test_gmail_service())
