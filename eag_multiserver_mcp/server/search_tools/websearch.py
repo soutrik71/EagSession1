@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 def save_search_results(
-    query: str, text: str, tables: List[Dict], output_dir: str = "./server/outputs"
+    query: str, text: str, tables: List[Dict], output_dir: str = "./outputs"
 ) -> str:
     """
     Save search results to a JSON file in the specified directory.
@@ -51,8 +51,9 @@ def save_search_results(
     sanitized_query = "".join(c if c.isalnum() else "_" for c in query)
     # filename = f"{sanitized_query}_{timestamp}.json"
     filename = f"{sanitized_query}.json"
-    filepath = os.path.join(output_dir, filename)
-
+    os.makedirs(output_dir, exist_ok=True)
+    # create file path using unix path separator
+    filepath = f"{output_dir}/{filename}"
     # Prepare the data
     data = {
         "query": query,

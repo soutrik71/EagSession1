@@ -73,3 +73,4 @@ eag_multiserver_mcp/Session.session
 eag_multiserver_mcp/Session.session-journal
 eag_multiserver_mcp/Session.session
 eag_multiserver_mcp/server/Session.session
+eag_multiserver_mcp/server/outputs/current_F1_2025_driver_standings.json
