@@ -18,6 +18,8 @@ async def search_web(query: str, ctx: Context, max_urls: int = 3) -> str:
     """
     Search the web for the given query and return the best content.
     This tool is to be triggered whenever the user wants to search the web for information.
+    The tool calling can be done using the format: {'name': 'websearch', 'args': {'query': 'query', 'max_urls': 3}}
+    The tool is to be used when the user wants to search the web for information.
 
     Args:
         query: The search query string

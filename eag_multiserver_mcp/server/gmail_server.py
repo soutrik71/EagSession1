@@ -24,6 +24,8 @@ async def send_email(
 ) -> str:
     """
     Send an email with optional attachment using Gmail API.
+    The tool calling can be done using the format: {'name': 'gmail', 'args': {'recipient_id': 'recipient_id', 'subject': 'subject', 'message': 'message', 'attachment_path': 'attachment_path'}}
+    The tool is to be used when the user wants to send an email to someone.
 
     Args:
         recipient_id: Email address of the recipient and gmail would be used to send the email to the user

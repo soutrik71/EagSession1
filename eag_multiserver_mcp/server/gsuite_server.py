@@ -2,7 +2,7 @@ from mcp.server.fastmcp import FastMCP, Context
 from gsuite_tools.gsheet_builder import create_gsheet_from_json
 import logging
 import os
-from typing import Optional
+import glob
 
 # Configure logging
 logging.basicConfig(
@@ -16,32 +16,39 @@ mcp = FastMCP("gsuite-tools")
 
 @mcp.tool()
 async def create_gsheet(
-    json_path: str,
+    email_id: str,
     ctx: Context,
-    email: str,
 ) -> str:
     """
-    Create a Google Sheet from a JSON file containing search results and save it in a text file.
-    This tool is to be triggered whenever the user wants to create a Google Sheet from a JSON file.
+    Create a Google Sheet from the most recent JSON file in the outputs folder and share it.
+    This tool automatically searches for JSON files in the outputs directory.
+    The tool is to be used when the user wants to create a Google Sheet from search results.
 
     Args:
-        json_path: Path to the JSON file to convert to a Google Sheet
+        email_id: Email address to share the Google Sheet with
         ctx: MCP context for logging
-        email: Email address to share the Google Sheet with and gmail would be used to send the sheet to the user
-
     Returns:
         String with the URL of the created Google Sheet
     """
     try:
-        await ctx.info(f"Starting Google Sheet creation from: {json_path}")
+        outputs_dir = "./server/outputs"
+        await ctx.info(f"Searching for JSON files in: {outputs_dir}")
 
-        # Normalize path if needed
-        json_path = os.path.normpath(json_path)
+        # Ensure outputs directory exists
+        os.makedirs(outputs_dir, exist_ok=True)
 
-        # Validate JSON file exists
-        if not os.path.exists(json_path):
-            await ctx.error(f"JSON file not found: {json_path}")
-            return f"Error: JSON file not found at {json_path}"
+        # Find all JSON files in the outputs directory
+        json_files = glob.glob(os.path.join(outputs_dir, "*.json"))
+
+        if not json_files:
+            await ctx.error(f"No JSON files found in {outputs_dir}")
+            return f"Error: No JSON files found in {outputs_dir}"
+
+        # Sort by modification time (newest first)
+        json_files.sort(key=os.path.getmtime, reverse=True)
+        json_path = json_files[0]
+
+        await ctx.info(f"Selected most recent JSON file: {json_path}")
 
         # Hardcoded values
         credentials_path = "./server/credentials.json"
@@ -64,7 +71,7 @@ async def create_gsheet(
         sheet_url = create_gsheet_from_json(
             json_path=json_path,
             credentials_path=credentials_path,
-            email=email,
+            email=email_id,
             sheet_prefix=sheet_prefix,
             save_url_to_folder=save_url_folder,
         )

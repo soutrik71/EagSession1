@@ -76,3 +76,7 @@ eag_multiserver_mcp/server/Session.session
 eag_multiserver_mcp/server/outputs/current_F1_2025_driver_standings.json
 eag_multiserver_mcp/server/outputs/gsheet_url_current_F1_2025_driver_standings.txt
 eag_multiserver_mcp/server/outputs/
+eag_multiserver_mcp/client/conversation_logs/
+eag_multiserver_mcp/client/history_index/
+eag_multiserver_mcp/history_index/index.faiss
+eag_multiserver_mcp/history_index/index.pkl

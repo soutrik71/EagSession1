@@ -1,0 +1,3 @@
+history_index_name: "history_index"
+reset_index: False
+is_pydantic_schema: True
