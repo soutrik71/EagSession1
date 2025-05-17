@@ -235,6 +235,11 @@ async def main(query: str, conversation_id=None, chat_history=None):
 
             # Get LLM decision
             try:
+                print(
+                    "Starting LLM decision process with query:",
+                    query[:100],
+                    "..." if len(query) > 100 else "",
+                )
                 response, messages = await process_step(
                     "Getting LLM decision",
                     step_outputs,
@@ -245,6 +250,22 @@ async def main(query: str, conversation_id=None, chat_history=None):
                     llm=llm,
                     chat_history=chat_history,
                 )
+
+                # Log information about the response
+                if (
+                    hasattr(response, "combined_tool_calls")
+                    and response.combined_tool_calls
+                ):
+                    print(
+                        f"LLM decision returned {len(response.combined_tool_calls)} combined tool calls"
+                    )
+                elif hasattr(response, "tool_calls") and response.tool_calls:
+                    print(
+                        f"LLM decision returned {len(response.tool_calls)} tool calls"
+                    )
+                else:
+                    print("LLM decision returned no tool calls")
+
             except Exception as e:
                 # Handle error in LLM decision and return early
                 error_msg = AIMessage(
@@ -256,26 +277,108 @@ async def main(query: str, conversation_id=None, chat_history=None):
                     step_outputs,
                 )
 
-            # Execute tool calls if present
-            has_tool_calls = hasattr(response, "tool_calls") and response.tool_calls
-            step_name = (
-                "Executing tool calls" if has_tool_calls else "Processing response"
-            )
-
-            response, messages = await process_step(
-                step_name,
-                step_outputs,
-                execute_actions,
-                response=response,
-                messages=messages,
-                tools=tools,
-                is_pydantic_schema=config.get("is_pydantic_schema", False),
+            # Check if response has regular tool_calls or combined tool_calls from sub-questions
+            has_tool_calls = (
+                hasattr(response, "tool_calls") and response.tool_calls
+            ) or (
+                hasattr(response, "combined_tool_calls")
+                and response.combined_tool_calls
             )
 
             if has_tool_calls:
-                step_outputs["steps"][-1]["tools_used"] = [
-                    tc["name"] for tc in response.tool_calls
-                ]
+                # Log information about the tools to be executed
+                all_tools_info = []
+
+                if (
+                    hasattr(response, "combined_tool_calls")
+                    and response.combined_tool_calls
+                ):
+                    for tc in response.combined_tool_calls:
+                        name = (
+                            tc.get("name", "unknown")
+                            if isinstance(tc, dict)
+                            else getattr(tc, "name", "unknown")
+                        )
+                        args = (
+                            tc.get("args", {})
+                            if isinstance(tc, dict)
+                            else getattr(tc, "args", {})
+                        )
+                        all_tools_info.append(
+                            f"{name} ({', '.join([f'{k}={v}' for k,v in args.items()][:2])}...)"
+                        )
+
+                    print("Will execute these combined tool calls:")
+                    for i, tool_info in enumerate(all_tools_info, 1):
+                        print(f"  {i}. {tool_info}")
+                elif hasattr(response, "tool_calls") and response.tool_calls:
+                    for tc in response.tool_calls:
+                        name = (
+                            tc.get("name", "unknown")
+                            if isinstance(tc, dict)
+                            else getattr(tc, "name", "unknown")
+                        )
+                        args = (
+                            tc.get("args", {})
+                            if isinstance(tc, dict)
+                            else getattr(tc, "args", {})
+                        )
+                        all_tools_info.append(
+                            f"{name} ({', '.join([f'{k}={v}' for k,v in args.items()][:2])}...)"
+                        )
+
+                    print("Will execute these tool calls:")
+                    for i, tool_info in enumerate(all_tools_info, 1):
+                        print(f"  {i}. {tool_info}")
+
+            # Determine the step name based on number of tool calls
+            num_tools = (
+                len(all_tools_info)
+                if has_tool_calls and "all_tools_info" in locals()
+                else 0
+            )
+            step_name = (
+                f"Executing {num_tools} tool call(s)"
+                if has_tool_calls
+                else "Processing response"
+            )
+
+            # Execute the tool calls with appropriate error handling
+            try:
+                response, messages = await process_step(
+                    step_name,
+                    step_outputs,
+                    execute_actions,
+                    response=response,
+                    messages=messages,
+                    tools=tools,
+                    client=client,
+                    is_pydantic_schema=config.get("is_pydantic_schema", False),
+                )
+            except Exception as e:
+                log(f"Error executing actions: {e}")
+                import traceback
+
+                traceback.print_exc()
+                # Add error information
+                error_msg = f"Error executing actions: {e}"
+                messages.append(AIMessage(content=error_msg))
+                # Continue with processing to ensure conversation is saved
+
+            if has_tool_calls:
+                if (
+                    hasattr(response, "combined_tool_calls")
+                    and response.combined_tool_calls
+                ):
+                    # Handle combined tool calls from sub-questions
+                    step_outputs["steps"][-1]["tools_used"] = [
+                        tc["name"] for tc in response.combined_tool_calls
+                    ]
+                elif hasattr(response, "tool_calls") and response.tool_calls:
+                    # Handle regular tool calls
+                    step_outputs["steps"][-1]["tools_used"] = [
+                        tc["name"] for tc in response.tool_calls
+                    ]
 
             # Print the final message chain
             log("Conversation results:")

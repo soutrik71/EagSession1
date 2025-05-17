@@ -61,9 +61,10 @@ Important rules for creating sub-questions:
 - A tool can be used only once in a query so club the sub-questions using the same tool if required
 
 For identifying tools:
-- websearch: For finding information online regading any topic
-- gsuite: For creating spreadsheets or documents to be shared with others via email
-- gmail: For email-related tasks only if explicitly mentioned by the user with a specific email id and task to be performed with subject and body
+- search_web: For finding information online regading any topic (use tool "search_web")
+- create_gsheet: For creating spreadsheets or documents to be shared with others via email (use tool "create_gsheet")
+- send_email: For email-related tasks only if explicitly mentioned by the user with a specific email id 
+  and task to be performed with subject and body (use tool "send_email")
 - calendar: For scheduling tasks only if explicitly mentioned by the user with a specific date and time
 - calculator: For mathematical operations only if explicitly mentioned by the user
 
