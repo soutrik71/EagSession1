@@ -3,16 +3,65 @@ import os
 import shutil
 import json
 from datetime import datetime
-from loguru import logger
+from enum import Enum
+
+
+# Define verbosity levels for logging
+class LogLevel(Enum):
+    ERROR = 0
+    WARN = 1
+    INFO = 2
+    DEBUG = 3
+    TRACE = 4
+
+
+# Global log level setting - can be changed programmatically
+CURRENT_LOG_LEVEL = LogLevel.DEBUG
+
+
+def set_log_level(level: LogLevel):
+    """Set the global log level for the application"""
+    global CURRENT_LOG_LEVEL
+    CURRENT_LOG_LEVEL = level
+    log(f"Log level set to {level.name}", level=LogLevel.INFO)
+
+
+def log(message, level=LogLevel.INFO, console_only=False):
+    """
+    Log a message with timestamp and appropriate level.
+
+    Args:
+        message: The message to log
+        level: LogLevel enum indicating importance
+        console_only: Whether to only print to console and not to log file
+    """
+    if level.value <= CURRENT_LOG_LEVEL.value:
+        timestamp = get_timestamp()
+        level_prefix = f"[{level.name}]"
+        formatted_message = f"[{timestamp}] {level_prefix} {message}"
+
+        print(formatted_message)
+
+        # Additional logging to file could be added here if needed
+        if not console_only and level.value <= LogLevel.INFO.value:
+            # Could log to a file or other destination
+            pass
 
 
 def read_yaml_file(file_path):
     """
     Read a YAML file and return its contents.
     """
-    with open(file_path, "r") as file:
-        data = yaml.safe_load(file)
-    return data
+    try:
+        with open(file_path, "r") as file:
+            data = yaml.safe_load(file)
+        return data
+    except FileNotFoundError:
+        log(f"Config file not found: {file_path}", level=LogLevel.WARN)
+        return {}
+    except Exception as e:
+        log(f"Error reading config file {file_path}: {e}", level=LogLevel.ERROR)
+        return {}
 
 
 def check_and_reset_index(index_name: str, reset_index: bool) -> None:
@@ -24,30 +73,20 @@ def check_and_reset_index(index_name: str, reset_index: bool) -> None:
         reset_index: Whether to reset the index
     """
     if reset_index and os.path.exists(index_name):
-        logger.warning(
-            f"reset_index is set to True. Deleting existing index at '{index_name}'"
-        )
+        log(f"Resetting index at '{index_name}'", level=LogLevel.WARN)
         try:
             shutil.rmtree(index_name)
-            logger.success(f"Successfully deleted index folder '{index_name}'")
+            log(f"Successfully deleted index folder", level=LogLevel.INFO)
         except Exception as e:
-            logger.error(f"Error deleting index folder '{index_name}': {e}")
+            log(f"Error deleting index folder: {e}", level=LogLevel.ERROR)
     elif not reset_index and os.path.exists(index_name):
-        logger.info(
-            f"reset_index is set to False. Keeping existing index at '{index_name}'"
-        )
+        log("Using existing index at '{}'".format(index_name), level=LogLevel.INFO)
 
 
 # Helper function for consistent timestamps
 def get_timestamp(format="%H:%M:%S"):
     """Get a formatted timestamp string"""
     return datetime.now().strftime(format)
-
-
-# Helper for logging with timestamps
-def log(message):
-    """Log a message with a timestamp prefix"""
-    print(f"[{get_timestamp()}] {message}")
 
 
 def format_json_content(content):
@@ -101,14 +140,14 @@ def save_conversation(conversation_id, query, messages, output_dir):
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(conversation_data, f, indent=2)
 
-    log(f"Conversation saved to: {filepath}")
+    log(f"Conversation saved to: {filepath}", level=LogLevel.INFO)
     return filepath
 
 
 def display_conversation_history(conversation_id, memory_store):
     """Display the conversation history from the memory store"""
     if not memory_store:
-        log("Memory store not available, cannot display conversation history")
+        log("Memory store not available", level=LogLevel.WARN)
         return
 
     print("\n" + "=" * 50)
@@ -197,5 +236,5 @@ def save_session_summary(conversation_id, queries, results, output_dir):
     with open(session_file, "w", encoding="utf-8") as f:
         json.dump(session_summary, f, indent=2)
 
-    log(f"Session summary saved to: {session_file}")
+    log(f"Session summary saved to: {session_file}", level=LogLevel.INFO)
     return session_file

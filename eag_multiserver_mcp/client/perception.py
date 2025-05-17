@@ -28,6 +28,10 @@ class Process(BaseModel):
     tool: str = Field(
         description="Tool name (websearch, gsuite, gmail, calculator, etc.)"
     )
+    tool_args: dict = Field(
+        description="Required arguments for the tool in key-value format",
+        default_factory=dict,
+    )
 
 
 class ContentSearch(BaseModel):
@@ -43,14 +47,14 @@ system_prompt = """
 You are an intelligent assistant designed to refine user queries using current input and prior context.
 Your goal is to:
 1. Create a standalone query that incorporates necessary context
-2. Break it down into specific sub-questions with appropriate tools
+2. Break it down into specific sub-questions with appropriate tools and their required arguments
 
 Process:
 1. Analyze the current user query to understand what is being asked
 2. Check if the query has dependencies on chat history (pronouns, references, etc.)
 3. If dependencies exist, create a standalone enhanced query by incorporating context from history
 4. If no dependencies exist, use the original query as the enhanced query
-5. Break down the enhanced query into sequential sub-questions with appropriate tools
+5. Break down the enhanced query into sequential sub-questions with tools and their REQUIRED arguments
 
 Important rules for creating sub-questions:
 - ONLY extract sub-questions that are DIRECTLY present in the enhanced query
@@ -59,14 +63,27 @@ Important rules for creating sub-questions:
 - Break down the query into logical sequential parts that must be executed in order
 - Assign the most appropriate tool for each sub-question
 - A tool can be used only once in a query so club the sub-questions using the same tool if required
+- ALWAYS include the REQUIRED arguments for each tool in the sub-question
 
-For identifying tools:
-- search_web: For finding information online regading any topic (use tool "search_web")
-- create_gsheet: For creating spreadsheets or documents to be shared with others via email (use tool "create_gsheet")
-- send_email: For email-related tasks only if explicitly mentioned by the user with a specific email id 
-  and task to be performed with subject and body (use tool "send_email")
-- calendar: For scheduling tasks only if explicitly mentioned by the user with a specific date and time
-- calculator: For mathematical operations only if explicitly mentioned by the user
+For identifying tools and their REQUIRED arguments:
+- search_web: For finding information online regarding any topic
+  - REQUIRED ARGS: query (topic to search)
+  - Example sub-question: "Find information about F1-2025 driver standings" 
+    (query="F1-2025 driver standings")
+
+- create_gsheet: For creating spreadsheets or documents to be shared with others
+  - REQUIRED ARGS: email_id (recipient email address)
+  - Example sub-question: "Create a Google Sheet with F1 data and share with user@example.com" 
+    (email_id="user@example.com")
+
+- send_email: For email-related tasks when explicitly mentioned by the user
+  - REQUIRED ARGS: recipient_id (email address), subject, message
+  - Example sub-question: "Send an email to user@example.com with subject 'F1 Results' and message containing the data" 
+    (recipient_id="user@example.com", subject="F1 Results", message="Here is the data you requested")
+
+- calculator: For mathematical operations when explicitly mentioned by the user
+  - REQUIRED ARGS: specific operator tool (add, subtract, multiply, divide) and values (a, b)
+  - Example sub-question: "Calculate 5 plus 7" (tool="add", a=5, b=7)
 
 **Inputs:**
 - `chat_history`: A list of dictionaries, each with keys `sender` and `content`.
@@ -178,11 +195,12 @@ if __name__ == "__main__":
 
         # process conversation and enhance query
         conversation_list = [
-            "Search for the top 5 places to visit in France",
-            "Search for the top 5 places to visit in India and convert into a google sheet for soutrik1991@gmail.com",
-            "Search for the top 5 places to visit in USA and convert into a google sheet and "
-            "draft an email to the soutrik1991@gmail.com with subject 'Top 5 places to visit in USA' and "
-            "body 'Please find the top 5 places to visit in USA' and send it to soutrik1991@gmail.com",
+            # "Search for the top 5 places to visit in France",
+            # "Search for the top 5 places to visit in India and convert into a google sheet for soutrik1991@gmail.com",
+            # "Search for the top 5 places to visit in USA and convert into a google sheet and "
+            # "draft an email to the soutrik1991@gmail.com with subject 'Top 5 places to visit in USA' and "
+            # "body 'Please find the top 5 places to visit in USA' and send it to soutrik1991@gmail.com",
+            "Give me the driver standing for f1-2025 and create a google sheet and send an email stating the facts and figures with soutrik1991@gmail.com",
         ]
         enhanced_queries, list_of_processes = (
             await process_conversation_and_enhance_query(
@@ -199,6 +217,7 @@ if __name__ == "__main__":
             for process in processes:
                 print(f"- Sub-question: {process.sub_question}")
                 print(f"  Tool: {process.tool}")
+                print(f"  Tool Args: {process.tool_args}")
 
     # Run the async main function
     asyncio.run(main())

@@ -2,7 +2,7 @@ from mcp.server.fastmcp import FastMCP, Context
 from gmail_tools.mail_tools import GmailService
 import logging
 import os
-from typing import Optional
+import glob
 
 # Configure logging
 logging.basicConfig(
@@ -19,19 +19,16 @@ async def send_email(
     recipient_id: str,
     subject: str,
     message: str,
-    attachment_path: str,
     ctx: Context,
 ) -> str:
     """
     Send an email with optional attachment using Gmail API.
-    The tool calling can be done using the format: {'name': 'gmail', 'args': {'recipient_id': 'recipient_id', 'subject': 'subject', 'message': 'message', 'attachment_path': 'attachment_path'}}
     The tool is to be used when the user wants to send an email to someone.
 
     Args:
         recipient_id: Email address of the recipient and gmail would be used to send the email to the user
         subject: Email subject line and the subject of the email
         message: Email body text and the body of the email
-        attachment_path: Path to file to attach and the file would be attached to the email
         ctx: MCP context for logging
 
     Returns:
@@ -54,16 +51,26 @@ async def send_email(
             await ctx.error(f"Token file not found: {token_path}")
             return f"Error: Token file not found at {token_path}. Please run authentication first."
 
-        # Check if attachment exists (if provided)
+        # Check for attachments in the outputs directory
         attachments = []
-        if attachment_path:
+
+        # Create outputs directory if it doesn't exist
+        outputs_dir = os.path.join(os.getcwd(), "server", "outputs")
+        os.makedirs(outputs_dir, exist_ok=True)
+
+        # Find latest file in outputs directory
+        files = glob.glob(os.path.join(outputs_dir, "*.txt"))
+        attachment_path = None
+
+        if files:
+            # Sort files by modification time (newest first)
+            files.sort(key=os.path.getmtime, reverse=True)
+            attachment_path = files[0]
             attachment_path = os.path.normpath(attachment_path)
-            if os.path.exists(attachment_path):
-                await ctx.info(f"Attachment found: {attachment_path}")
-                attachments.append(attachment_path)
-            else:
-                await ctx.warning(f"Attachment not found: {attachment_path}")
-                return f"Error: Attachment file not found at {attachment_path}"
+            await ctx.info(f"Using latest file as attachment: {attachment_path}")
+            attachments.append(attachment_path)
+        else:
+            await ctx.info("No attachment files found in outputs directory")
 
         # Initialize Gmail service
         await ctx.info(

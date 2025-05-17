@@ -13,6 +13,18 @@ print(f"Project root: {project_root}")
 sys.path.insert(0, current_dir)
 sys.path.insert(0, project_root)
 
+# Clean up server/outputs folder if it exists
+outputs_dir = os.path.join(project_root, "server", "outputs")
+if os.path.exists(outputs_dir):
+    print(f"Cleaning up existing outputs folder: {outputs_dir}")
+    import shutil
+
+    try:
+        shutil.rmtree(outputs_dir)
+        print("Outputs folder deleted successfully")
+    except Exception as e:
+        print(f"Error deleting outputs folder: {e}")
+
 # Import core dependencies
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.messages import HumanMessage, AIMessage
@@ -299,13 +311,13 @@ async def main(query: str, conversation_id=None, chat_history=None):
                             if isinstance(tc, dict)
                             else getattr(tc, "name", "unknown")
                         )
-                        args = (
+                        tool_args = (
                             tc.get("args", {})
                             if isinstance(tc, dict)
                             else getattr(tc, "args", {})
                         )
                         all_tools_info.append(
-                            f"{name} ({', '.join([f'{k}={v}' for k,v in args.items()][:2])}...)"
+                            f"{name} ({', '.join([f'{k}={v}' for k,v in tool_args.items()][:2])}...)"
                         )
 
                     print("Will execute these combined tool calls:")
@@ -318,13 +330,13 @@ async def main(query: str, conversation_id=None, chat_history=None):
                             if isinstance(tc, dict)
                             else getattr(tc, "name", "unknown")
                         )
-                        args = (
+                        tool_args = (
                             tc.get("args", {})
                             if isinstance(tc, dict)
                             else getattr(tc, "args", {})
                         )
                         all_tools_info.append(
-                            f"{name} ({', '.join([f'{k}={v}' for k,v in args.items()][:2])}...)"
+                            f"{name} ({', '.join([f'{k}={v}' for k,v in tool_args.items()][:2])}...)"
                         )
 
                     print("Will execute these tool calls:")

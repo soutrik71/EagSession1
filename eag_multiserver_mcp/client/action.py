@@ -14,6 +14,17 @@ sys.path.insert(0, project_root)
 
 from typing import List, Dict, Any, Tuple
 from langchain_core.messages import ToolMessage, AIMessage
+import re
+
+# Import utils for logging
+from client.utils import log, LogLevel
+
+# Tool name mapping to handle different naming conventions
+TOOL_NAME_MAPPING = {
+    "websearch": ["search_web", "search", "web", "websearch"],
+    "gsuite": ["create_gsheet", "gsheet", "sheet", "google_sheet", "spreadsheet"],
+    "gmail": ["send_email", "email", "mail", "gmail"],
+}
 
 
 async def process_tool_calls(
@@ -34,45 +45,53 @@ async def process_tool_calls(
     messages = []
     tool_dict = {tool.name: tool for tool in tools}
 
-    # Also create a more flexible dictionary for matching similar tool names
+    # Create a flexible tool dictionary for matching
     flexible_tool_dict = {}
     for tool in tools:
         flexible_tool_dict[tool.name.lower()] = tool
         # Add common aliases
-        if "search" in tool.name.lower() or "web" in tool.name.lower():
-            flexible_tool_dict["websearch"] = tool
-        if "sheet" in tool.name.lower() or "gsuite" in tool.name.lower():
-            flexible_tool_dict["gsuite"] = tool
-        if "email" in tool.name.lower() or "gmail" in tool.name.lower():
-            flexible_tool_dict["gmail"] = tool
+        for canonical, aliases in TOOL_NAME_MAPPING.items():
+            if any(alias in tool.name.lower() for alias in aliases):
+                for alias in aliases:
+                    flexible_tool_dict[alias.lower()] = tool
 
-    print(
-        f"Processing {len(tool_calls)} tool call(s) with {len(tools)} available tools"
+    log(
+        "Processing {len(tool_calls)} tool call(s) with {len(tools)} available tools",
+        level=LogLevel.INFO,
     )
-    print(f"Available tools: {', '.join(tool_dict.keys())}")
+    log("Available tools: {', '.join(tool_dict.keys())}", level=LogLevel.DEBUG)
 
     for i, tool_call in enumerate(tool_calls, 1):
         tool_name = tool_call.get("name", "")
         tool_id = tool_call.get("id", f"tool-{i}")
         tool_args = tool_call.get("args", {})
 
-        print(f"Tool call {i}/{len(tool_calls)}: '{tool_name}'")
+        log(f"Tool call {i}/{len(tool_calls)}: '{tool_name}'", level=LogLevel.INFO)
 
-        # First try exact match
+        # Find the appropriate tool
+        selected_tool = None
+
+        # Exact match
         if tool_name in tool_dict:
             selected_tool = tool_dict[tool_name]
-        # Then try lowercase match
+        # Flexible match
         elif tool_name.lower() in flexible_tool_dict:
             selected_tool = flexible_tool_dict[tool_name.lower()]
-            print(f"Using flexible match: {tool_name} -> {selected_tool.name}")
-        else:
+            log(
+                f"Using flexible match: {tool_name} -> {selected_tool.name}",
+                level=LogLevel.DEBUG,
+            )
+
+        if not selected_tool:
             error_msg = f"Tool {tool_name} not found in available tools."
-            print(error_msg)
-            print(f"Available tools: {', '.join(tool_dict.keys())}")
+            log(error_msg, level=LogLevel.ERROR)
             messages.append(ToolMessage(content=error_msg, tool_call_id=tool_id))
             continue
 
-        print(f"Found tool '{selected_tool.name}', executing with args: {tool_args}")
+        log(
+            f"Found tool '{selected_tool.name}', executing with args: {tool_args}",
+            level=LogLevel.DEBUG,
+        )
 
         try:
             if isinstance(tool_args, dict):
@@ -82,58 +101,53 @@ async def process_tool_calls(
                     and "email_id" not in tool_args
                 ):
                     # Extract email from tool args or use default
-                    import re
-
-                    email = None
-                    for val in tool_args.values():
-                        if isinstance(val, str):
-                            email_match = re.search(r"[\w\.-]+@[\w\.-]+", val)
-                            if email_match:
-                                email = email_match.group(0)
-                                break
-
-                    if not email:
-                        # Check if there's an email in any of the messages
-                        for msg in messages:
-                            if hasattr(msg, "content") and isinstance(msg.content, str):
-                                email_match = re.search(
-                                    r"[\w\.-]+@[\w\.-]+", msg.content
-                                )
-                                if email_match:
-                                    email = email_match.group(0)
-                                    break
-
+                    email = find_email_in_content(tool_args, messages)
                     if email:
-                        print(f"Found email: {email} for create_gsheet")
+                        log(
+                            f"Found email for create_gsheet: {email}",
+                            level=LogLevel.DEBUG,
+                        )
                         tool_args = {"email_id": email}
                     else:
-                        print("No email found, using default")
+                        log("No email found, using default", level=LogLevel.WARN)
                         tool_args = {"email_id": "user@example.com"}
 
                 # Structure args correctly based on schema type
                 if is_pydantic_schema and "input_data" not in tool_args:
-                    # For Pydantic schema tools, wrap in input_data if not already present
                     args_to_use = {"input_data": tool_args}
-                    print(f"Using Pydantic schema format: {args_to_use}")
+                    log("Using Pydantic schema format", level=LogLevel.DEBUG)
                 else:
-                    # For non-Pydantic tools, use tool_args directly
                     args_to_use = tool_args
-                    print(f"Using direct args format: {args_to_use}")
 
-                # Use correct invocation method based on tool type
+                # Invoke the tool
                 if hasattr(selected_tool, "ainvoke"):
-                    print(f"Invoking async tool '{selected_tool.name}'")
+                    log(
+                        f"Invoking async tool '{selected_tool.name}'",
+                        level=LogLevel.DEBUG,
+                    )
                     tool_output = await selected_tool.ainvoke(input=args_to_use)
                 else:
-                    print(f"Invoking sync tool '{selected_tool.name}'")
+                    log(
+                        f"Invoking sync tool '{selected_tool.name}'",
+                        level=LogLevel.DEBUG,
+                    )
                     tool_output = selected_tool.invoke(input=args_to_use)
 
-                print(f"Tool '{selected_tool.name}' executed successfully")
-                print(f"Tool output: {tool_output[:200]}...")
+                log(
+                    f"Tool '{selected_tool.name}' executed successfully",
+                    level=LogLevel.INFO,
+                )
+
+                # Only show part of the output in the logs to avoid verbosity
+                if isinstance(tool_output, str) and len(tool_output) > 200:
+                    log(
+                        f"Tool output preview: {tool_output[:150]}...",
+                        level=LogLevel.DEBUG,
+                    )
+
                 messages.append(AIMessage(content=tool_output))
             else:
-                # Handle non-dict case
-                print(f"Tool args is not a dict: {type(tool_args)}")
+                # Handle non-dict case with less verbosity
                 if hasattr(selected_tool, "ainvoke"):
                     tool_output = await selected_tool.ainvoke(tool_args)
                 else:
@@ -142,13 +156,34 @@ async def process_tool_calls(
 
         except Exception as e:
             error_msg = f"Error executing tool {tool_name}: {e}"
-            print(f"ERROR: {error_msg}")
+            log(error_msg, level=LogLevel.ERROR)
             import traceback
 
             traceback.print_exc()
             messages.append(AIMessage(content=error_msg))
 
     return messages
+
+
+def find_email_in_content(data, messages=None):
+    """Helper function to extract email from content"""
+    # First check in the data dictionary values
+    if isinstance(data, dict):
+        for val in data.values():
+            if isinstance(val, str):
+                email_match = re.search(r"[\w\.-]+@[\w\.-]+", val)
+                if email_match:
+                    return email_match.group(0)
+
+    # Then check in the message content if provided
+    if messages:
+        for msg in messages:
+            if hasattr(msg, "content") and isinstance(msg.content, str):
+                email_match = re.search(r"[\w\.-]+@[\w\.-]+", msg.content)
+                if email_match:
+                    return email_match.group(0)
+
+    return None
 
 
 async def execute_actions(
@@ -185,25 +220,17 @@ async def execute_actions(
                 else response.tool_calls
             )
 
-            # Print detailed information about tool calls
-            print(
-                f"Execute_actions: Processing {len(tool_calls_to_process)} tool call(s)..."
-            )
-            for i, tc in enumerate(tool_calls_to_process):
-                if isinstance(tc, dict) and "name" in tc:
-                    print(f"  Tool {i+1}: {tc['name']}")
-                elif hasattr(tc, "name"):
-                    print(f"  Tool {i+1}: {tc.name}")
-                else:
-                    print(f"  Tool {i+1}: unknown format {type(tc)}")
-
             # Process tool calls
+            log(
+                f"Executing {len(tool_calls_to_process)} tool call(s)",
+                level=LogLevel.INFO,
+            )
             tool_messages = await process_tool_calls(
                 tool_calls_to_process, tools, is_pydantic_schema
             )
             messages.extend(tool_messages)
 
-            # Summarize the tool executions
+            # Log executed tools
             tool_names = []
             for tc in tool_calls_to_process:
                 if isinstance(tc, dict) and "name" in tc:
@@ -213,13 +240,13 @@ async def execute_actions(
                 else:
                     tool_names.append("unknown_tool")
 
-            print(f"Executed tools: {', '.join(tool_names)}")
+            log(f"Executed tools: {', '.join(tool_names)}", level=LogLevel.INFO)
         else:
-            print("No tool calls to execute")
+            log("No tool calls to execute", level=LogLevel.INFO)
 
         return response, messages
     except Exception as e:
-        print(f"Error in action execution: {e}")
+        log(f"Error in action execution: {e}", level=LogLevel.ERROR)
         import traceback
 
         traceback.print_exc()
@@ -237,16 +264,33 @@ def print_message_chain(messages: List[Any]) -> None:
     Args:
         messages: List of message objects
     """
-    print("\nProcessed messages chain:")
+    log("Processed messages chain:", level=LogLevel.INFO)
     for i, msg in enumerate(messages, 1):
         msg_type = type(msg).__name__
-        msg_preview = msg.content
-        print(f"{i}. {msg_type}: {msg_preview}")
+        # Truncate long content for readability
+        if hasattr(msg, "content"):
+            content_preview = (
+                msg.content[:100] + "..." if len(msg.content) > 100 else msg.content
+            )
+        else:
+            content_preview = (
+                str(msg)[:100] + "..." if len(str(msg)) > 100 else str(msg)
+            )
+
+        log(f"{i}. {msg_type}: {content_preview}", level=LogLevel.INFO)
 
         # Print tool calls if present
         if hasattr(msg, "tool_calls") and msg.tool_calls:
-            print(f"   Tool calls: {[tc['name'] for tc in msg.tool_calls]}")
+            tool_names = [
+                (
+                    tc.get("name", "unknown")
+                    if isinstance(tc, dict)
+                    else getattr(tc, "name", "unknown")
+                )
+                for tc in msg.tool_calls
+            ]
+            log(f"   Tool calls: {tool_names}", level=LogLevel.DEBUG)
 
 
 if __name__ == "__main__":
-    print("Testing action execution...")
+    log("Testing action execution...", level=LogLevel.INFO)
