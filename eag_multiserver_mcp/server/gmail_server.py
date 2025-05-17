@@ -28,7 +28,7 @@ async def send_email(
     Args:
         recipient_id: Email address of the recipient and gmail would be used to send the email to the user
         subject: Email subject line and the subject of the email
-        message: Email body text and the body of the email
+        message: Basic message with only elaborating the subject line with some salutations
         ctx: MCP context for logging
 
     Returns:
