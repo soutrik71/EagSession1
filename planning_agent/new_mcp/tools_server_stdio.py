@@ -637,7 +637,7 @@ async def demonstrate_context_features(
 
         # Transform the message
         processed_message = message.upper()
-        await ctx.info(f"ℹ️ INFO: Message transformed to uppercase")
+        await ctx.info("ℹ️ INFO: Message transformed to uppercase")
 
         await ctx.report_progress(75, 100, "Generating response...")
         await asyncio.sleep(0.1)  # Simulate work
