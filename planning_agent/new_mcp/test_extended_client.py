@@ -4,7 +4,7 @@ import logging
 import sys
 
 # Import the extended tools server instance
-from tools_server_extended import mcp as extended_server
+from tools_server_extended_stdio import mcp as extended_server
 
 # Set up logging to capture context messages
 logging.basicConfig(
