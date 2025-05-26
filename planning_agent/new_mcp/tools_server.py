@@ -1,4 +1,4 @@
-from fastmcp import FastMCP
+from fastmcp import FastMCP, Context
 from typing import Annotated
 import math
 import requests
@@ -15,54 +15,76 @@ mcp = FastMCP(name="CalculatorServer")
 
 # standard way to define tools
 @mcp.tool()
-async def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
+async def add(a: int, b: int, ctx: Context) -> int:
+    """Add two numbers with context logging"""
+    await ctx.info(f"Adding {a} + {b}")
+    result = a + b
+    await ctx.info(f"Result: {result}")
+    return result
 
 
 @mcp.tool()
-async def subtract(a: int, b: int) -> int:
-    """Subtract two numbers"""
-    return a - b
+async def subtract(a: int, b: int, ctx: Context) -> int:
+    """Subtract two numbers with context logging"""
+    await ctx.info(f"Subtracting {a} - {b}")
+    result = a - b
+    await ctx.info(f"Result: {result}")
+    return result
 
 
 @mcp.tool()
-async def multiply(a: int, b: int) -> int:
-    """Multiply two numbers"""
-    return a * b
+async def multiply(a: int, b: int, ctx: Context) -> int:
+    """Multiply two numbers with context logging"""
+    await ctx.info(f"Multiplying {a} × {b}")
+    result = a * b
+    await ctx.info(f"Result: {result}")
+    return result
 
 
 @mcp.tool()
-async def divide(a: int, b: int) -> float:
-    """Divide two numbers"""
+async def divide(a: int, b: int, ctx: Context) -> float:
+    """Divide two numbers with context logging and error handling"""
+    await ctx.info(f"Dividing {a} ÷ {b}")
     if b == 0:
+        await ctx.error("Division by zero attempted!")
         raise ToolError("Cannot divide by zero")
-    return a / b
+    result = a / b
+    await ctx.info(f"Result: {result}")
+    return result
 
 
 # better way to define tools using pydantic Field and Annotated
 @mcp.tool()
 async def get_sine_value(
-    x: Annotated[float, Field(description="The angle in radians")],
+    x: Annotated[float, Field(description="The angle in radians")], ctx: Context
 ) -> float:
-    """Get the sine value of an angle"""
-    return math.sin(x)
+    """Get the sine value of an angle with context logging"""
+    await ctx.info(f"Calculating sin({x} radians)")
+    result = math.sin(x)
+    await ctx.info(f"sin({x}) = {result}")
+    return result
 
 
 @mcp.tool()
 async def get_cosine_value(
-    x: Annotated[float, Field(description="The angle in radians")],
+    x: Annotated[float, Field(description="The angle in radians")], ctx: Context
 ) -> float:
-    """Get the cosine value of an angle"""
-    return math.cos(x)
+    """Get the cosine value of an angle with context logging"""
+    await ctx.info(f"Calculating cos({x} radians)")
+    result = math.cos(x)
+    await ctx.info(f"cos({x}) = {result}")
+    return result
 
 
 @mcp.tool()
 async def get_tangent_value(
-    x: Annotated[float, Field(description="The angle in radians")],
+    x: Annotated[float, Field(description="The angle in radians")], ctx: Context
 ) -> float:
-    """Get the tangent value of an angle"""
-    return math.tan(x)
+    """Get the tangent value of an angle with context logging"""
+    await ctx.info(f"Calculating tan({x} radians)")
+    result = math.tan(x)
+    await ctx.info(f"tan({x}) = {result}")
+    return result
 
 
 # using default value with direct field
@@ -70,13 +92,25 @@ async def get_tangent_value(
 async def get_log_value(
     x: float = Field(description="The number to get the log of"),
     base: float = Field(description="The base of the log", default=10.0),
+    ctx: Context = None,
 ) -> float:
-    """Get the log value of a number"""
+    """Get the log value of a number with context logging"""
+    if ctx:
+        await ctx.info(f"Calculating log base {base} of {x}")
+
     if x <= 0:
+        if ctx:
+            await ctx.error(f"Invalid input: x={x} (must be positive)")
         raise ToolError("Cannot calculate log of non-positive number")
     if base <= 0 or base == 1:
+        if ctx:
+            await ctx.error(f"Invalid base: {base} (must be positive and ≠ 1)")
         raise ToolError("Log base must be positive and not equal to 1")
-    return math.log(x, base)
+
+    result = math.log(x, base)
+    if ctx:
+        await ctx.info(f"log_{base}({x}) = {result}")
+    return result
 
 
 # one tool to calculate the distance between 2 places => using openstreetmap api
@@ -150,9 +184,10 @@ async def calculate_distance_between_places(
     unit: Annotated[
         str, Field(description="Unit for distance result", default="km")
     ] = "km",
+    ctx: Context = None,
 ) -> str:
     """
-    Calculate the distance between two places by name.
+    Calculate the distance between two places by name with progress reporting.
 
     This tool:
     1. Geocodes the place names to get their latitude and longitude coordinates
@@ -163,21 +198,48 @@ async def calculate_distance_between_places(
         place1: Name of the first place
         place2: Name of the second place
         unit: Unit for the result ("km" for kilometers or "miles" for miles)
+        ctx: FastMCP context for logging and progress reporting
 
     Returns:
         A formatted string with the distance and coordinates information
     """
     try:
+        if ctx:
+            await ctx.info(
+                f"Starting distance calculation between '{place1}' and '{place2}'"
+            )
+            await ctx.report_progress(0, 100, "Validating inputs...")
+
         # Validate inputs
         if not place1.strip() or not place2.strip():
+            if ctx:
+                await ctx.error("Empty place names provided")
             return "Error: Place names cannot be empty"
 
         if unit.lower() not in ["km", "miles"]:
+            if ctx:
+                await ctx.error(f"Invalid unit: {unit}")
             return "Error: Unit must be 'km' or 'miles'"
+
+        if ctx:
+            await ctx.report_progress(25, 100, f"Geocoding '{place1}'...")
 
         # Get coordinates for both places
         lat1, lon1 = await get_coordinates(place1)
+
+        if ctx:
+            await ctx.info(
+                f"Found coordinates for '{place1}': {lat1:.4f}°, {lon1:.4f}°"
+            )
+            await ctx.report_progress(50, 100, f"Geocoding '{place2}'...")
+
         lat2, lon2 = await get_coordinates(place2)
+
+        if ctx:
+            await ctx.info(
+                f"Found coordinates for '{place2}': {lat2:.4f}°, {lon2:.4f}°"
+            )
+            await ctx.report_progress(75, 100, "Calculating distance...")
 
         # Calculate distance in kilometers
         distance_km = haversine_distance(lat1, lon1, lat2, lon2)
@@ -189,6 +251,10 @@ async def calculate_distance_between_places(
         else:
             distance = distance_km
             unit_str = "km"
+
+        if ctx:
+            await ctx.info(f"Distance calculated: {distance:.2f} {unit_str}")
+            await ctx.report_progress(100, 100, "Distance calculation complete!")
 
         # Format the result
         result = f"""Distance between '{place1}' and '{place2}':
@@ -202,6 +268,8 @@ async def calculate_distance_between_places(
         return result
 
     except Exception as e:
+        if ctx:
+            await ctx.error(f"Distance calculation failed: {str(e)}")
         return f"Error calculating distance: {str(e)}"
 
 
@@ -224,24 +292,35 @@ class WeatherOutput(BaseModel):
 
 
 @mcp.tool()
-async def get_weather(input: WeatherInput) -> WeatherOutput:
+async def get_weather(input: WeatherInput, ctx: Context = None) -> WeatherOutput:
     """
-    Get current weather and forecast for a location using SerpAPI.
+    Get current weather and forecast for a location using SerpAPI with context logging.
 
     Args:
         input: WeatherInput containing location and number of forecast days
+        ctx: FastMCP context for logging, progress reporting, and HTTP requests
 
     Returns:
         WeatherOutput with weather information and success status
     """
     try:
+        if ctx:
+            await ctx.info(
+                f"Weather request for '{input.location}' ({input.days} days)"
+            )
+            await ctx.report_progress(0, 100, "Validating weather request...")
+
         # Validate inputs
         if not input.location.strip():
+            if ctx:
+                await ctx.error("Empty location provided for weather request")
             return WeatherOutput(
                 weather_info="", success=False, error_message="Location cannot be empty"
             )
 
         if input.days < 1 or input.days > 7:
+            if ctx:
+                await ctx.error(f"Invalid days parameter: {input.days} (must be 1-7)")
             return WeatherOutput(
                 weather_info="",
                 success=False,
@@ -251,11 +330,16 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
         # Get API key from environment
         api_key = os.getenv("SERP_API_KEY")
         if not api_key:
+            if ctx:
+                await ctx.error("SERP_API_KEY not found in environment")
             return WeatherOutput(
                 weather_info="",
                 success=False,
                 error_message="SERP_API_KEY not found in environment variables. Please set it in your .env file.",
             )
+
+        if ctx:
+            await ctx.report_progress(25, 100, "Preparing API request...")
 
         # SerpAPI weather search with simplified parameters
         url = "https://serpapi.com/search"
@@ -267,22 +351,51 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
             "gl": "us",
         }
 
-        response = requests.get(url, params=params, timeout=15)
-        response.raise_for_status()
+        if ctx:
+            await ctx.info("Making HTTP request to SerpAPI for weather data")
+            await ctx.report_progress(50, 100, "Fetching weather data from API...")
+
+        # Use context HTTP request if available, otherwise fallback to requests
+        if ctx:
+            try:
+                # Use FastMCP context HTTP request capability
+                response_data = await ctx.http_request(
+                    "GET", url, params=params, timeout=15
+                )
+                data = response_data  # Context http_request should return parsed JSON
+            except Exception as e:
+                await ctx.error(f"Context HTTP request failed: {str(e)}")
+                # Fallback to regular requests
+                response = requests.get(url, params=params, timeout=15)
+                response.raise_for_status()
+                data = response.json()
+        else:
+            response = requests.get(url, params=params, timeout=15)
+            response.raise_for_status()
+            data = response.json()
+
+        if ctx:
+            await ctx.info("Weather API response received successfully")
+            await ctx.report_progress(75, 100, "Processing weather data...")
 
         # Check if response is valid JSON
-        try:
-            data = response.json()
-        except ValueError as e:
-            return WeatherOutput(
-                weather_info="",
-                success=False,
-                error_message=f"Invalid JSON response from weather API: {str(e)}",
-            )
+        if not isinstance(data, dict):
+            try:
+                data = data.json() if hasattr(data, "json") else data
+            except ValueError as e:
+                if ctx:
+                    await ctx.error(f"Invalid JSON response from weather API: {str(e)}")
+                return WeatherOutput(
+                    weather_info="",
+                    success=False,
+                    error_message=f"Invalid JSON response from weather API: {str(e)}",
+                )
 
         # Check for API errors in response
         if isinstance(data, dict) and "error" in data:
             error_msg = data.get("error", "Unknown error")
+            if ctx:
+                await ctx.error(f"SerpAPI returned error: {error_msg}")
             return WeatherOutput(
                 weather_info="",
                 success=False,
@@ -296,6 +409,8 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
         if isinstance(data, dict) and "search_information" in data:
             search_info = data["search_information"]
             if search_info.get("total_results", 0) == 0:
+                if ctx:
+                    await ctx.error(f"No search results found for '{input.location}'")
                 return WeatherOutput(
                     weather_info="",
                     success=False,
@@ -307,6 +422,8 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
 
         # Ensure data is a dictionary
         if not isinstance(data, dict):
+            if ctx:
+                await ctx.error(f"Unexpected response format: {type(data).__name__}")
             return WeatherOutput(
                 weather_info="",
                 success=False,
@@ -315,6 +432,9 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
                     f"Expected JSON object, got: {type(data).__name__}"
                 ),
             )
+
+        if ctx:
+            await ctx.info("Processing weather data from API response")
 
         # Extract weather information from the response
         weather_info = []
@@ -421,6 +541,10 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
                 )
             else:
                 # If still no weather info, provide a helpful message
+                if ctx:
+                    await ctx.error(
+                        f"No weather information found for '{input.location}'"
+                    )
                 return WeatherOutput(
                     weather_info="",
                     success=False,
@@ -430,22 +554,129 @@ async def get_weather(input: WeatherInput) -> WeatherOutput:
                     ),
                 )
 
+        if ctx:
+            await ctx.info(
+                f"Weather data successfully processed for '{input.location}'"
+            )
+            await ctx.report_progress(
+                100, 100, "Weather request completed successfully!"
+            )
+
         return WeatherOutput(
             weather_info="\n".join(weather_info), success=True, error_message=""
         )
 
     except requests.RequestException as e:
+        if ctx:
+            await ctx.error(f"HTTP request failed: {str(e)}")
         return WeatherOutput(
             weather_info="",
             success=False,
             error_message=f"Error fetching weather data: {str(e)}",
         )
     except Exception as e:
+        if ctx:
+            await ctx.error(f"Unexpected error in weather processing: {str(e)}")
         return WeatherOutput(
             weather_info="",
             success=False,
             error_message=f"Error processing weather information: {str(e)}",
         )
+
+
+# ADDED: Demonstration tool to showcase context features
+@mcp.tool()
+async def demonstrate_context_features(
+    message: str = Field(description="A message to process", default="Hello FastMCP!"),
+    ctx: Context = None,
+) -> str:
+    """
+    Demonstrate FastMCP context features including logging and progress reporting.
+
+    This tool showcases:
+    - Different logging levels (debug, info, warning, error)
+    - Progress reporting with incremental updates
+    - Context information access
+
+    Args:
+        message: A message to process and demonstrate with
+        ctx: FastMCP context for logging and progress reporting
+
+    Returns:
+        A summary of the context demonstration
+    """
+    if not ctx:
+        return "Context not available - this tool requires FastMCP context to demonstrate features"
+
+    try:
+        # Demonstrate different logging levels
+        await ctx.debug(
+            f"🔍 DEBUG: Starting context demonstration with message: '{message}'"
+        )
+        await ctx.info(
+            f"ℹ️ INFO: Processing message of length {len(message)} characters"
+        )
+
+        # Demonstrate progress reporting
+        await ctx.report_progress(0, 100, "Starting context feature demonstration...")
+
+        # Simulate some processing with progress updates
+        import asyncio
+
+        await ctx.report_progress(25, 100, "Analyzing message content...")
+        await asyncio.sleep(0.1)  # Simulate work
+
+        # Check message content and provide warnings if needed
+        if len(message) > 100:
+            await ctx.warning(
+                f"⚠️ WARNING: Message is quite long ({len(message)} chars)"
+            )
+
+        await ctx.report_progress(50, 100, "Processing message transformations...")
+        await asyncio.sleep(0.1)  # Simulate work
+
+        # Transform the message
+        processed_message = message.upper()
+        await ctx.info(f"ℹ️ INFO: Message transformed to uppercase")
+
+        await ctx.report_progress(75, 100, "Generating response...")
+        await asyncio.sleep(0.1)  # Simulate work
+
+        # Access context information
+        request_id = ctx.request_id
+        client_id = ctx.client_id or "Unknown"
+
+        await ctx.info(f"ℹ️ INFO: Request ID: {request_id}")
+        await ctx.info(f"ℹ️ INFO: Client ID: {client_id}")
+
+        await ctx.report_progress(100, 100, "Context demonstration completed!")
+
+        # Create response
+        response = f"""
+🎯 Context Features Demonstration Complete!
+
+📝 Original Message: "{message}"
+🔄 Processed Message: "{processed_message}"
+📊 Message Length: {len(message)} characters
+🆔 Request ID: {request_id}
+👤 Client ID: {client_id}
+
+✅ Successfully demonstrated:
+- Debug, Info, Warning logging levels
+- Progress reporting (0% → 25% → 50% → 75% → 100%)
+- Context information access
+- Message processing workflow
+
+💡 Note: All logging and progress updates were sent to the MCP client!
+        """.strip()
+
+        await ctx.info("✅ Context demonstration completed successfully")
+        return response
+
+    except Exception as e:
+        if ctx:
+            await ctx.error(f"❌ ERROR: Context demonstration failed: {str(e)}")
+        return f"Error during context demonstration: {str(e)}"
 
 
 if __name__ == "__main__":
