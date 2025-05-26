@@ -220,7 +220,7 @@ async def main():
             print("=" * 60)
 
     except Exception as e:
-        print(f"\n❌ Connection failed after 2 retry attempts")
+        print("\n❌ Connection failed after 2 retry attempts")
         print(f"🔌 Server may not be running at: {sse_server_url}")
         print(f"💡 Error details: {str(e)}")
         print("\n🚀 To start the server, run:")
