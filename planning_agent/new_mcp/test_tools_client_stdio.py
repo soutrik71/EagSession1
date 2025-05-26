@@ -4,7 +4,7 @@ import logging
 import sys
 
 # Import the tools server instance
-from tools_server import mcp as tools_server
+from tools_server_stdio import mcp as tools_server
 
 # ADDED: Set up logging to capture context messages
 logging.basicConfig(
