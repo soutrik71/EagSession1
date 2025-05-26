@@ -1,0 +1,31 @@
+[project]
+name = "new-mcp"
+version = "0.1.0"
+description = "A new MCP ways of working as per the new MCP python module"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "faiss-cpu>=1.11.0",
+    "fastmcp>=2.5.1",
+    "langchain>=0.3.25",
+    "langchain-community>=0.3.24",
+    "langchain-core>=0.3.61",
+    "langchain-experimental>=0.3.4",
+    "langchain-openai>=0.3.18",
+    "langchain-text-splitters>=0.3.8",
+    "langgraph>=0.4.7",
+    "loguru>=0.7.3",
+    "ollama>=0.4.8",
+    "openai>=1.82.0",
+    "tiktoken>=0.9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["new_mcp"]
+
+[tool.uv]
+pip = { index-url = "https://pypi.org/simple" }
