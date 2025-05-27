@@ -1,0 +1,124 @@
+# Document Processing Pipeline Configuration
+# This file contains all configurable parameters for the document processing system
+
+# Directory and File Paths
+paths:
+  # Base directory for all operations (relative to script location)
+  root_dir: "."
+  
+  # Directory containing documents to be processed
+  documents_dir: "documents"
+  
+  # Directory for FAISS index and cache files
+  index_cache_dir: "faiss_index"
+  
+  # Subdirectory for extracted images
+  images_dir: "images"
+  
+  # Specific file names
+  files:
+    index_file: "index.bin"
+    metadata_file: "metadata.json"
+    cache_file: "doc_index_cache.json"
+
+# Text Processing Configuration
+text_processing:
+  # Basic text chunking parameters
+  chunk_size: 256              # Number of words per chunk
+  chunk_overlap: 40            # Number of overlapping words between chunks
+  max_chunk_length: 512        # Maximum characters per chunk
+  
+  # Semantic chunking parameters
+  semantic_word_limit: 512     # Word limit for semantic merge processing
+  min_words_for_semantic: 10   # Minimum words required to use semantic chunking
+  
+  # File type extensions to process
+  supported_extensions:
+    pdf: [".pdf"]
+    web: [".html", ".htm", ".url"]
+    # Other formats will use MarkItDown fallback
+
+# Search Configuration
+search:
+  # Number of top results to return by default
+  top_k: 5
+  
+  # FAISS index type (currently using IndexFlatL2)
+  index_type: "IndexFlatL2"
+
+# Document Extraction Configuration
+extraction:
+  # PDF extraction settings
+  pdf:
+    write_images: true
+    extract_tables: true
+    
+  # Web page extraction settings
+  webpage:
+    include_comments: false
+    include_tables: true
+    include_images: true
+    output_format: "markdown"
+    
+  # Image processing settings
+  images:
+    delete_after_caption: true
+    caption_placeholder: true  # Use placeholder until OpenAI vision is implemented
+
+# Logging Configuration
+logging:
+  # Log levels: DEBUG, INFO, WARN, ERROR
+  level: "INFO"
+  
+  # Log output destination
+  output: "stderr"  # stderr or file path
+
+# Processing Options - All behavior controlled here
+processing:
+  # Main operation mode - choose one
+  mode: "process"  # Options: "process", "clear", "search"
+  
+  # Processing behavior
+  force_rebuild: false         # Set to true to rebuild from scratch
+  skip_unchanged: true         # Skip files that haven't changed
+  
+  # Progress and error handling
+  show_progress: true
+  continue_on_error: true
+  
+  # Search query (when mode is "search")
+  search_query: ""
+
+# Model Configuration
+models:
+  # OpenAI model settings (currently handled by llm_utils)
+  chat_model: "gpt-4o"
+  embedding_model: "text-embedding-3-small"
+  
+  # Timeout settings
+  timeout: 30.0
+  
+  # Retry settings
+  max_retries: 3
+
+# Performance Settings
+performance:
+  # Batch processing
+  batch_size: 10
+  
+  # Memory management
+  max_memory_usage: "2GB"
+  
+  # Parallel processing (for future implementation)
+  max_workers: 4
+
+# Development and Debug Settings
+debug:
+  # Enable debug mode
+  enabled: false
+  
+  # Verbose logging
+  verbose: false
+  
+  # Save intermediate results
+  save_intermediate: false 
