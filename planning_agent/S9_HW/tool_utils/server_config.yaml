@@ -79,8 +79,8 @@ processing:
   mode: "process"  # Options: "process", "clear", "search"
   
   # Processing behavior
-  force_rebuild: false         # Set to true to rebuild from scratch
-  skip_unchanged: true         # Skip files that haven't changed
+  force_rebuild: true         # Set to true to rebuild from scratch
+  skip_unchanged: false         # Skip files that haven't changed
   
   # Progress and error handling
   show_progress: true

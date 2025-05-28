@@ -274,3 +274,34 @@ class UrlFetchOutput(BaseModel):
     content: str = Field(description="Extracted text content from the webpage")
     success: bool = Field(description="Whether the fetch was successful")
     error_message: str = Field(description="Error message if fetch failed", default="")
+
+
+# ================= Document Search Operations =================
+
+
+class DocumentSearchInput(BaseModel):
+    """Input model for document search operations"""
+
+    query: str = Field(description="Search query to find relevant documents")
+    top_k: int = Field(
+        description="Number of top results to return", default=5, ge=1, le=20
+    )
+
+
+class DocumentSearchResult(BaseModel):
+    """Individual search result from document search"""
+
+    chunk: str = Field(description="Text chunk that matched the query")
+    source: str = Field(description="Source document filename")
+    chunk_id: str = Field(description="Unique identifier for this chunk")
+    score: float = Field(description="Similarity score (lower is better)")
+
+
+class DocumentSearchOutput(BaseModel):
+    """Output model for document search operations"""
+
+    results: List[DocumentSearchResult] = Field(description="List of search results")
+    total_results: int = Field(description="Total number of results found")
+    query: str = Field(description="Original search query")
+    success: bool = Field(description="Whether the search was successful")
+    error_message: str = Field(description="Error message if search failed", default="")

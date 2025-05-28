@@ -20,7 +20,7 @@ from dataclasses import dataclass
 import yaml
 
 # Import our LLM utilities
-from llm_utils import LLMUtils
+from .llm_utils import LLMUtils
 
 # External libraries for document processing
 try:
@@ -36,6 +36,7 @@ class ConfigManager:
     """Manages configuration loading and access"""
 
     def __init__(self, config_path: str = "server_config.yaml"):
+        # Look for config file in the same directory as this file
         self.config_path = Path(__file__).parent / config_path
         self.config = self._load_config()
 
