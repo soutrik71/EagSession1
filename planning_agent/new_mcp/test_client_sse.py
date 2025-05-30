@@ -213,9 +213,7 @@ async def main():
             print("=" * 60)
             print("✅ All SSE tests completed successfully!")
             print("📡 SSE Transport: Connected to http://127.0.0.1:4201/sse")
-            print(
-                "📝 Note: Server-Sent Events provide real-time streaming capabilities"
-            )
+            print("📝 Note: Server-Sent Events provide real-time streaming capabilities")
             print("🔄 SSE allows for efficient server-to-client communication")
             print("=" * 60)
 

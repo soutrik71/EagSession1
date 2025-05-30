@@ -19,23 +19,40 @@ import hashlib
 
 # Models
 from models import (
-    AddInput, AddOutput,
-    SubtractInput, SubtractOutput,
-    MultiplyInput, MultiplyOutput,
-    DivideInput, DivideOutput,
-    PowerInput, PowerOutput,
-    CbrtInput, CbrtOutput,
-    FactorialInput, FactorialOutput,
-    RemainderInput, RemainderOutput,
-    SinInput, SinOutput,
-    CosInput, CosOutput,
-    TanInput, TanOutput,
-    MineInput, MineOutput,
-    CreateThumbnailInput, ImageOutput,
-    StringsToIntsInput, StringsToIntsOutput,
-    ExpSumInput, ExpSumOutput,
-    FibonacciInput, FibonacciOutput,
-    PythonCodeInput, PythonCodeOutput,
+    AddInput,
+    AddOutput,
+    SubtractInput,
+    SubtractOutput,
+    MultiplyInput,
+    MultiplyOutput,
+    DivideInput,
+    DivideOutput,
+    PowerInput,
+    PowerOutput,
+    CbrtInput,
+    CbrtOutput,
+    FactorialInput,
+    FactorialOutput,
+    RemainderInput,
+    RemainderOutput,
+    SinInput,
+    SinOutput,
+    CosInput,
+    CosOutput,
+    TanInput,
+    TanOutput,
+    MineInput,
+    MineOutput,
+    CreateThumbnailInput,
+    ImageOutput,
+    StringsToIntsInput,
+    StringsToIntsOutput,
+    ExpSumInput,
+    ExpSumOutput,
+    FibonacciInput,
+    FibonacciOutput,
+    PythonCodeInput,
+    PythonCodeOutput,
     ShellCommandInput,
 )
 
@@ -43,11 +60,13 @@ mcp = FastMCP("Calculator")
 
 # ------------------- Tools -------------------
 
+
 @mcp.tool()
 def add(input: AddInput) -> AddOutput:
     """Add two numbers. Usage: input={"input": {"a": 1, "b": 2}} result = await mcp.call_tool('add', input)"""
     print("CALLED: add(AddInput) -> AddOutput")
     return AddOutput(result=input.a + input.b)
+
 
 @mcp.tool()
 def subtract(input: SubtractInput) -> SubtractOutput:
@@ -55,11 +74,13 @@ def subtract(input: SubtractInput) -> SubtractOutput:
     print("CALLED: subtract(SubtractInput) -> SubtractOutput")
     return SubtractOutput(result=input.a - input.b)
 
+
 @mcp.tool()
 def multiply(input: MultiplyInput) -> MultiplyOutput:
     """Multiply two integers. Usage: input={"input": {"a": 6, "b": 7}} result = await mcp.call_tool('multiply', input)"""
     print("CALLED: multiply(MultiplyInput) -> MultiplyOutput")
     return MultiplyOutput(result=input.a * input.b)
+
 
 @mcp.tool()
 def divide(input: DivideInput) -> DivideOutput:
@@ -67,17 +88,20 @@ def divide(input: DivideInput) -> DivideOutput:
     print("CALLED: divide(DivideInput) -> DivideOutput")
     return DivideOutput(result=input.a / input.b)
 
+
 @mcp.tool()
 def power(input: PowerInput) -> PowerOutput:
     """Compute a raised to the power of b. Usage: input={"input": {"a": 2, "b": 10}} result = await mcp.call_tool('power', input)"""
     print("CALLED: power(PowerInput) -> PowerOutput")
-    return PowerOutput(result=input.a ** input.b)
+    return PowerOutput(result=input.a**input.b)
+
 
 @mcp.tool()
 def cbrt(input: CbrtInput) -> CbrtOutput:
     """Compute the cube root of a number. Usage: input={"input": {"a": 27}} result = await mcp.call_tool('cbrt', input)"""
     print("CALLED: cbrt(CbrtInput) -> CbrtOutput")
-    return CbrtOutput(result=input.a ** (1/3))
+    return CbrtOutput(result=input.a ** (1 / 3))
+
 
 @mcp.tool()
 def factorial(input: FactorialInput) -> FactorialOutput:
@@ -85,11 +109,13 @@ def factorial(input: FactorialInput) -> FactorialOutput:
     print("CALLED: factorial(FactorialInput) -> FactorialOutput")
     return FactorialOutput(result=math.factorial(input.a))
 
+
 @mcp.tool()
 def remainder(input: RemainderInput) -> RemainderOutput:
     """Compute the remainder of a divided by b. Usage: input={"input": {"a": 17, "b": 4}} result = await mcp.call_tool('remainder', input)"""
     print("CALLED: remainder(RemainderInput) -> RemainderOutput")
     return RemainderOutput(result=input.a % input.b)
+
 
 @mcp.tool()
 def sin(input: SinInput) -> SinOutput:
@@ -97,11 +123,13 @@ def sin(input: SinInput) -> SinOutput:
     print("CALLED: sin(SinInput) -> SinOutput")
     return SinOutput(result=math.sin(input.a))
 
+
 @mcp.tool()
 def cos(input: CosInput) -> CosOutput:
     """Compute cosine of an angle in radians. Usage: input={"input": {"a": 1}} result = await mcp.call_tool('cos', input)"""
     print("CALLED: cos(CosInput) -> CosOutput")
     return CosOutput(result=math.cos(input.a))
+
 
 @mcp.tool()
 def tan(input: TanInput) -> TanOutput:
@@ -109,11 +137,13 @@ def tan(input: TanInput) -> TanOutput:
     print("CALLED: tan(TanInput) -> TanOutput")
     return TanOutput(result=math.tan(input.a))
 
+
 @mcp.tool()
 def mine(input: MineInput) -> MineOutput:
     """Special mining tool. Usage: input={"input": {"a": 5, "b": 2}} result = await mcp.call_tool('mine', input)"""
     print("CALLED: mine(MineInput) -> MineOutput")
     return MineOutput(result=input.a - input.b - input.b)
+
 
 @mcp.tool()
 def create_thumbnail(input: CreateThumbnailInput) -> ImageOutput:
@@ -123,6 +153,7 @@ def create_thumbnail(input: CreateThumbnailInput) -> ImageOutput:
     img.thumbnail((100, 100))
     return ImageOutput(data=img.tobytes(), format="png")
 
+
 @mcp.tool()
 def strings_to_chars_to_int(input: StringsToIntsInput) -> StringsToIntsOutput:
     """Convert characters to ASCII values. Usage: input={"input": {"string": "INDIA"}} result = await mcp.call_tool('strings_to_chars_to_int', input)"""
@@ -131,13 +162,13 @@ def strings_to_chars_to_int(input: StringsToIntsInput) -> StringsToIntsOutput:
     return StringsToIntsOutput(result=ascii_values)
 
 
-
 @mcp.tool()
 def int_list_to_exponential_sum(input: ExpSumInput) -> ExpSumOutput:
     """Sum exponentials of int list. Usage: input={"input": {"numbers": [65, 66, 67]}} result = await mcp.call_tool('int_list_to_exponential_sum', input)"""
     print("CALLED: int_list_to_exponential_sum(ExpSumInput) -> ExpSumOutput")
     result = sum(math.exp(i) for i in input.numbers)
     return ExpSumOutput(result=result)
+
 
 @mcp.tool()
 def fibonacci_numbers(input: FibonacciInput) -> FibonacciOutput:
@@ -150,7 +181,6 @@ def fibonacci_numbers(input: FibonacciInput) -> FibonacciOutput:
     for _ in range(2, n):
         fib_sequence.append(fib_sequence[-1] + fib_sequence[-2])
     return FibonacciOutput(result=fib_sequence[:n])
-
 
 
 # @mcp.tool()
@@ -209,18 +239,22 @@ def fibonacci_numbers(input: FibonacciInput) -> FibonacciOutput:
 
 # ------------------- Resources -------------------
 
+
 @mcp.resource("greeting://{name}")
 def get_greeting(name: str) -> str:
     """Get a personalized greeting. Usage: input={"input": {"name": "Alice"}} result = await mcp.call_tool('get_greeting', input)"""
     print("CALLED: get_greeting(name: str) -> str")
     return f"Hello, {name}!"
 
+
 # ------------------- Prompts -------------------
+
 
 @mcp.prompt()
 def review_code(code: str) -> str:
     """Ask to review a code snippet. Usage: input={"input": {"code": "def add(a, b): return a+b"}} result = await mcp.call_tool('review_code', input)"""
     return f"Please review this code:\n\n{code}"
+
 
 @mcp.prompt()
 def debug_error(error: str) -> list:
@@ -230,6 +264,7 @@ def debug_error(error: str) -> list:
         base.UserMessage(error),
         base.AssistantMessage("I'll help debug that. What have you tried so far?"),
     ]
+
 
 # ------------------- Main -------------------
 

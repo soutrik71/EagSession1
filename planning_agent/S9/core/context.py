@@ -10,6 +10,7 @@ import uuid
 from datetime import datetime
 from pydantic import BaseModel
 
+
 class StrategyProfile(BaseModel):
     planning_mode: str
     exploration_mode: Optional[str] = None
@@ -32,9 +33,9 @@ class AgentProfile:
         self.llm_config = config["llm"]
         self.persona = config["persona"]
 
-
     def __repr__(self):
         return f"<AgentProfile {self.name} ({self.strategy})>"
+
 
 class AgentContext:
     """Holds all session state, user input, memory, and strategies."""
@@ -50,7 +51,9 @@ class AgentContext:
             today = datetime.now()
             ts = int(time.time())
             uid = uuid.uuid4().hex[:6]
-            session_id = f"{today.year}/{today.month:02}/{today.day:02}/session-{ts}-{uid}"
+            session_id = (
+                f"{today.year}/{today.month:02}/{today.day:02}/session-{ts}-{uid}"
+            )
 
         self.user_input = user_input
         self.agent_profile = AgentProfile()
@@ -61,21 +64,19 @@ class AgentContext:
         self.step = 0
         self.task_progress = []  # 🆕 Will track tool executions
         self.final_answer = None
-        
 
         # Log session start
-        self.add_memory(MemoryItem(
-            timestamp=time.time(),
-            text=f"Started new session with input: {user_input} at {datetime.utcnow().isoformat()}",
-            type="run_metadata",
-            session_id=self.session_id,
-            tags=["run_start"],
-            user_query=user_input,
-            metadata={
-                "start_time": datetime.now().isoformat(),
-                "step": self.step
-            }
-        ))
+        self.add_memory(
+            MemoryItem(
+                timestamp=time.time(),
+                text=f"Started new session with input: {user_input} at {datetime.utcnow().isoformat()}",
+                type="run_metadata",
+                session_id=self.session_id,
+                tags=["run_start"],
+                user_query=user_input,
+                metadata={"start_time": datetime.now().isoformat(), "step": self.step},
+            )
+        )
 
     def add_memory(self, item: MemoryItem):
         """Add item to memory"""
@@ -84,7 +85,7 @@ class AgentContext:
     def format_history_for_llm(self) -> str:
         if not self.tool_calls:
             return "No previous actions"
-            
+
         history = []
         for i, trace in enumerate(self.tool_calls, 1):
             result_str = str(trace.result)
@@ -92,18 +93,22 @@ class AgentContext:
                 if len(result_str) > 50:
                     result_str = f"{result_str[:50]}... [RESPONSE TRUNCATED]"
             # else: last step gets full result
-            
-            history.append(f"{i}. Used {trace.tool_name} with {trace.arguments}\nResult: {result_str}")
-        
+
+            history.append(
+                f"{i}. Used {trace.tool_name} with {trace.arguments}\nResult: {result_str}"
+            )
+
         return "\n\n".join(history)
 
     def log_subtask(self, tool_name: str, status: str = "pending"):
         """Log the start of a new subtask."""
-        self.task_progress.append({
-            "step": self.step,
-            "tool": tool_name,
-            "status": status,
-        })
+        self.task_progress.append(
+            {
+                "step": self.step,
+                "tool": tool_name,
+                "status": status,
+            }
+        )
 
     def update_subtask_status(self, tool_name: str, status: str):
         """Update the status of an existing subtask."""

@@ -49,9 +49,7 @@ async def test_simple_session():
             server_info = session.get_server_info()
 
             active_servers = {k: len(v) for k, v in server_info.items() if v}
-            print(
-                f"📋 Connected: {len(tools)} tools from {len(active_servers)} servers"
-            )
+            print(f"📋 Connected: {len(tools)} tools from {len(active_servers)} servers")
 
             if len(active_servers) == 0:
                 print("❌ No servers running. Start servers first.")

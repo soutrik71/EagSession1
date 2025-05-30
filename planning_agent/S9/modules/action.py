@@ -12,9 +12,11 @@ try:
     from agent import log
 except ImportError:
     import datetime
+
     def log(stage: str, msg: str):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] [{stage}] {msg}")
+
 
 class ToolCallResult(BaseModel):
     tool_name: str
@@ -22,7 +24,9 @@ class ToolCallResult(BaseModel):
     result: Union[str, list, dict]
     raw_response: Any
 
+
 MAX_TOOL_CALLS_PER_PLAN = 5
+
 
 async def run_python_sandbox(code: str, dispatcher: Any) -> str:
     print("[action] 🔍 Entered run_python_sandbox()")
@@ -40,7 +44,9 @@ async def run_python_sandbox(code: str, dispatcher: Any) -> str:
             async def call_tool(self, tool_name: str, input_dict: dict):
                 self.call_count += 1
                 if self.call_count > MAX_TOOL_CALLS_PER_PLAN:
-                    raise RuntimeError(f"Exceeded max tool calls ({MAX_TOOL_CALLS_PER_PLAN}) in solve() plan.")
+                    raise RuntimeError(
+                        f"Exceeded max tool calls ({MAX_TOOL_CALLS_PER_PLAN}) in solve() plan."
+                    )
                 # REAL tool call now
                 result = await self.dispatcher.call_tool(tool_name, input_dict)
                 return result
@@ -49,6 +55,7 @@ async def run_python_sandbox(code: str, dispatcher: Any) -> str:
 
         # Preload safe built-ins into the sandbox
         import json, re
+
         sandbox.__dict__["json"] = json
         sandbox.__dict__["re"] = re
 
@@ -73,11 +80,6 @@ async def run_python_sandbox(code: str, dispatcher: Any) -> str:
             return f"{' '.join(str(r) for r in result)}"
         else:
             return f"{result}"
-
-
-
-
-
 
     except Exception as e:
         log("sandbox", f"⚠️ Execution error: {e}")

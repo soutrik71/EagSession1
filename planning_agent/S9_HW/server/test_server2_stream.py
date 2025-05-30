@@ -146,9 +146,7 @@ async def test_server2_stream():
                     )
                     parsed_result = parse_result(result[0].text)
                     success = parsed_result.get("success", False)
-                    rapid_results.append(
-                        f"Query '{query}': {'✅' if success else '❌'}"
-                    )
+                    rapid_results.append(f"Query '{query}': {'✅' if success else '❌'}")
                 except Exception as e:
                     rapid_results.append(f"Query '{query}': ❌ {type(e).__name__}")
 

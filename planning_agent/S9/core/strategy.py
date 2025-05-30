@@ -12,11 +12,15 @@ try:
     from agent import log
 except ImportError:
     import datetime
+
     def log(stage: str, msg: str):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] [{stage}] {msg}")
 
-def select_decision_prompt_path(planning_mode: str, exploration_mode: Optional[str] = None) -> str:
+
+def select_decision_prompt_path(
+    planning_mode: str, exploration_mode: Optional[str] = None
+) -> str:
     """Selects the appropriate decision prompt file based on planning strategy."""
     if planning_mode == "conservative":
         return "prompts/decision_prompt_conservative.txt"
@@ -27,7 +31,9 @@ def select_decision_prompt_path(planning_mode: str, exploration_mode: Optional[s
             return "prompts/decision_prompt_exploratory_sequential.txt"
     return "prompts/decision_prompt_conservative.txt"  # safe fallback
 
+
 model = ModelManager()
+
 
 async def decide_next_action(
     context: AgentContext,
@@ -60,14 +66,29 @@ async def decide_next_action(
 
     if planning_mode == "conservative":
         return await conservative_plan(
-            perception, memory_items, filtered_summary, all_tools, step_num, max_steps,
-            prompt_path, force_replan
+            perception,
+            memory_items,
+            filtered_summary,
+            all_tools,
+            step_num,
+            max_steps,
+            prompt_path,
+            force_replan,
         )
 
     if planning_mode == "exploratory":
         return await exploratory_plan(
-            perception, memory_items, filtered_summary, all_tools, step_num, max_steps,
-            exploration_mode, memory_fallback_enabled, prompt_path, force_replan, failed_tools
+            perception,
+            memory_items,
+            filtered_summary,
+            all_tools,
+            step_num,
+            max_steps,
+            exploration_mode,
+            memory_fallback_enabled,
+            prompt_path,
+            force_replan,
+            failed_tools,
         )
 
     # Fallback
@@ -82,6 +103,7 @@ async def decide_next_action(
     )
     return plan
 
+
 # === CONSERVATIVE MODE ===
 async def conservative_plan(
     perception: PerceptionResult,
@@ -91,7 +113,7 @@ async def conservative_plan(
     step_num: int,
     max_steps: int,
     prompt_path: str,
-    force_replan: bool
+    force_replan: bool,
 ) -> str:
     """Conservative: Plan 1 tool call."""
 
@@ -107,10 +129,11 @@ async def conservative_plan(
         tool_descriptions=tool_context,
         prompt_path=prompt_path,
         step_num=step_num,
-        max_steps=max_steps
+        max_steps=max_steps,
     )
 
     return plan
+
 
 # === EXPLORATORY MODE ===
 async def exploratory_plan(
@@ -124,7 +147,7 @@ async def exploratory_plan(
     memory_fallback_enabled: bool,
     prompt_path: str,
     force_replan: bool,
-    failed_tools: List[str]
+    failed_tools: List[str],
 ) -> str:
     """Exploratory: Plan multiple options."""
 
@@ -142,7 +165,7 @@ async def exploratory_plan(
                     tool_descriptions=fallback_summary,
                     prompt_path=prompt_path,
                     step_num=step_num,
-                    max_steps=max_steps
+                    max_steps=max_steps,
                 )
             else:
                 log("strategy", "⚠️ No memory fallback tools. Using all tools.")
@@ -154,7 +177,7 @@ async def exploratory_plan(
             tool_descriptions=tool_context,
             prompt_path=prompt_path,
             step_num=step_num,
-            max_steps=max_steps
+            max_steps=max_steps,
         )
 
     if not filtered_summary.strip():
@@ -169,10 +192,11 @@ async def exploratory_plan(
         tool_descriptions=tool_context,
         prompt_path=prompt_path,
         step_num=step_num,
-        max_steps=max_steps
+        max_steps=max_steps,
     )
 
     return plan
+
 
 # === GENERATE PLAN ===
 async def generate_plan(
@@ -188,8 +212,7 @@ async def generate_plan(
     prompt_template = load_prompt(prompt_path)
 
     final_prompt = prompt_template.format(
-        tool_descriptions=tool_descriptions,
-        user_input=perception.user_input
+        tool_descriptions=tool_descriptions, user_input=perception.user_input
     )
 
     raw = (await model.generate_text(final_prompt)).strip()
@@ -197,8 +220,11 @@ async def generate_plan(
 
     return raw
 
+
 # === MEMORY FALLBACK LOGIC ===
-def find_recent_successful_tools(memory_items: List[MemoryItem], limit: int = 5) -> List[str]:
+def find_recent_successful_tools(
+    memory_items: List[MemoryItem], limit: int = 5
+) -> List[str]:
     """Find recent successful tool names based on memory items."""
     successful_tools = []
 

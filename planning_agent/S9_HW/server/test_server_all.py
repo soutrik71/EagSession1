@@ -130,9 +130,7 @@ async def test_all_servers():
                 result = await client.call_tool(
                     "calculator_create_thumbnail", {"input": {"image_path": "test.jpg"}}
                 )
-                print(
-                    f"🔍 Raw result for calculator_create_thumbnail: {result[0].text}"
-                )
+                print(f"🔍 Raw result for calculator_create_thumbnail: {result[0].text}")
                 print(f"✅ thumbnail(test.jpg) = {parse_result(result[0].text)}")
             except Exception as e:
                 print(f"⚠️  thumbnail(test.jpg) failed (expected): {type(e).__name__}")

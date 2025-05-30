@@ -12,6 +12,7 @@ ROOT = Path(__file__).parent.parent
 MODELS_JSON = ROOT / "config" / "models.json"
 PROFILE_YAML = ROOT / "config" / "profiles.yaml"
 
+
 class ModelManager:
     def __init__(self):
         self.config = json.loads(MODELS_JSON.read_text())
@@ -37,8 +38,7 @@ class ModelManager:
 
     def _gemini_generate(self, prompt: str) -> str:
         response = self.client.models.generate_content(
-            model=self.model_info["model"],
-            contents=prompt
+            model=self.model_info["model"], contents=prompt
         )
 
         # ✅ Safely extract response text
@@ -53,7 +53,7 @@ class ModelManager:
     def _ollama_generate(self, prompt: str) -> str:
         response = requests.post(
             self.model_info["url"]["generate"],
-            json={"model": self.model_info["model"], "prompt": prompt, "stream": False}
+            json={"model": self.model_info["model"], "prompt": prompt, "stream": False},
         )
         response.raise_for_status()
         return response.json()["response"].strip()

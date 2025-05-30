@@ -14,14 +14,17 @@ try:
     from agent import log
 except ImportError:
     import datetime
+
     def log(stage: str, msg: str):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] [{stage}] {msg}")
+
 
 model = ModelManager()
 
 
 prompt_path = "prompts/perception_prompt.txt"
+
 
 class PerceptionResult(BaseModel):
     intent: str
@@ -30,7 +33,10 @@ class PerceptionResult(BaseModel):
     tags: List[str] = []
     selected_servers: List[str] = []  # 🆕 NEW field
 
-async def extract_perception(user_input: str, mcp_server_descriptions: dict) -> PerceptionResult:
+
+async def extract_perception(
+    user_input: str, mcp_server_descriptions: dict
+) -> PerceptionResult:
     """
     Extracts perception details and selects relevant MCP servers based on the user query.
     """
@@ -43,13 +49,8 @@ async def extract_perception(user_input: str, mcp_server_descriptions: dict) -> 
     servers_text = "\n".join(server_list)
 
     prompt_template = load_prompt(prompt_path)
-    
 
-    prompt = prompt_template.format(
-        servers_text=servers_text,
-        user_input=user_input
-    )
-    
+    prompt = prompt_template.format(servers_text=servers_text, user_input=user_input)
 
     try:
         raw = await model.generate_text(prompt)
@@ -75,17 +76,15 @@ async def extract_perception(user_input: str, mcp_server_descriptions: dict) -> 
             entities=[],
             tool_hint=None,
             tags=[],
-            selected_servers=list(mcp_server_descriptions.keys())
+            selected_servers=list(mcp_server_descriptions.keys()),
         )
 
 
 async def run_perception(context: AgentContext, user_input: Optional[str] = None):
-
     """
     Clean wrapper to call perception from context.
     """
     return await extract_perception(
-        user_input = user_input or context.user_input,
-        mcp_server_descriptions=context.mcp_server_descriptions
+        user_input=user_input or context.user_input,
+        mcp_server_descriptions=context.mcp_server_descriptions,
     )
-

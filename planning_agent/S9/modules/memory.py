@@ -11,12 +11,15 @@ try:
     from agent import log
 except ImportError:
     import datetime
+
     def log(stage: str, msg: str):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] [{stage}] {msg}")
 
+
 class MemoryItem(BaseModel):
     """Represents a single memory entry for a session."""
+
     timestamp: float
     type: str  # run_metadata, tool_call, tool_output, final_answer
     text: str
@@ -35,7 +38,13 @@ class MemoryManager:
     def __init__(self, session_id: str, memory_dir: str = "memory"):
         self.session_id = session_id
         self.memory_dir = memory_dir
-        self.memory_path = os.path.join('memory', session_id.split('-')[0], session_id.split('-')[1], session_id.split('-')[2], f'session-{session_id}.json')
+        self.memory_path = os.path.join(
+            "memory",
+            session_id.split("-")[0],
+            session_id.split("-")[1],
+            session_id.split("-")[2],
+            f"session-{session_id}.json",
+        )
         self.items: List[MemoryItem] = []
 
         if not os.path.exists(self.memory_dir):
@@ -76,7 +85,12 @@ class MemoryManager:
         self.add(item)
 
     def add_tool_output(
-        self, tool_name: str, tool_args: dict, tool_result: dict, success: bool, tags: Optional[List[str]] = None
+        self,
+        tool_name: str,
+        tool_args: dict,
+        tool_result: dict,
+        success: bool,
+        tags: Optional[List[str]] = None,
     ):
         item = MemoryItem(
             timestamp=time.time(),
@@ -118,13 +132,19 @@ class MemoryManager:
 
         # Search backwards for latest matching tool call/output
         for item in reversed(self.items):
-            if item.tool_name == tool_name and item.type in {"tool_call", "tool_output"}:
+            if item.tool_name == tool_name and item.type in {
+                "tool_call",
+                "tool_output",
+            }:
                 item.success = success
                 log("memory", f"✅ Marked {tool_name} as success={success}")
                 self.save()
                 return
 
-        log("memory", f"⚠️ Tried to mark {tool_name} as success={success} but no matching memory found.")
+        log(
+            "memory",
+            f"⚠️ Tried to mark {tool_name} as success={success} but no matching memory found.",
+        )
 
     def get_session_items(self) -> List[MemoryItem]:
         """

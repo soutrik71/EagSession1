@@ -124,9 +124,7 @@ async def connect_and_test_multi_server():
                     "stdio_tools_roll_dice", {"sides": 6, "count": 2}
                 )
                 dice_data = json.loads(result[0].text)
-                print(
-                    f"🎲 Dice roll (2d6): {dice_data['rolls']} = {dice_data['total']}"
-                )
+                print(f"🎲 Dice roll (2d6): {dice_data['rolls']} = {dice_data['total']}")
             except Exception as e:
                 print(f"❌ roll_dice failed: {str(e)}")
 

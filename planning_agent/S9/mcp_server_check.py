@@ -5,10 +5,7 @@ import json
 
 
 async def main():
-    server_params = StdioServerParameters(
-        command="python",
-        args=["mcp_server_1.py"]
-    )
+    server_params = StdioServerParameters(command="python", args=["mcp_server_1.py"])
 
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:

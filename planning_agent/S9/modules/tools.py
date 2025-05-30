@@ -3,6 +3,7 @@
 from typing import List, Dict, Optional, Any
 import re
 
+
 def extract_json_block(text: str) -> str:
     match = re.search(r"```json\n(.*?)```", text, re.DOTALL)
     if match:
@@ -40,12 +41,17 @@ def get_tool_map(tools: List[Any]) -> Dict[str, Any]:
     """
     return {tool.name: tool for tool in tools}
 
+
 def tool_expects_input(self, tool_name: str) -> bool:
     tool = next((t for t in self.tools if t.name == tool_name), None)
-    if not tool or not hasattr(tool, 'parameters') or not isinstance(tool.parameters, dict):
+    if (
+        not tool
+        or not hasattr(tool, "parameters")
+        or not isinstance(tool.parameters, dict)
+    ):
         return False
     # If the top-level parameter is just 'input', we assume wrapping is required
-    return list(tool.parameters.keys()) == ['input']
+    return list(tool.parameters.keys()) == ["input"]
 
 
 def load_prompt(path: str) -> str:

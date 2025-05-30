@@ -13,7 +13,24 @@ from pathlib import Path
 import requests
 from markitdown import MarkItDown
 import time
-from models import AddInput, AddOutput, SqrtInput, SqrtOutput, StringsToIntsInput, StringsToIntsOutput, ExpSumInput, ExpSumOutput, PythonCodeInput, PythonCodeOutput, UrlInput, FilePathInput, MarkdownInput, MarkdownOutput, ChunkListOutput, SearchDocumentsInput
+from models import (
+    AddInput,
+    AddOutput,
+    SqrtInput,
+    SqrtOutput,
+    StringsToIntsInput,
+    StringsToIntsOutput,
+    ExpSumInput,
+    ExpSumOutput,
+    PythonCodeInput,
+    PythonCodeOutput,
+    UrlInput,
+    FilePathInput,
+    MarkdownInput,
+    MarkdownOutput,
+    ChunkListOutput,
+    SearchDocumentsInput,
+)
 from tqdm import tqdm
 import hashlib
 from pydantic import BaseModel
@@ -22,7 +39,7 @@ import sqlite3
 import trafilatura
 import pymupdf4llm
 import re
-import base64 # ollama needs base64-encoded-image
+import base64  # ollama needs base64-encoded-image
 
 
 mcp = FastMCP("Calculator")
@@ -46,19 +63,19 @@ def get_embedding(text: str) -> np.ndarray:
     result.raise_for_status()
     return np.array(result.json()["embedding"], dtype=np.float32)
 
+
 def chunk_text(text, size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
     words = text.split()
     for i in range(0, len(words), size - overlap):
-        yield " ".join(words[i:i+size])
+        yield " ".join(words[i : i + size])
+
 
 def mcp_log(level: str, message: str) -> None:
     sys.stderr.write(f"{level}: {message}\n")
     sys.stderr.flush()
 
+
 # === CHUNKING ===
-
-
-
 
 
 def are_related(chunk1: str, chunk2: str, index: int) -> bool:
@@ -84,16 +101,18 @@ Just respond in one word (Yes or No), and do not provide any further explanation
     print(f"  Chunk {index} → {chunk1[:60]}{'...' if len(chunk1) > 60 else ''}")
     print(f"  Chunk {index+1} → {chunk2[:60]}{'...' if len(chunk2) > 60 else ''}")
 
-    result = requests.post(OLLAMA_CHAT_URL, json={
-        "model": PHI_MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "stream": False
-    })
+    result = requests.post(
+        OLLAMA_CHAT_URL,
+        json={
+            "model": PHI_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "stream": False,
+        },
+    )
     result.raise_for_status()
     reply = result.json().get("message", {}).get("content", "").strip().lower()
     print(f"  ✅ Model reply: {reply}")
     return reply.startswith("yes")
-
 
 
 @mcp.tool()
@@ -106,12 +125,14 @@ def search_stored_documents(input: SearchDocumentsInput) -> list[str]:
     try:
         index = faiss.read_index(str(ROOT / "faiss_index" / "index.bin"))
         metadata = json.loads((ROOT / "faiss_index" / "metadata.json").read_text())
-        query_vec = get_embedding(query ).reshape(1, -1)
+        query_vec = get_embedding(query).reshape(1, -1)
         D, I = index.search(query_vec, k=5)
         results = []
         for idx in I[0]:
             data = metadata[idx]
-            results.append(f"{data['chunk']}\n[Source: {data['doc']}, ID: {data['chunk_id']}]")
+            results.append(
+                f"{data['chunk']}\n[Source: {data['doc']}, ID: {data['chunk_id']}]"
+            )
         return results
     except Exception as e:
         return [f"ERROR: Failed to search: {str(e)}"]
@@ -128,7 +149,7 @@ def caption_image(img_url_or_path: str) -> str:
         return f"[Image file not found: {img_url_or_path}]"
 
     try:
-        if img_url_or_path.startswith("http"): # for extract_web_pages
+        if img_url_or_path.startswith("http"):  # for extract_web_pages
             result = requests.get(img_url_or_path)
             encoded_image = base64.b64encode(result.content).decode("utf-8")
         else:
@@ -136,13 +157,16 @@ def caption_image(img_url_or_path: str) -> str:
                 encoded_image = base64.b64encode(img_file.read()).decode("utf-8")
 
         # Set stream=True to get the full generator-style output
-        with requests.post(OLLAMA_URL, json={
-            "model": GEMMA_MODEL,
-            "prompt": "If there is lot of text in the image, then ONLY reply back with exact text in the image, else Describe the image such that your result can replace 'alt-text' for it. Only explain the contents of the image and provide no further explaination.",
-            "images": [encoded_image],
-            "stream": True
-        }, stream=True) as result:
-
+        with requests.post(
+            OLLAMA_URL,
+            json={
+                "model": GEMMA_MODEL,
+                "prompt": "If there is lot of text in the image, then ONLY reply back with exact text in the image, else Describe the image such that your result can replace 'alt-text' for it. Only explain the contents of the image and provide no further explaination.",
+                "images": [encoded_image],
+                "stream": True,
+            },
+            stream=True,
+        ) as result:
             caption_parts = []
             for line in result.iter_lines():
                 if not line:
@@ -164,9 +188,6 @@ def caption_image(img_url_or_path: str) -> str:
         return f"[Image could not be processed: {img_url_or_path}]"
 
 
-
-
-
 def replace_images_with_captions(markdown: str) -> str:
     def replace(match):
         alt, src = match.group(1), match.group(2)
@@ -183,7 +204,7 @@ def replace_images_with_captions(markdown: str) -> str:
             mcp_log("WARN", f"Image deletion failed: {e}")
             return f"[Image could not be processed: {src}]"
 
-    return re.sub(r'!\[(.*?)\]\((.*?)\)', replace, markdown)
+    return re.sub(r"!\[(.*?)\]\((.*?)\)", replace, markdown)
 
 
 @mcp.tool()
@@ -194,21 +215,24 @@ def convert_webpage_url_into_markdown(input: UrlInput) -> MarkdownOutput:
     if not downloaded:
         return MarkdownOutput(markdown="Failed to download the webpage.")
 
-    markdown = trafilatura.extract(
-        downloaded,
-        include_comments=False,
-        include_tables=True,
-        include_images=True,
-        output_format='markdown'
-    ) or ""
+    markdown = (
+        trafilatura.extract(
+            downloaded,
+            include_comments=False,
+            include_tables=True,
+            include_images=True,
+            output_format="markdown",
+        )
+        or ""
+    )
 
     markdown = replace_images_with_captions(markdown)
     return MarkdownOutput(markdown=markdown)
 
+
 @mcp.tool()
 def extract_pdf(input: FilePathInput) -> MarkdownOutput:
     """Convert PDF to markdown. Usage: input={"input": {"file_path": "documents/sample.pdf"} } result = await mcp.call_tool('extract_pdf', input)"""
-
 
     if not os.path.exists(input.file_path):
         return MarkdownOutput(markdown=f"File not found: {input.file_path}")
@@ -219,16 +243,12 @@ def extract_pdf(input: FilePathInput) -> MarkdownOutput:
 
     # Actual markdown with relative image paths
     markdown = pymupdf4llm.to_markdown(
-        input.file_path,
-        write_images=True,
-        image_path=str(global_image_dir)
+        input.file_path, write_images=True, image_path=str(global_image_dir)
     )
 
     # Re-point image links in the markdown
     markdown = re.sub(
-        r'!\[\]\((.*?/images/)([^)]+)\)',
-        r'![](images/\2)',
-        markdown.replace("\\", "/")
+        r"!\[\]\((.*?/images/)([^)]+)\)", r"![](images/\2)", markdown.replace("\\", "/")
     )
 
     markdown = replace_images_with_captions(markdown)
@@ -244,7 +264,7 @@ def semantic_merge(text: str) -> list[str]:
 
     while i < len(words):
         # 1. Take next chunk of words (and prepend leftovers if any)
-        chunk_words = words[i:i + WORD_LIMIT]
+        chunk_words = words[i : i + WORD_LIMIT]
         chunk_text = " ".join(chunk_words).strip()
 
         prompt = f"""
@@ -264,11 +284,14 @@ Keep markdown formatting intact.
 """
 
         try:
-            result = requests.post(OLLAMA_CHAT_URL, json={
-                "model": PHI_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "stream": False
-            })
+            result = requests.post(
+                OLLAMA_CHAT_URL,
+                json={
+                    "model": PHI_MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                },
+            )
             reply = result.json().get("message", {}).get("content", "").strip()
 
             if reply:
@@ -282,7 +305,7 @@ Keep markdown formatting intact.
 
                     # Get remaining words from second_part and re-use them in next batch
                     leftover_words = second_part.split()
-                    words = leftover_words + words[i + WORD_LIMIT:]
+                    words = leftover_words + words[i + WORD_LIMIT :]
                     i = 0  # restart loop with leftover + remaining
                     continue
                 else:
@@ -298,11 +321,6 @@ Keep markdown formatting intact.
         i += WORD_LIMIT
 
     return final_chunks
-
-
-
-
-
 
 
 def process_documents():
@@ -340,7 +358,9 @@ def process_documents():
 
             elif ext in [".html", ".htm", ".url"]:
                 mcp_log("INFO", f"Using Trafilatura to extract {file.name}")
-                markdown = extract_webpage(UrlInput(url=file.read_text().strip())).markdown
+                markdown = extract_webpage(
+                    UrlInput(url=file.read_text().strip())
+                ).markdown
 
             else:
                 # Fallback to MarkItDown for other formats
@@ -353,23 +373,26 @@ def process_documents():
                 continue
 
             if len(markdown.split()) < 10:
-                mcp_log("WARN", f"Content too short for semantic merge in {file.name} → Skipping chunking.")
+                mcp_log(
+                    "WARN",
+                    f"Content too short for semantic merge in {file.name} → Skipping chunking.",
+                )
                 chunks = [markdown.strip()]
             else:
-                mcp_log("INFO", f"Running semantic merge on {file.name} with {len(markdown.split())} words")
+                mcp_log(
+                    "INFO",
+                    f"Running semantic merge on {file.name} with {len(markdown.split())} words",
+                )
                 chunks = semantic_merge(markdown)
-
 
             embeddings_for_file = []
             new_metadata = []
             for i, chunk in enumerate(tqdm(chunks, desc=f"Embedding {file.name}")):
                 embedding = get_embedding(chunk)
                 embeddings_for_file.append(embedding)
-                new_metadata.append({
-                    "doc": file.name,
-                    "chunk": chunk,
-                    "chunk_id": f"{file.stem}_{i}"
-                })
+                new_metadata.append(
+                    {"doc": file.name, "chunk": chunk, "chunk_id": f"{file.stem}_{i}"}
+                )
 
             if embeddings_for_file:
                 if index is None:
@@ -383,15 +406,18 @@ def process_documents():
                 CACHE_FILE.write_text(json.dumps(CACHE_META, indent=2))
                 METADATA_FILE.write_text(json.dumps(metadata, indent=2))
                 faiss.write_index(index, str(INDEX_FILE))
-                mcp_log("SAVE", f"Saved FAISS index and metadata after processing {file.name}")
+                mcp_log(
+                    "SAVE",
+                    f"Saved FAISS index and metadata after processing {file.name}",
+                )
 
         except Exception as e:
             mcp_log("ERROR", f"Failed to process {file.name}: {e}")
 
 
-
 def ensure_faiss_ready():
     from pathlib import Path
+
     index_path = ROOT / "faiss_index" / "index.bin"
     meta_path = ROOT / "faiss_index" / "metadata.json"
     if not (index_path.exists() and meta_path.exists()):
@@ -405,20 +431,21 @@ if __name__ == "__main__":
     print("STARTING THE SERVER AT AMAZING LOCATION")
 
     if len(sys.argv) > 1 and sys.argv[1] == "dev":
-        mcp.run() # Run without transport for dev server
+        mcp.run()  # Run without transport for dev server
     else:
         # Start the server in a separate thread
         import threading
+
         server_thread = threading.Thread(target=lambda: mcp.run(transport="stdio"))
         server_thread.daemon = True
         server_thread.start()
-        
+
         # Wait a moment for the server to start
         time.sleep(2)
-        
+
         # Process documents after server is running
         process_documents()
-        
+
         # Keep the main thread alive
         try:
             while True:
