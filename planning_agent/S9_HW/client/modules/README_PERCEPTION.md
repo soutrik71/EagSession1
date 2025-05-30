@@ -170,7 +170,7 @@ chain = prompt | llm | PydanticOutputParser(pydantic_object=PerceptionResult)
 Optimized `server:tool:description` format for efficient LLM processing:
 ```
 calculator:calculator_add:Add two numbers
-calculator:calculator_subtract:Subtract one number from another
+calculator:calculator_subtract:Subtract one number from another  
 calculator:calculator_multiply:Multiply two numbers
 calculator:calculator_divide:Divide one number by another
 calculator:calculator_sin:Calculate sine of an angle in radians

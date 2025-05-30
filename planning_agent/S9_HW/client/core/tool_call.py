@@ -9,6 +9,7 @@ sequential chains with result passing, and hybrid approaches.
 
 import asyncio
 import logging
+import json
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 
@@ -130,7 +131,7 @@ class ToolCallExecutor:
         self, tool_calls: List[Dict[str, Any]]
     ) -> List[ToolExecutionResult]:
         """
-        Execute multiple tools in parallel
+        Execute multiple tools in parallel using a loop approach to avoid session conflicts
 
         Args:
             tool_calls: List of tool call specifications
@@ -140,30 +141,48 @@ class ToolCallExecutor:
         """
         self.logger.info(f"🚀 Executing {len(tool_calls)} tools in parallel")
 
-        # Create tasks for parallel execution
-        tasks = [self.execute_single_tool(tc) for tc in tool_calls]
+        # Execute tools with a loop and small delays to avoid session conflicts
+        results = []
 
-        # Execute all tasks concurrently
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        try:
+            for i, tool_call in enumerate(tool_calls):
+                # Add small delay between tool executions to prevent session conflicts
+                if i > 0:
+                    await asyncio.sleep(0.1)
 
-        # Process results and handle exceptions
-        final_results = []
-        for i, result in enumerate(results):
-            if isinstance(result, Exception):
-                # Convert exception to error result
-                final_results.append(
+                self.logger.info(
+                    f"🔧 Executing parallel tool {i+1}/{len(tool_calls)}: {tool_call.get('tool_name', 'unknown')}"
+                )
+
+                # Execute the tool
+                result = await self.execute_single_tool(tool_call)
+                results.append(result)
+
+                # Log the result
+                if result.success:
+                    self.logger.info(f"✅ Parallel tool {i+1} completed successfully")
+                else:
+                    self.logger.warning(f"⚠️ Parallel tool {i+1} failed: {result.error}")
+
+        except Exception as e:
+            self.logger.error(f"❌ Parallel execution failed: {e}")
+
+            # Fill remaining results with errors if we didn't complete all tools
+            for j in range(len(results), len(tool_calls)):
+                results.append(
                     ToolExecutionResult(
-                        tool_name=tool_calls[i].get("tool_name", "unknown"),
-                        step=tool_calls[i].get("step", i + 1),
+                        tool_name=tool_calls[j].get("tool_name", "unknown"),
+                        step=tool_calls[j].get("step", j + 1),
                         success=False,
-                        error=str(result),
-                        result_variable=tool_calls[i].get("result_variable"),
+                        error=f"Parallel execution failed: {str(e)}",
+                        result_variable=tool_calls[j].get("result_variable"),
                     )
                 )
-            else:
-                final_results.append(result)
 
-        return final_results
+        self.logger.info(
+            f"🏁 Parallel execution completed: {len([r for r in results if r.success])}/{len(results)} successful"
+        )
+        return results
 
     def _extract_result_variables(
         self, parameters: Dict[str, Any], previous_results: Dict[str, Any]
@@ -181,27 +200,51 @@ class ToolCallExecutor:
         if not previous_results:
             return parameters
 
-        # Convert parameters to string for replacement
-        param_str = str(parameters)
+        def substitute_in_object(obj):
+            """Recursively substitute variables in nested objects"""
+            if isinstance(obj, dict):
+                return {k: substitute_in_object(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [substitute_in_object(item) for item in obj]
+            elif isinstance(obj, str):
+                # Check if this string contains variable patterns
+                for var_name, var_value in previous_results.items():
+                    pattern = f"${{{{{var_name}}}}}"
+                    if pattern in obj:
+                        self.logger.info(f"🔄 Substituting {pattern} with {var_value}")
 
-        # Replace each variable
-        for var_name, var_value in previous_results.items():
-            # Look for patterns like ${{var_name}}
-            pattern = f"${{{{{var_name}}}}}"
-            if pattern in param_str:
-                self.logger.info(f"🔄 Substituting {pattern} with {var_value}")
-                param_str = param_str.replace(pattern, str(var_value))
+                        # If the entire string is just the variable, replace with the actual value
+                        if obj == pattern:
+                            # Extract the actual numeric value from the result
+                            if isinstance(var_value, str):
+                                try:
+                                    # Try to parse JSON if it's a JSON string
+                                    parsed_value = json.loads(var_value)
+                                    if (
+                                        isinstance(parsed_value, dict)
+                                        and "result" in parsed_value
+                                    ):
+                                        return parsed_value["result"]
+                                    return parsed_value
+                                except (json.JSONDecodeError, ValueError):
+                                    return var_value
+                            return var_value
+                        else:
+                            # Replace the pattern within the string
+                            if isinstance(var_value, (int, float)):
+                                obj = obj.replace(pattern, str(var_value))
+                            else:
+                                obj = obj.replace(pattern, str(var_value))
+                return obj
+            else:
+                return obj
 
-        # Try to reconstruct the parameters (simple case)
         try:
-            # This is a simplified approach - in reality you'd need more sophisticated parsing
-            import ast
-
-            return ast.literal_eval(param_str)
-        except Exception:
-            # Fallback: try manual JSON-like reconstruction
-            # For now, return original parameters if substitution fails
-            self.logger.warning(f"Could not substitute variables in {parameters}")
+            result = substitute_in_object(parameters)
+            self.logger.info(f"🔄 Parameters after substitution: {result}")
+            return result
+        except Exception as e:
+            self.logger.warning(f"Could not substitute variables in {parameters}: {e}")
             return parameters
 
     async def execute_sequential_tools(

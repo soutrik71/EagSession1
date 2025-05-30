@@ -15,13 +15,15 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 import sys
 
-# set the right path for the modules
-sys.path.append(str(Path(__file__).parent.parent))
+# Add the parent directory to Python path for imports
+current_dir = Path(__file__).parent
+client_dir = current_dir.parent
+sys.path.insert(0, str(client_dir))
 
 # Import core components
 from core.session import FastMCPSession
 from core.tool_call import create_tool_executor, ExecutionPlanResult
-from modules.decision import DecisionResult
+from modules.decision import DecisionResult, create_decision_engine
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -302,8 +304,6 @@ async def execute_query_full_pipeline(
     Returns:
         ActionResult with complete execution details
     """
-    from .decision import create_decision_engine
-
     try:
         # Step 1: Create decision plan
         logger.info(f"🧠 Analyzing query: {query}")
@@ -342,8 +342,8 @@ async def test_action_engine():
 
     test_queries = [
         "What is 25 + 37?",
-        "What is 5 factorial and square root of 16?",
-        "Calculate sine of 1.5 and then find the exponential of that result",
+        "What is 5 factorial and 16 squared?",
+        "Calculate sine of 1.5 and then square that result",
     ]
 
     for query in test_queries:

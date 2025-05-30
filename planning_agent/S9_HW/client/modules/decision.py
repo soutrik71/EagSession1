@@ -20,7 +20,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 # Import utility functions for tool information
-from tool_utils import get_filtered_tools_summary
+from tool_utils import get_filtered_tools_summary, get_tools_for_prompt
 
 # Import LLM utilities
 from llm_utils import LLMUtils
@@ -212,7 +212,15 @@ class FastMCPDecision:
 
             # Get filtered tool descriptions for the recommended tools
             logger.info("📋 Fetching filtered tool descriptions...")
-            tool_descriptions = await get_filtered_tools_summary(recommended_tools)
+
+            # If no tools are recommended, get all available tools
+            if not recommended_tools:
+                logger.info(
+                    "🔧 No recommended tools provided, fetching all available tools..."
+                )
+                tool_descriptions = await get_tools_for_prompt()
+            else:
+                tool_descriptions = await get_filtered_tools_summary(recommended_tools)
 
             logger.info(f"📋 Tool descriptions: {len(tool_descriptions)} characters")
 
