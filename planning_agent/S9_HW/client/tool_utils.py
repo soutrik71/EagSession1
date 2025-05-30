@@ -214,6 +214,83 @@ async def get_server_tools_tuples() -> List[tuple]:
     return tool_tuples
 
 
+async def get_all_tools_dict() -> Dict[str, str]:
+    """
+    Extract all tools and descriptions into a single dictionary across all servers.
+
+    Returns:
+        Dict mapping tool_name to description: {"tool_name": "description", ...}
+    """
+    try:
+        all_server_info = await get_server_tools_info()
+    except Exception as e:
+        raise ConnectionError(f"Failed to fetch tools from MCP servers: {e}")
+
+    tools_dict = {}
+    for server_name, server_data in all_server_info.items():
+        for tool in server_data["tools"]:
+            tools_dict[tool["name"]] = tool["description"]
+
+    return tools_dict
+
+
+def filter_tools_dict(
+    all_tools_dict: Dict[str, str], tool_names: List[str]
+) -> Dict[str, str]:
+    """
+    Filter the tools dictionary by a list of tool names.
+
+    Args:
+        all_tools_dict: Dictionary of all tools {name: description}
+        tool_names: List of tool names to include
+
+    Returns:
+        Filtered dictionary containing only specified tools
+    """
+    return {name: desc for name, desc in all_tools_dict.items() if name in tool_names}
+
+
+def format_tools_summary(tools_dict: Dict[str, str]) -> str:
+    """
+    Create a formatted string summary of tools.
+
+    Args:
+        tools_dict: Dictionary of tools {name: description}
+
+    Returns:
+        Formatted string with tool names and descriptions
+    """
+    return "\n".join(
+        f"- {tool_name}: {description if description else 'No description provided.'}"
+        for tool_name, description in tools_dict.items()
+    )
+
+
+async def get_filtered_tools_summary(tool_names: List[str]) -> str:
+    """
+    Simple function to get filtered tools summary in one call.
+
+    Steps:
+    1. Extract all tools and descriptions to dict
+    2. Filter dict by tool names list
+    3. Format as string summary
+
+    Args:
+        tool_names: List of tool names to include
+
+    Returns:
+        Formatted string summary of specified tools
+    """
+    # Step 1: Get all tools dict
+    all_tools = await get_all_tools_dict()
+
+    # Step 2: Filter by tool names
+    filtered_tools = filter_tools_dict(all_tools, tool_names)
+
+    # Step 3: Format as string
+    return format_tools_summary(filtered_tools)
+
+
 # Test function
 async def test_utils():
     """Test utility functions"""
@@ -221,22 +298,29 @@ async def test_utils():
     print("=" * 40)
 
     try:
+        # Test basic server info
         server_info = await get_server_tools_info()
         print(f"✅ Found {len(server_info)} servers")
 
+        # Test all tools dict
+        all_tools = await get_all_tools_dict()
+        print(f"✅ Extracted {len(all_tools)} tools total")
+        print(f" the tool names are {all_tools.keys()}")
+
+        # Test filtering with some example tools
+        example_tools = [
+            "calculator_add",
+            "web_tools_search_web",
+            "doc_search_query_documents",
+        ]
+        filtered_summary = await get_filtered_tools_summary(example_tools)
+        print(f"\n📋 Filtered summary for {example_tools}:")
+        print(filtered_summary)
+
+        # Test formatted tools for prompt
         formatted = format_tools_for_prompt(server_info)
-        print("\n📋 Formatted tool information:")
-        print(formatted)
-
-        all_servers = get_all_server_names(server_info)
-        print(f"\n🖥️ Available servers: {all_servers}")
-
-        all_tools = get_all_tool_names(server_info)
-        print(
-            f"\n🔧 Available tools ({len(all_tools)}): {all_tools[:5]}..."
-            if len(all_tools) > 5
-            else f"\n🔧 Available tools: {all_tools}"
-        )
+        print("\n🔧 First 3 lines of formatted tools:")
+        print("\n".join(formatted.split("\n")[:3]))
 
     except Exception as e:
         print(f"❌ Error testing utils: {e}")

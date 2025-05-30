@@ -26,7 +26,14 @@ document_processor = DocumentProcessor()
 async def query_documents(
     input: DocumentSearchInput, ctx: Context
 ) -> DocumentSearchOutput:
-    """Query and retrieve relevant documents using semantic search with automatic index checking"""
+    """Query and retrieve relevant documents using semantic search from the indexed document store. Good for finding information from previously processed documents, PDFs, or knowledge base content. Returns ranked document chunks with relevance scores
+    Currently we have documents about the following topics:
+    -Cricket and Cricketers
+    - DLF Constructions
+    - Economics
+    - Indian Policies and Schemes
+    - Tesla Motors IP on Carbon Crisis
+    """
     await ctx.info(
         "CALLED: query_documents(DocumentSearchInput) -> DocumentSearchOutput"
     )

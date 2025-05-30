@@ -1,8 +1,72 @@
-# FastMCP 2.0 Perception System
+# FastMCP 2.0 Perception Module
+
+This module is responsible for analyzing user queries, enhancing them with context from past conversations, and selecting the appropriate MCP servers and tools. It utilizes a LangChain-based chain, GPT-powered LLM integration (via LLMUtils), and Pydantic for output validation.
 
 ## Overview
 
-This perception system provides intelligent query analysis for the FastMCP 2.0 architecture, using **LangChain with GPT-4o** and **Pydantic output parsing** to understand user queries, enhance them with chat history context, and select appropriate MCP servers and tools.
+- **Purpose**: To process user queries, incorporate chat history, and determine the intent and best tools to use for fulfilling the request.
+- **Architecture**:
+  - **Chain Construction**: Reads a prompt template (`../prompts/perception_prompt.txt`), injects tool information gathered from live MCP servers (using `get_server_tools_info` and `format_tools_for_prompt`), and sets output formatting via Pydantic (`PerceptionResult` model).
+  - **Core Classes**:
+    - `SelectedTool`: A data model that holds tool-specific information such as tool name, the server it resides on, and reasoning behind its selection.
+    - `PerceptionResult`: Aggregates the analysis result containing the enhanced question, intent, extracted entities, selected servers, and tools.
+    - `FastMCPPerception`: The primary class that initializes the LLM, builds the LangChain chain, polls live MCP server data for tool info, and performs query analysis.
+
+## How It Works
+
+1. **Initialization**
+   - On instantiation, `FastMCPPerception` initializes the LLM using `LLMUtils`.
+   - The chain is built by reading the prompt template and injecting both the formatted tool information (fetched via `get_server_tools_info` and processed by `format_tools_for_prompt`) and Pydantic's format instructions.
+
+2. **Query Analysis**
+   - The `analyze_query` method takes a user query and optionally a chat history list, then formats this history for context injection.
+   - The chain integrates these inputs to produce a structured result (`PerceptionResult`) that includes the enhanced question, intent, selected servers, and recommended tools.
+
+3. **Fallback Mechanism**
+   - In case the LLM fails (e.g., due to processing errors), a fallback result is generated that marks the intent as "unknown" and returns empty selections for servers and tools.
+
+## How to Run
+
+- **Prerequisites**:
+  - Ensure that all dependencies are available: Python 3.7+, Asyncio, LangChain Core, Pydantic, and custom modules such as `LLMUtils` and tool utilities.
+  - **Live MCP Servers**: This module depends on live MCP servers for retrieving tool information. The servers required include:
+    - `server1_stream.py` (Calculator)
+    - `server2_stream.py` (Web Tools)
+    - `server3_stream.py` (Document Search)
+
+- **Execution**:
+   - Navigate to the directory `planning_agent/S9_HW/client/modules` in your terminal.
+   - Run the module using the command:
+
+    ```bash
+    python perception.py
+    ```
+
+   - This will execute the `test_perception()` function, which runs several test cases to analyze sample queries and logs results including enhanced questions, identified intent, and selected tools/servers.
+
+## Dependencies
+
+- **Python** (3.7+ recommended)
+- **Asyncio** for asynchronous operations
+- **LangChain Core** for managing the prompt templates and chain orchestration
+- **Pydantic** for model validation and output parsing
+- **LLMUtils** (custom module) for integrating GPT/LLM capabilities
+- **Tool Utilities** (`get_server_tools_info`, `format_tools_for_prompt`) for fetching live MCP server data
+
+## Logging and Debugging
+
+- The module uses Python's built-in `logging` module to track initialization, chain processing, server connections, and error handling.
+- In the event of connection or processing failures, errors are logged and descriptive messages prompt to check MCP server status.
+
+## Additional Notes
+
+- **Prompt Template**: The prompt template (`perception_prompt.txt`) in the `../prompts` directory is critical to the module's operation. Changes to this template may affect output formatting and analysis.
+- **Live Data**: Since the module fetches real-time information from MCP servers, ensure that these servers are running before invoking the perception engine.
+- **Modularity**: The design supports future updates to LLM integration and tool information handling with minimal changes required to the core logic.
+
+---
+
+This README serves as a guide for developers and users to understand, run, and extend the FastMCP 2.0 Perception Module.
 
 ## Key Features
 

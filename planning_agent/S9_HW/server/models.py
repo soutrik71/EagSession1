@@ -57,6 +57,18 @@ class DivideOutput(BaseModel):
     result: float = Field(description="Quotient of the division")
 
 
+class SquareInput(BaseModel):
+    """Input model for square operation"""
+
+    a: float = Field(description="Number to square")
+
+
+class SquareOutput(BaseModel):
+    """Output model for square operation"""
+
+    result: float = Field(description="Square of the number (a²)")
+
+
 class PowerInput(BaseModel):
     """Input model for power operation"""
 

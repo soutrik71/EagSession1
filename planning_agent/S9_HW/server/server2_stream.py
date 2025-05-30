@@ -25,7 +25,7 @@ web_content_fetcher = WebContentFetcher()
 
 @mcp.tool()
 async def search_web(input: SearchInput, ctx: Context) -> SearchOutput:
-    """Search the web using DuckDuckGo and return formatted results"""
+    """Search the web using DuckDuckGo for current information. Returns formatted search results with titles, URLs, and snippets. Good for finding current facts, news, or real-time information. Limited to publicly available content."""
     await ctx.info("CALLED: search_web(SearchInput) -> SearchOutput")
     await ctx.info(f"Searching for: '{input.query}' (max {input.max_results} results)")
     await ctx.report_progress(0, 100, "Starting web search...")
@@ -56,29 +56,30 @@ async def search_web(input: SearchInput, ctx: Context) -> SearchOutput:
 
 @mcp.tool()
 async def fetch_webpage(input: UrlFetchInput, ctx: Context) -> UrlFetchOutput:
-    """Fetch and extract text content from a webpage"""
+    """Fetch and extract text content from a webpage URL. Returns clean text content without HTML tags. Good for getting full article content or detailed information from specific pages. Requires valid, accessible URL."""
     await ctx.info("CALLED: fetch_webpage(UrlFetchInput) -> UrlFetchOutput")
-    await ctx.info(f"Fetching content from: {input.url}")
-    await ctx.report_progress(0, 100, "Starting URL fetch...")
+    await ctx.info(f"Fetching content from: {input.url} (max {input.max_length} chars)")
+    await ctx.report_progress(0, 100, "Starting webpage fetch...")
 
     try:
         await ctx.report_progress(25, 100, "Downloading webpage...")
 
-        # Use the pre-instantiated web content fetcher object
-        content = await web_content_fetcher.fetch_and_parse(input.url)
+        # Use the pre-instantiated fetcher object
+        content = await web_content_fetcher.fetch_webpage_content(
+            input.url, input.max_length
+        )
 
         await ctx.report_progress(75, 100, "Processing content...")
 
-        # Truncate if needed based on input parameter
-        if len(content) > input.max_length:
-            content = content[: input.max_length] + "... [truncated]"
+        # Clean and format the content
+        cleaned_content = web_content_fetcher.clean_content(content)
 
-        await ctx.report_progress(100, 100, "Content fetched successfully!")
-        await ctx.info(f"Fetched {len(content)} characters")
+        await ctx.report_progress(100, 100, "Webpage fetch completed!")
+        await ctx.info(f"Retrieved {len(cleaned_content)} characters")
 
-        return UrlFetchOutput(content=content, success=True, error_message="")
+        return UrlFetchOutput(content=cleaned_content, success=True, error_message="")
     except Exception as e:
-        await ctx.error(f"URL fetch failed: {str(e)}")
+        await ctx.error(f"Webpage fetch failed: {str(e)}")
         return UrlFetchOutput(
             content="", success=False, error_message=f"Fetch failed: {str(e)}"
         )
