@@ -22,13 +22,10 @@ class MCP:
         self.server_script = server_script
         self.working_dir = working_dir or os.getcwd()
         self.server_command = server_command or sys.executable
-        
 
     async def list_tools(self):
         server_params = StdioServerParameters(
-            command=self.server_command,
-            args=[self.server_script],
-            cwd=self.working_dir
+            command=self.server_command, args=[self.server_script], cwd=self.working_dir
         )
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
@@ -38,9 +35,7 @@ class MCP:
 
     async def call_tool(self, tool_name: str, arguments: dict) -> Any:
         server_params = StdioServerParameters(
-            command=self.server_command,
-            args=[self.server_script],
-            cwd=self.working_dir
+            command=self.server_command, args=[self.server_script], cwd=self.working_dir
         )
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
@@ -59,7 +54,6 @@ class MultiMCP:
         self.tool_map: Dict[str, Dict[str, Any]] = {}  # tool_name → {config, tool}
         self.server_tools: Dict[str, List[Any]] = {}  # server_name -> list of tools
 
-
     async def initialize(self):
         print("in MultiMCP initialize")
         for config in self.server_configs:
@@ -67,7 +61,7 @@ class MultiMCP:
                 params = StdioServerParameters(
                     command=sys.executable,
                     args=[config["script"]],
-                    cwd=config.get("cwd", os.getcwd())
+                    cwd=config.get("cwd", os.getcwd()),
                 )
                 print(f"→ Scanning tools from: {config['script']} in {params.cwd}")
                 async with stdio_client(params) as (read, write):
@@ -78,13 +72,17 @@ class MultiMCP:
                             await session.initialize()
                             print("[agent] MCP session initialized")
                             tools = await session.list_tools()
-                            print(f"→ Tools received: {[tool.name for tool in tools.tools]}")
+                            print(
+                                f"→ Tools received: {[tool.name for tool in tools.tools]}"
+                            )
                             for tool in tools.tools:
                                 self.tool_map[tool.name] = {
                                     "config": config,
-                                    "tool": tool
+                                    "tool": tool,
                                 }
-                                server_key = config["id"]  # fallback to script name if no key
+                                server_key = config[
+                                    "id"
+                                ]  # fallback to script name if no key
                                 if server_key not in self.server_tools:
                                     self.server_tools[server_key] = []
                                 self.server_tools[server_key].append(tool)
@@ -102,7 +100,7 @@ class MultiMCP:
         params = StdioServerParameters(
             command=sys.executable,
             args=[config["script"]],
-            cwd=config.get("cwd", os.getcwd())
+            cwd=config.get("cwd", os.getcwd()),
         )
 
         async with stdio_client(params) as (read, write):
@@ -122,8 +120,6 @@ class MultiMCP:
             if server in self.server_tools:
                 tools.extend(self.server_tools[server])
         return tools
-
-
 
     async def shutdown(self):
         pass  # no persistent sessions to close

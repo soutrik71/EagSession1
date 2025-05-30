@@ -1,0 +1,61 @@
+agent:
+  name: Cortex-R
+  id: cortex_r_hw_001
+  description: >
+    A reasoning-driven AI agent using FastMCP 2.0 with HTTP transport
+    for external tools and memory to solve complex tasks step-by-step.
+
+strategy:
+  planning_mode: conservative   # [conservative, exploratory]
+  exploration_mode: parallel    # [parallel, sequential] (only relevant if planning_mode = exploratory)
+  memory_fallback_enabled: true # after tool exploration failure
+  max_steps: 3                  # max sequential agent steps
+  max_lifelines_per_step: 3      # retries for each step (after primary failure)
+
+memory:
+  memory_service: true
+  summarize_tool_results: true  # Always store summarized results
+  tag_interactions: true        # Get tags from LLM for each interaction
+  storage:
+    base_dir: "memory"
+    structure: "date"  # Indicates we're using date-based directory structure
+
+llm:
+  text_generation: gemini #gemini or phi4 or gemma3:12b or qwen2.5:32b-instruct-q4_0 
+  embedding: nomic
+
+persona:
+  tone: concise
+  verbosity: low
+  behavior_tags: [rational, focused, tool-using]
+
+# FastMCP 2.0 HTTP Transport Configuration
+mcp_client_config:
+  mcpServers:
+    calculator:
+      url: "http://127.0.0.1:4201/mcp/"
+      transport: "streamable-http"
+      description: "Math tools, including special string-int conversions, fibonacci, python sandbox"
+      capabilities: ["add", "subtract", "multiply", "divide", "power", "cbrt", "factorial", "remainder", "sin", "cos", "tan", "mine", "create_thumbnail", "strings_to_chars_to_int", "int_list_to_exponential_sum", "fibonacci_numbers"]
+      server_script: "server/server1_stream.py"
+      
+    web_tools:
+      url: "http://127.0.0.1:4202/mcp/"
+      transport: "streamable-http"
+      description: "Web search and content fetching tools using DuckDuckGo"
+      capabilities: ["search_web", "fetch_webpage"]
+      server_script: "server/server2_stream.py"
+      
+    doc_search:
+      url: "http://127.0.0.1:4203/mcp/"
+      transport: "streamable-http"
+      description: "Document search and retrieval using semantic search with FAISS index"
+      capabilities: ["query_documents"]
+      server_script: "server/server3_stream.py"
+
+# Server management configuration
+server_management:
+  auto_start_servers: false  # Set to true to auto-start servers
+  server_startup_delay: 2    # Seconds to wait between starting servers
+  health_check_timeout: 5    # Seconds to wait for server health check
+  max_retries: 3            # Max connection retries per server

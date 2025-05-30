@@ -1,9 +1,9 @@
 from fastmcp import FastMCP, Context
-import sys
 from pathlib import Path
+import sys
 
 # Add the tool_utils directory to the path so we can import doc_tools
-sys.path.append(str(Path(__file__).parent))
+sys.path.append(str(Path(__file__).parent.parent))
 
 # Import document processor from tool_utils
 from tool_utils.doc_tools import DocumentProcessor, ConfigManager
@@ -12,7 +12,7 @@ from tool_utils.doc_tools import DocumentProcessor, ConfigManager
 from models import DocumentSearchInput, DocumentSearchOutput, DocumentSearchResult
 
 # Initialize FastMCP server
-mcp = FastMCP(name="DocumentSearchServer")
+mcp = FastMCP(name="DocumentSearchStreamServer")
 
 # Initialize document processor and config outside of tool definitions
 config = ConfigManager()
@@ -148,7 +148,7 @@ async def query_documents(
 # ================= Server Entry Point =================
 
 if __name__ == "__main__":
-    print("FastMCP 2.0 Document Query Server starting...")
+    print("FastMCP 2.0 Document Search Stream Server starting...")
     print("Available tools:")
     print(
         "- query_documents: Query and retrieve relevant documents with automatic index checking"
@@ -160,11 +160,12 @@ if __name__ == "__main__":
     print(f"- Config file: {config.config_path}")
     print(f"- Default top_k: {config.get('search.top_k', 5)}")
 
-    if len(sys.argv) > 1 and sys.argv[1] == "dev":
-        print("Running in development mode")
-        mcp.run()  # Run without transport for dev server
-    else:
-        print("Running with stdio transport")
-        mcp.run(transport="stdio")  # Run with stdio for direct execution
+    # Run with HTTP streaming transport
+    mcp.run(
+        transport="streamable-http",
+        host="127.0.0.1",
+        port=4203,  # Different port from other servers
+        log_level="debug",
+    )
 
-    print("Server shutting down...")
+    print("\nDocument Search Stream Server shutting down...")

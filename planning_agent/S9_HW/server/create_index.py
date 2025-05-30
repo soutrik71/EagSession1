@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 # Add the tool_utils directory to the path so we can import doc_tools
-sys.path.append(str(Path(__file__).parent))
+sys.path.append(str(Path(__file__).parent.parent))
 
 try:
     from tool_utils.doc_tools import DocumentProcessor, ConfigManager

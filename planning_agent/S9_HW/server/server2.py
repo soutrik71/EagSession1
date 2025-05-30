@@ -1,4 +1,9 @@
 from fastmcp import FastMCP, Context
+import sys
+from pathlib import Path
+
+# Add the tool_utils directory to the path so we can import web_tools
+sys.path.append(str(Path(__file__).parent.parent))
 
 # Import web tool classes
 from tool_utils.web_tools import DuckDuckGoSearcher, WebContentFetcher
@@ -7,7 +12,7 @@ from tool_utils.web_tools import DuckDuckGoSearcher, WebContentFetcher
 from models import SearchInput, SearchOutput, UrlFetchInput, UrlFetchOutput
 
 # Initialize FastMCP server
-mcp = FastMCP(name="WebToolsStreamServer")
+mcp = FastMCP(name="WebToolsServer")
 
 # Initialize web tool instances outside of tool definitions
 # This follows the pattern requested - creating class objects outside tool definitions
@@ -82,17 +87,16 @@ async def fetch_webpage(input: UrlFetchInput, ctx: Context) -> UrlFetchOutput:
 # ================= Server Entry Point =================
 
 if __name__ == "__main__":
-    print("FastMCP 2.0 Web Tools Stream Server starting...")
+    print("FastMCP 2.0 Web Tools Server starting...")
     print("Available tools:")
     print("- search_web: Search the web using DuckDuckGo")
     print("- fetch_webpage: Fetch content from a webpage")
 
-    # Run with HTTP streaming transport
-    mcp.run(
-        transport="streamable-http",
-        host="127.0.0.1",
-        port=4202,  # Different port from other servers
-        log_level="debug",
-    )
+    if len(sys.argv) > 1 and sys.argv[1] == "dev":
+        print("Running in development mode")
+        mcp.run()  # Run without transport for dev server
+    else:
+        print("Running with stdio transport")
+        mcp.run(transport="stdio")  # Run with stdio for direct execution
 
-    print("\nWeb Tools Stream Server shutting down...")
+    print("\nServer shutting down...")
