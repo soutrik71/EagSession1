@@ -334,11 +334,61 @@ async def execute_query_full_pipeline(
         )
 
 
+async def execute_with_decision_result(
+    query: str, decision_result: DecisionResult, config_path: Optional[str] = None
+) -> ActionResult:
+    """
+    Execute action plan with pre-computed decision result
+
+    This function allows you to execute an action plan when you already have
+    a DecisionResult from a previous analysis. Useful when you want to:
+    - Reuse decision analysis
+    - Execute with modified decision parameters
+    - Separate decision making from execution phases
+
+    Args:
+        query: Original user query
+        decision_result: Pre-computed decision plan from decision engine
+        config_path: Path to configuration file (optional)
+
+    Returns:
+        ActionResult with execution details and formatted answer
+    """
+    try:
+        logger.info(
+            f"🎯 Executing pre-computed decision plan: {decision_result.strategy}"
+        )
+        logger.info(f"📝 Query: {query}")
+        logger.info(f"🔧 Tools: {[tc.tool_name for tc in decision_result.tool_calls]}")
+
+        # Execute decision plan using action engine
+        async with create_action_engine(config_path) as action_engine:
+            result = await action_engine.execute_decision(query, decision_result)
+
+        return result
+
+    except Exception as e:
+        error_msg = f"Decision execution failed: {str(e)}"
+        logger.error(f"❌ {error_msg}")
+
+        return ActionResult(
+            success=False,
+            query=query,
+            strategy=str(decision_result.strategy) if decision_result else "unknown",
+            total_steps=0,
+            execution_time=0.0,
+            final_answer=f"❌ {error_msg}",
+            detailed_results={"error": error_msg},
+            tool_execution_log=[error_msg],
+            error=error_msg,
+        )
+
+
 # Example usage and testing
-async def test_action_engine():
-    """Test the action engine with sample queries"""
-    print("🧪 Testing FastMCP Action Engine")
-    print("=" * 40)
+async def test_full_pipeline():
+    """Test the full pipeline that does both decision and action"""
+    print("🧪 Testing Full Pipeline (Decision + Action)")
+    print("=" * 50)
 
     test_queries = [
         "What is 25 + 37?",
@@ -349,6 +399,7 @@ async def test_action_engine():
     for query in test_queries:
         print(f"\n🔍 Query: {query}")
         try:
+            # Uses execute_query_full_pipeline which does both decision and action
             result = await execute_query_full_pipeline(query)
             print(f"✅ Success: {result.success}")
             print(f"🎯 Strategy: {result.strategy}")
@@ -359,5 +410,95 @@ async def test_action_engine():
             print(f"❌ Error: {e}")
 
 
+async def test_with_handcoded_decision():
+    """Test using handcoded decision result with execute_with_decision_result"""
+    print("\n🧪 Testing Handcoded Decision Result")
+    print("=" * 50)
+
+    # Import decision types for handcoding
+    from modules.decision import ToolCall, ExecutionStrategy
+
+    # Handcode a simple decision result for "What is 25 + 37?"
+    query = "What is 25 + 37?"
+
+    # Create a handcoded decision result
+    handcoded_decision = DecisionResult(
+        strategy=ExecutionStrategy.SINGLE_TOOL,
+        total_steps=1,
+        tool_calls=[
+            ToolCall(
+                step=1,
+                tool_name="calculator_add",
+                parameters={"input": {"a": 25, "b": 37}},
+                dependency="none",
+                purpose="Add 25 and 37 together",
+                result_variable="add_result",
+            )
+        ],
+        execution_sequence="Single step: execute add(25, 37)",
+        final_result_processing="Return the sum directly as the final answer",
+        reasoning="Simple addition operation requiring only the calculator add tool",
+    )
+
+    print(f"🔍 Query: {query}")
+    print(f"🧠 Handcoded Strategy: {handcoded_decision.strategy}")
+    print(
+        f"🔧 Handcoded Tools: {[tc.tool_name for tc in handcoded_decision.tool_calls]}"
+    )
+
+    try:
+        # Use execute_with_decision_result with handcoded decision
+        result = await execute_with_decision_result(query, handcoded_decision)
+
+        print(f"✅ Success: {result.success}")
+        print(f"⏱️  Time: {result.execution_time:.2f}s")
+        print(f"📝 Answer: {result.final_answer}")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+
+async def test_separated_decision_and_action():
+    """Test separating decision making from action execution using LLM decision"""
+    print("\n🧪 Testing Separated Decision and Action (LLM Decision)")
+    print("=" * 60)
+
+    query = "What is 25 + 37?"
+
+    try:
+        # Step 1: Create decision separately using LLM
+        print(f"🧠 Step 1: Analyzing query: {query}")
+        decision_engine = await create_decision_engine()
+        decision_result = await decision_engine.analyze_decision(query, [])
+
+        print(f"📋 Decision: {decision_result.strategy}")
+        print(f"🔧 Tools: {[tc.tool_name for tc in decision_result.tool_calls]}")
+
+        # Step 2: Execute with pre-computed decision using standalone function
+        print("🎯 Step 2: Executing pre-computed decision...")
+        result = await execute_with_decision_result(query, decision_result)
+
+        print(f"✅ Success: {result.success}")
+        print(f"⏱️  Time: {result.execution_time:.2f}s")
+        print(f"📝 Answer: {result.final_answer}")
+
+        # Step 3: Alternative - Use action engine directly
+        print("🔄 Step 3: Alternative direct usage...")
+        async with create_action_engine() as action_engine:
+            direct_result = await action_engine.execute_decision(query, decision_result)
+            print(f"✅ Direct Success: {direct_result.success}")
+            print(f"📝 Direct Answer: {direct_result.final_answer}")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+
+async def main():
+    """Run all tests"""
+    await test_full_pipeline()
+    await test_with_handcoded_decision()
+    await test_separated_decision_and_action()
+
+
 if __name__ == "__main__":
-    asyncio.run(test_action_engine())
+    asyncio.run(main())
