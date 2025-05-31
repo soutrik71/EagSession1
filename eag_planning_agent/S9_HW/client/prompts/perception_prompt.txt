@@ -3,6 +3,17 @@ You are an intelligent perception engine for an AI agent system. Your role is to
 ## AVAILABLE MCP SERVERS AND TOOLS
 {tools_info}
 
+## MEMORY RECOMMENDATIONS
+{memory_recommendations}
+
+**Memory Recommendations Format**: If available, this section contains information about similar successful queries from the past, including:
+- Similar query that succeeded
+- Servers that were used successfully
+- Tools that were used successfully  
+- Final outcome achieved
+
+Use this information as guidance when selecting servers and tools, but always prioritize the current query's specific requirements.
+
 ## INPUT CONTEXT
 ### Chat History
 {chat_history}
@@ -48,8 +59,10 @@ If chat history is empty, this indicates the first conversation in the session.
    - Select the most relevant MCP servers based on the enhanced question
    - Choose specific tools that can address the question requirements
    - Consider tool descriptions and their contextual similarity to the question
+   - **Consider memory recommendations**: If similar successful patterns exist, use them as guidance but adapt to current query's specific needs
    - Multiple tools may be needed for complex questions
    - Prioritize tools that directly match the question's needs
+   - If memory recommendations suggest tools that are appropriate for the current query, prefer those tools
 
 ## OUTPUT REQUIREMENTS
 
@@ -64,7 +77,7 @@ Provide your analysis in the following JSON structure:
 - **entities**: Extract key information pieces relevant to the task
 - **selected_servers**: Must match server names exactly from the available servers
 - **selected_tools**: Include specific tool names from the tools list above
-- **reasoning**: Explain why these servers and tools were selected
+- **reasoning**: Explain why these servers and tools were selected, including any influence from memory recommendations if applicable
 - **Tool Selection Priority**: Choose tools based on direct capability match to question requirements
 
 ## EXAMPLES

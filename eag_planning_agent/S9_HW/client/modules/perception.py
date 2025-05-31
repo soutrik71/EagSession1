@@ -142,6 +142,7 @@ class FastMCPPerception:
             prompt = ChatPromptTemplate.from_template(prompt_template)
 
             # Set up partial variables - these are injected once
+            # Note: memory_recommendations will be provided per query, not as partial
             prompt = prompt.partial(
                 tools_info=tools_info,
                 format_instructions=self.parser.get_format_instructions(),
@@ -161,7 +162,10 @@ class FastMCPPerception:
             raise
 
     async def analyze_query(
-        self, user_query: str, chat_history: List[Dict[str, str]] = None
+        self,
+        user_query: str,
+        chat_history: List[Dict[str, str]] = None,
+        memory_recommendations: str = None,
     ) -> PerceptionResult:
         """
         Analyze a user query and return structured perception results.
@@ -170,6 +174,8 @@ class FastMCPPerception:
             user_query: The user's question/input
             chat_history: List of previous conversation messages
                          Format: [{"sender": "human/ai", "content": "..."}]
+            memory_recommendations: Formatted string with similar successful patterns
+                                  from memory agent's vector database
 
         Returns:
             PerceptionResult with enhanced question, intent, entities, and tool selection
@@ -181,6 +187,9 @@ class FastMCPPerception:
         if chat_history is None:
             chat_history = []
 
+        if memory_recommendations is None:
+            memory_recommendations = "No similar successful patterns found in memory."
+
         # Format chat history for prompt
         history_text = self._format_chat_history(chat_history)
 
@@ -189,10 +198,20 @@ class FastMCPPerception:
                 f"🧠 Analyzing query: '{user_query[:50]}{'...' if len(user_query) > 50 else ''}'"
             )
             logger.info(f"📚 Chat history: {len(chat_history)} messages")
+            memory_has_recommendations = (
+                memory_recommendations and "No similar" not in memory_recommendations
+            )
+            logger.info(
+                f"🧠 Memory recommendations: {'Yes' if memory_has_recommendations else 'No'}"
+            )
 
             # Invoke the chain with properly formatted inputs
             result = await self.chain.ainvoke(
-                {"user_query": user_query, "chat_history": history_text}
+                {
+                    "user_query": user_query,
+                    "chat_history": history_text,
+                    "memory_recommendations": memory_recommendations,
+                }
             )
 
             logger.info(f"✅ Analysis complete - Intent: {result.intent}")
@@ -300,7 +319,9 @@ async def create_perception_engine() -> FastMCPPerception:
 
 
 async def analyze_user_query(
-    user_query: str, chat_history: List[Dict[str, str]] = None
+    user_query: str,
+    chat_history: List[Dict[str, str]] = None,
+    memory_recommendations: str = None,
 ) -> PerceptionResult:
     """
     Quick function to analyze a user query without managing perception instance.
@@ -310,6 +331,7 @@ async def analyze_user_query(
     Args:
         user_query: The user's question
         chat_history: Optional chat history
+        memory_recommendations: Optional memory recommendations from vector DB
 
     Returns:
         PerceptionResult
@@ -320,7 +342,9 @@ async def analyze_user_query(
     """
     try:
         perception = await create_perception_engine()
-        return await perception.analyze_query(user_query, chat_history)
+        return await perception.analyze_query(
+            user_query, chat_history, memory_recommendations
+        )
     except (ConnectionError, ValueError) as e:
         logger.error(f"❌ Query analysis failed due to server unavailability: {e}")
         raise

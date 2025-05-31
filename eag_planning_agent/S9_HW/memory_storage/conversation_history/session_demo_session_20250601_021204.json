@@ -1,0 +1,22 @@
+{
+  "conv_001": {
+    "session_id": "demo_session_20250601_021204",
+    "conversation_id": "conv_001",
+    "query": "What is 15 + 25?",
+    "timestamp": "2025-06-01T02:12:11.976069",
+    "perception": {
+      "enhanced_question": "What is 15 + 25?",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_add"
+      ],
+      "reasoning": "The intent of the question is clearly mathematical calculation requiring the sum of two numbers. The calculator server with the calculator_add tool is specifically designed for this operation. Given the successful memory recommendation for similar queries, it's appropriate to use the calculator_add tool here."
+    },
+    "decision": null,
+    "action": null,
+    "messages": []
+  }
+}

@@ -3,7 +3,7 @@
     "session_id": "demo_session_internal",
     "conversation_id": "conv_001",
     "query": "What is 15 + 25?",
-    "timestamp": "2025-06-01T00:56:58.288486",
+    "timestamp": "2025-06-01T02:10:40.667703",
     "perception": {
       "enhanced_question": "What is 15 + 25?",
       "intent": "mathematical_calculation",
@@ -13,7 +13,7 @@
       "selected_tools": [
         "calculator_add"
       ],
-      "reasoning": "The user's query is a simple mathematical addition problem. The calculator server with the calculator_add tool is directly suited to perform this operation by adding the numbers 15 and 25."
+      "reasoning": "The user's query is a straightforward addition calculation which falls under the 'mathematical_calculation' intent. The calculator server and specifically the calculator_add tool are selected because they directly address the requirement to add two numbers. The memory recommendations support this choice due to a similar successful case where calculator_add was used effectively."
     },
     "decision": {
       "strategy": "single_tool",
@@ -21,11 +21,11 @@
       "tool_names": [
         "calculator_add"
       ],
-      "reasoning": "The query is a simple arithmetic operation involving the addition of two numbers, which can be solved using a single tool call to the addition calculator."
+      "reasoning": "The query is a simple arithmetic operation that involves the addition of two numbers, which can be completed with a single call to the 'calculator_add' tool."
     },
     "action": {
       "success": true,
-      "execution_time": 0.5,
+      "execution_time": 0.5630000000019209,
       "final_answer": "\u2705 {\n  \"result\": 40.0\n}",
       "tools_executed": 1,
       "error": null
@@ -36,9 +36,9 @@
     "session_id": "demo_session_internal",
     "conversation_id": "conv_002",
     "query": "Now multiply that result by 3",
-    "timestamp": "2025-06-01T00:57:11.736031",
+    "timestamp": "2025-06-01T02:10:53.675667",
     "perception": {
-      "enhanced_question": "Multiply 40.0 by 3",
+      "enhanced_question": "Multiply 40 by 3",
       "intent": "mathematical_calculation",
       "selected_servers": [
         "calculator"
@@ -46,7 +46,7 @@
       "selected_tools": [
         "calculator_multiply"
       ],
-      "reasoning": "The query references a previous result ('that result'), which relates back to the result of the addition operation in the chat history. This makes the user query dependent on the previous operation's result. The primary intent is a mathematical calculation, specifically multiplication. Therefore, the calculator server with the calculator_multiply tool is the appropriate choice."
+      "reasoning": "The query 'Now multiply that result by 3' references a previous calculation in the chat history, which gave a result of 40. The task is a straightforward multiplication operation, which aligns with the functionality of the calculator server and the calculator_multiply tool. The memory recommendation suggested using the calculator_multiply tool for similar queries, supporting its suitability for this task."
     },
     "decision": {
       "strategy": "single_tool",
@@ -54,11 +54,11 @@
       "tool_names": [
         "calculator_multiply"
       ],
-      "reasoning": "The query is a simple multiplication operation that can be accomplished with a single tool call using the available calculator_multiply tool."
+      "reasoning": "The query is a simple arithmetic operation that only requires a single multiplication calculation using the available 'calculator_multiply' tool. There are no dependencies or additional steps needed."
     },
     "action": {
       "success": true,
-      "execution_time": 0.4530000000013388,
+      "execution_time": 0.5159999999959837,
       "final_answer": "\u2705 {\n  \"result\": 120.0\n}",
       "tools_executed": 1,
       "error": null

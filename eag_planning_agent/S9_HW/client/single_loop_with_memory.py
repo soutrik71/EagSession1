@@ -39,7 +39,7 @@ logging.getLogger("modules.mem_agent").setLevel(logging.INFO)
 logging.getLogger("core.session").setLevel(logging.INFO)
 logging.getLogger("core.tool_call").setLevel(logging.INFO)
 
-# Test queries with different complexity types: simple, sequential, parallel
+# Test queries with different complexity types: simple, sequential, parallel, web search, document search
 test_queries = [
     # Simple questions (with followup relationship)
     "What is 15 + 25?",  # Simple 1
@@ -50,6 +50,15 @@ test_queries = [
     "What is 8 * 7 and what is 64 divided by 8?",  # Parallel
     # Additional complex question
     "Calculate the factorial of 5",  # Simple 3
+    # Web search for current information
+    "Search for latest news about artificial intelligence developments",  # Web search
+    # Document search from knowledge base
+    "What are Tesla's approaches to reducing carbon emissions in manufacturing?",  # Document search
+    # Sequential: Web search + Document search
+    (
+        "Search for current Tesla stock price and then find Tesla's carbon emission "
+        "strategies from our documents"
+    ),  # Web + Doc sequential
 ]
 
 
@@ -100,22 +109,43 @@ def format_chat_history_from_memory(session_history, current_conversation_id):
 
 
 def get_chat_history_summary(chat_history):
-    """
-    Get a summary string of chat history for display purposes.
-
-    Args:
-        chat_history: List of chat history dictionaries
-
-    Returns:
-        Summary string
-    """
+    """Generate a summary description of chat history for display."""
     if not chat_history:
         return "No previous conversation history"
 
-    conversation_count = (
-        len(chat_history) // 2
-    )  # Each conversation has human + ai message
-    return f"{conversation_count} previous conversation(s)"
+    count = len(chat_history) // 2  # Pairs of human-ai messages
+    return f"{count} previous conversation(s)"
+
+
+def format_memory_recommendations(memory_recommendations: dict) -> str:
+    """
+    Format memory recommendations from memory agent into string for perception prompt.
+
+    Args:
+        memory_recommendations: Dict from memory_agent.get_similar_query_outcome()
+
+    Returns:
+        Formatted string for perception prompt
+    """
+    if not memory_recommendations:
+        return "No similar successful patterns found in memory."
+
+    # Extract information from memory recommendations
+    similar_query = memory_recommendations.get("query", "Unknown")
+    servers_used = memory_recommendations.get("servers_used", [])
+    tools_used = memory_recommendations.get("tools_used", [])
+    final_outcome = memory_recommendations.get("final_outcome", "No outcome available")
+
+    # Format for prompt
+    formatted = f"""**Similar Successful Pattern Found:**
+- **Similar Query**: "{similar_query}"
+- **Successful Servers**: {', '.join(servers_used) if servers_used else 'None'}
+- **Successful Tools**: {', '.join(tools_used) if tools_used else 'None'}
+- **Final Outcome**: {final_outcome[:100]}{'...' if len(final_outcome) > 100 else ''}
+
+**Recommendation**: Consider using similar servers and tools for the current query if they match the requirements."""
+
+    return formatted
 
 
 async def run_single_query_with_memory(
@@ -137,10 +167,33 @@ async def run_single_query_with_memory(
     print(f"📚 {chat_summary}")
 
     try:
+        # Step 0: Get memory recommendations for this query
+        print("\n🧠 Step 0: Getting Memory Recommendations...")
+        memory_recommendations = await memory_agent.get_similar_query_outcome(
+            query, confidence_threshold=0.4
+        )
+
+        if memory_recommendations:
+            print(
+                f"✅ Found similar successful pattern: '{memory_recommendations['query']}'"
+            )
+            print(f"🔧 Recommended tools: {memory_recommendations['tools_used']}")
+        else:
+            print(
+                "💡 No similar successful patterns found - proceeding with fresh analysis"
+            )
+
+        # Format memory recommendations for perception
+        formatted_memory_recommendations = format_memory_recommendations(
+            memory_recommendations
+        )
+
         # Step 1: Perception
         print("\n🧠 Step 1: Running Perception Engine...")
         perception_engine = await create_perception_engine()
-        perception_result = await perception_engine.analyze_query(query, chat_history)
+        perception_result = await perception_engine.analyze_query(
+            query, chat_history, formatted_memory_recommendations
+        )
 
         # Save perception outcome immediately
         memory_agent.save_perception_outcome(
@@ -217,14 +270,12 @@ async def test_memory_recommendations():
         )
 
         if similar_outcome:
-            print(f"✅ Found similar pattern: '{similar_outcome['query']}'")
-            print(f"🎯 Similarity score: {similar_outcome['similarity_score']:.3f}")
+            print(f"✅ Found similar successful pattern: '{similar_outcome['query']}'")
             print(f"🔧 Recommended tools: {similar_outcome['tools_used']}")
-            print(f"📊 Strategy: {similar_outcome['strategy']}")
-            print(f"✅ Past success: {similar_outcome['success']}")
-            print(f"⏱️ Avg execution time: {similar_outcome['execution_time']:.2f}s")
+            print(f"📡 Servers used: {similar_outcome['servers_used']}")
+            print(f"🎯 Final outcome: {similar_outcome['final_outcome'][:100]}...")
         else:
-            print("❌ No similar patterns found in memory")
+            print("❌ No similar successful patterns found in memory")
             print("💡 This would be a new pattern to learn from")
 
 
@@ -235,8 +286,11 @@ async def main():
     2. Sequential operations (step-by-step dependent tasks)
     3. Parallel operations (independent simultaneous tasks)
     4. Complex single operations
+    5. Web search operations (current information retrieval)
+    6. Document search operations (knowledge base querying)
+    7. Sequential web + document search (multi-source information)
     """
-    session_id = f"demo_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    session_id = f"demo_session_{datetime.now().strftime('%Y%m%d_%H%M')}"
     print("🚀 Enhanced Single Loop with Memory Agent Demo")
     print("=" * 80)
     print(f"📂 Session ID: {session_id}")
@@ -245,6 +299,9 @@ async def main():
     print("  2. Sequential operations")
     print("  3. Parallel operations")
     print("  4. Complex single operations")
+    print("  5. Web search for current information")
+    print("  6. Document search from knowledge base")
+    print("  7. Sequential web + document search")
     print("=" * 80)
 
     memory_agent = await create_memory_agent()
@@ -256,6 +313,9 @@ async def main():
         "Sequential Math (subtract then add)",  # Query 3
         "Parallel Math (multiply and divide)",  # Query 4
         "Factorial Calculation",  # Query 5
+        "Web Search (latest AI news)",  # Query 6
+        "Document Search (Tesla carbon strategies)",  # Query 7
+        "Sequential Web + Doc Search (Tesla stock + carbon docs)",  # Query 8
     ]
 
     for i, (query, description) in enumerate(zip(test_queries, query_descriptions), 1):

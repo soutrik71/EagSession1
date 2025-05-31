@@ -12,7 +12,6 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-import json
 
 # Add parent directory for imports
 sys.path.append(str(Path(__file__).parent))
@@ -27,6 +26,7 @@ from modules.mem_agent import create_memory_agent
 from single_loop_with_memory import (
     format_chat_history_from_memory,
     get_chat_history_summary,
+    format_memory_recommendations,
 )
 
 # Set up logging
@@ -86,10 +86,31 @@ async def run_pipeline_with_detailed_memory_demo(
         print("💬 No chat history available for this conversation")
 
     try:
+        # Step 0: Get memory recommendations for this query
+        print_subsection("STEP 0: Memory Recommendations")
+        memory_recommendations = await memory_agent.get_similar_query_outcome(
+            query, confidence_threshold=0.3
+        )
+
+        if memory_recommendations:
+            print("✅ Found similar successful pattern:")
+            print(f"  - Similar query: {memory_recommendations['query']}")
+            print(f"  - Recommended tools: {memory_recommendations['tools_used']}")
+            print(f"  - Servers used: {memory_recommendations['servers_used']}")
+        else:
+            print("💡 No similar successful patterns found")
+
+        # Import the formatting function
+        formatted_memory_recommendations = format_memory_recommendations(
+            memory_recommendations
+        )
+
         # Step 1: Perception with detailed output
         print_subsection("STEP 1: Perception Engine")
         perception_engine = await create_perception_engine()
-        perception_result = await perception_engine.analyze_query(query, chat_history)
+        perception_result = await perception_engine.analyze_query(
+            query, chat_history, formatted_memory_recommendations
+        )
 
         print("🧠 Perception Result:")
         print(f"  - Enhanced Question: {perception_result.enhanced_question}")
@@ -270,14 +291,15 @@ async def demo_memory_agent_internals():
         similar_outcome = await memory_agent.get_similar_query_outcome(
             test_query, confidence_threshold=0.3
         )
-        if similar_outcome:
-            print("✅ Found similar pattern:")
+        if similar_outcome:  # Now returns empty dict {} instead of None
+            print("✅ Found similar successful pattern:")
             print(f"  - Similar query: {similar_outcome['query']}")
-            print(f"  - Similarity score: {similar_outcome['similarity_score']:.3f}")
+            print(f"  - Servers used: {similar_outcome['servers_used']}")
             print(f"  - Recommended tools: {similar_outcome['tools_used']}")
-            print(f"  - Past success: {similar_outcome['success']}")
+            print(f"  - Final outcome: {similar_outcome['final_outcome'][:100]}...")
         else:
-            print("❌ No similar patterns found")
+            print("❌ No similar successful patterns found")
+            print("💡 Either no patterns exist or none were successful")
 
         # Final summary
         print_section("Memory Agent Demo Summary")

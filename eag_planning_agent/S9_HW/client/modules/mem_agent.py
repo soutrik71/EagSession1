@@ -525,14 +525,22 @@ class MemoryAgent:
     # Retrieval Method 2: Similarity-based retrieval
     async def get_similar_query_outcome(
         self, query: str, confidence_threshold: float = 0.7
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
-        Method 2: Retrieve most contextually similar top-1 query + server + tool + action.
+        Method 2: Retrieve most contextually similar successful query pattern.
 
-        Uses vector DB similarity with high confidence threshold.
+        Only returns patterns that were successful (success=True) and meet the confidence threshold.
+        Returns limited information: query, servers_used, tools_used, final_outcome.
+
+        Args:
+            query: The query to find similar patterns for
+            confidence_threshold: Minimum similarity score required (default 0.7)
+
+        Returns:
+            Dict with limited fields if successful pattern found, empty dict {} otherwise
         """
         if len(self.pattern_storage) == 0:
-            return None
+            return {}
 
         try:
             # Create embedding for current query
@@ -543,39 +551,33 @@ class MemoryAgent:
 
             query_array = np.array(query_embedding, dtype=np.float32).reshape(1, -1)
 
-            # Get top-1 most similar pattern
-            distances, indices = self.vector_index.search(query_array, 1)
+            # Get top-K most similar patterns to check for successful ones
+            k = min(5, len(self.pattern_storage))  # Check top 5 or all available
+            distances, indices = self.vector_index.search(query_array, k)
 
-            if len(indices[0]) > 0 and indices[0][0] < len(self.pattern_storage):
-                idx = indices[0][0]
-                pattern = self.pattern_storage[idx]
-                similarity_score = 1.0 / (
-                    1.0 + distances[0][0]
-                )  # Convert distance to similarity
+            # Look for the best successful pattern
+            for i in range(len(indices[0])):
+                if indices[0][i] < len(self.pattern_storage):
+                    idx = indices[0][i]
+                    pattern = self.pattern_storage[idx]
+                    similarity_score = 1.0 / (
+                        1.0 + distances[0][i]
+                    )  # Convert distance to similarity
 
-                # Only return if similarity meets confidence threshold
-                if similarity_score >= confidence_threshold:
-                    return {
-                        "similarity_score": similarity_score,
-                        "query": pattern.query,
-                        "servers_used": pattern.servers_used,
-                        "tools_used": pattern.tools_used,
-                        "strategy": pattern.strategy,
-                        "success": pattern.success,
-                        "execution_time": pattern.execution_time,
-                        "final_outcome": pattern.final_outcome,
-                        "error": pattern.error,
-                        "confidence": pattern.confidence_score,
-                        "timestamp": pattern.timestamp,
-                        "session_id": pattern.session_id,
-                        "conversation_id": pattern.conversation_id,
-                    }
+                    # Only return if similarity meets threshold AND pattern was successful
+                    if similarity_score >= confidence_threshold and pattern.success:
+                        return {
+                            "query": pattern.query,
+                            "servers_used": pattern.servers_used,
+                            "tools_used": pattern.tools_used,
+                            "final_outcome": pattern.final_outcome,
+                        }
 
-            return None
+            return {}  # No successful patterns found that meet threshold
 
         except Exception as e:
             logger.error(f"❌ Failed to get similar query outcome: {e}")
-            return None
+            return {}
 
     # Analytics and utility methods
     def get_tool_success_analytics(self, tool_name: str) -> Dict[str, Any]:
