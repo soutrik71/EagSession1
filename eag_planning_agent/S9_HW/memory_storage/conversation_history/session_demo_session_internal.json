@@ -1,0 +1,68 @@
+{
+  "conv_001": {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_001",
+    "query": "What is 15 + 25?",
+    "timestamp": "2025-06-01T00:43:56.457763",
+    "perception": {
+      "enhanced_question": "What is 15 + 25?",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_add"
+      ],
+      "reasoning": "The current question is a simple arithmetic addition problem involving two numbers. The calculator server provides a tool named calculator_add, specifically designed to perform addition. The task directly calls for using this tool."
+    },
+    "decision": {
+      "strategy": "single_tool",
+      "total_steps": 1,
+      "tool_names": [
+        "calculator_add"
+      ],
+      "reasoning": "The query involves a simple arithmetic operation which can be resolved using a single tool specifically designed for addition of two numbers. This eliminates the need for any complex orchestration, maintaining efficiency and accuracy."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.4530000000013388,
+      "final_answer": "\u2705 {\n  \"result\": 40.0\n}",
+      "tools_executed": 1,
+      "error": null
+    },
+    "messages": []
+  },
+  "conv_002": {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_002",
+    "query": "Now multiply that result by 3",
+    "timestamp": "2025-06-01T00:44:07.320458",
+    "perception": {
+      "enhanced_question": "Multiply 40.0 by 3",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_multiply"
+      ],
+      "reasoning": "The user wants to multiply the result of the previous calculation by 3. The calculator_multiply tool is suitable for multiplication operations and matches the intent, which is a mathematical calculation."
+    },
+    "decision": {
+      "strategy": "single_tool",
+      "total_steps": 1,
+      "tool_names": [
+        "calculator_multiply"
+      ],
+      "reasoning": "The user query involves a simple multiplication operation that can be handled by a single tool call without any dependencies. Thus, a 'single_tool' strategy is optimal for direct execution."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.4059999999954016,
+      "final_answer": "\u2705 {\n  \"result\": 120.0\n}",
+      "tools_executed": 1,
+      "error": null
+    },
+    "messages": []
+  }
+}

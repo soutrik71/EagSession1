@@ -1,0 +1,171 @@
+{
+  "conv_001": {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_001",
+    "query": "What is 15 + 25?",
+    "timestamp": "2025-06-01T00:40:53.051265",
+    "perception": {
+      "enhanced_question": "What is 15 + 25?",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_add"
+      ],
+      "reasoning": "The question requires a simple addition operation, which is best handled by the calculator server using the calculator_add tool. This tool is designed specifically for adding numbers, making it the most appropriate choice."
+    },
+    "decision": {
+      "strategy": "single_tool",
+      "total_steps": 1,
+      "tool_names": [
+        "calculator_add"
+      ],
+      "reasoning": "The query is a simple arithmetic operation involving the addition of two numbers which can be efficiently handled by a single tool call without any dependencies."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.5460000000020955,
+      "final_answer": "\u2705 {\n  \"result\": 40.0\n}",
+      "tools_executed": 1,
+      "error": null
+    },
+    "messages": []
+  },
+  "conv_002": {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_002",
+    "query": "Now multiply that result by 3",
+    "timestamp": "2025-06-01T00:41:04.040928",
+    "perception": {
+      "enhanced_question": "Multiply 40 by 3",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_multiply"
+      ],
+      "reasoning": "The user wants to perform a multiplication operation using a result obtained from a previous conversation, which is 40. Hence, the calculator server with the calculator_multiply tool is selected to compute the product of 40 and 3."
+    },
+    "decision": {
+      "strategy": "single_tool",
+      "total_steps": 1,
+      "tool_names": [
+        "calculator_multiply"
+      ],
+      "reasoning": "The query is a simple multiplication task that requires only one tool call using the calculator_multiply tool. This allows for a straightforward single tool execution plan without any dependencies."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.4069999999992433,
+      "final_answer": "\u2705 {\n  \"result\": 120.0\n}",
+      "tools_executed": 1,
+      "error": null
+    },
+    "messages": []
+  },
+  "conv_003": {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_003",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "timestamp": "2025-06-01T00:41:14.888647",
+    "perception": {
+      "enhanced_question": "What is 100 - 30 and then add 15 to that result?",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_subtract",
+        "calculator_add"
+      ],
+      "reasoning": "The query consists of two mathematical operations: subtraction followed by addition. First, we use the `calculator_subtract` tool to find the difference between 100 and 30. Next, using `calculator_add`, we add 15 to the resulting difference."
+    },
+    "decision": {
+      "strategy": "sequential_tools",
+      "total_steps": 2,
+      "tool_names": [
+        "calculator_subtract",
+        "calculator_add"
+      ],
+      "reasoning": "The query requires a sequential approach as the result of the subtraction is needed before performing the addition. The plan uses both tools in a sequential manner, ensuring accurate result integration."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.7970000000059372,
+      "final_answer": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+      "tools_executed": 2,
+      "error": null
+    },
+    "messages": []
+  },
+  "conv_004": {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_004",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "timestamp": "2025-06-01T00:41:27.925638",
+    "perception": {
+      "enhanced_question": "What is 8 multiplied by 7 and what is 64 divided by 8?",
+      "intent": "multi_task",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_multiply",
+        "calculator_divide"
+      ],
+      "reasoning": "The query involves two separate mathematical calculations (multiplication and division). Therefore, the 'calculator' server is selected with specific tools to handle each operation: 'calculator_multiply' for multiplication and 'calculator_divide' for division."
+    },
+    "decision": {
+      "strategy": "parallel_tools",
+      "total_steps": 2,
+      "tool_names": [
+        "calculator_multiply",
+        "calculator_divide"
+      ],
+      "reasoning": "The query consists of two independent mathematical calculations: multiplication and division. Each can be calculated simultaneously using the respective available tools, allowing for parallel execution. This strategy optimizes for efficiency by executing both tasks simultaneously."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.9529999999940628,
+      "final_answer": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+      "tools_executed": 2,
+      "error": null
+    },
+    "messages": []
+  },
+  "conv_005": {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_005",
+    "query": "Calculate the factorial of 5",
+    "timestamp": "2025-06-01T00:41:39.849428",
+    "perception": {
+      "enhanced_question": "Calculate the factorial of 5",
+      "intent": "mathematical_calculation",
+      "selected_servers": [
+        "calculator"
+      ],
+      "selected_tools": [
+        "calculator_factorial"
+      ],
+      "reasoning": "The user's query asks for the factorial of a number, which is a basic mathematical function. The calculator server includes a tool designed specifically for computing factorials, making it the most appropriate choice for this task."
+    },
+    "decision": {
+      "strategy": "single_tool",
+      "total_steps": 1,
+      "tool_names": [
+        "calculator_factorial"
+      ],
+      "reasoning": "The query is a simple request to calculate the factorial of a single number, which can be efficiently executed using the available 'calculator_factorial' tool in a single step. There are no dependencies or additional calculations involved, making the single tool strategy optimal."
+    },
+    "action": {
+      "success": true,
+      "execution_time": 0.4370000000053551,
+      "final_answer": "\u2705 {\n  \"result\": 120\n}",
+      "tools_executed": 1,
+      "error": null
+    },
+    "messages": []
+  }
+}

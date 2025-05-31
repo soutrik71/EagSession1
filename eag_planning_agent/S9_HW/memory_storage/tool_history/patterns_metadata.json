@@ -1,0 +1,202 @@
+[
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T00:33:20.406343",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.3899999999994179,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T00:33:31.371423",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T00:40:58.806848",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5460000000020955,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T00:41:09.962036",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4069999999992433,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_003",
+    "timestamp": "2025-06-01T00:41:22.033521",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "tools_used": [
+      "calculator_subtract",
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "sequential_tools",
+    "success": true,
+    "execution_time": 0.7970000000059372,
+    "final_outcome": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_004",
+    "timestamp": "2025-06-01T00:41:34.984497",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "tools_used": [
+      "calculator_multiply",
+      "calculator_divide"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "parallel_tools",
+    "success": true,
+    "execution_time": 0.9529999999940628,
+    "final_outcome": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_004047",
+    "conversation_id": "conv_005",
+    "timestamp": "2025-06-01T00:41:46.426743",
+    "query": "Calculate the factorial of 5",
+    "tools_used": [
+      "calculator_factorial"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4370000000053551,
+    "final_outcome": "\u2705 {\n  \"result\": 120\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T00:42:43.970620",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4530000000013388,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T00:42:55.078838",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4059999999954016,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T00:44:02.563694",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4530000000013388,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_internal",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T00:44:14.998797",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4059999999954016,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  }
+]

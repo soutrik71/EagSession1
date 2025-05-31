@@ -208,17 +208,44 @@ class FastMCPPerception:
             return self._create_fallback_result(user_query)
 
     def _format_chat_history(self, chat_history: List[Dict[str, str]]) -> str:
-        """Format chat history for prompt injection"""
+        """Format chat history for prompt injection according to the expected template format"""
         if not chat_history:
             return "No previous conversation history."
 
-        formatted_lines = []
-        for i, message in enumerate(chat_history[-10:]):  # Last 10 messages
-            sender = message.get("sender", "unknown")
-            content = message.get("content", "")
-            formatted_lines.append(f"{i+1}. {sender.upper()}: {content}")
+        # Group messages into conversations (human + ai pairs)
+        conversations = []
+        current_conversation = []
 
-        return "\n".join(formatted_lines)
+        for message in chat_history[-10:]:  # Last 10 messages
+            current_conversation.append(message)
+            # When we have a pair (human + ai), create a conversation
+            if len(current_conversation) == 2:
+                conversations.append(current_conversation)
+                current_conversation = []
+
+        if not conversations:
+            return "No previous conversation history."
+
+        # Format according to prompt template
+        formatted_conversations = []
+        for i, conv in enumerate(conversations, 1):
+            if len(conv) >= 2:
+                human_msg = conv[0].get("content", "")
+                ai_msg = conv[1].get("content", "")
+
+                # Clean up AI response (remove JSON formatting and emojis)
+                clean_ai_msg = ai_msg.replace("✅", "").replace(
+                    "📋 Results:", "Results:"
+                )
+                clean_ai_msg = clean_ai_msg.strip()
+
+                formatted_conversations.append(
+                    f"Conversation {i}:\n"
+                    f"Human: {human_msg}\n"
+                    f"Assistant: {clean_ai_msg}"
+                )
+
+        return "\n\n".join(formatted_conversations)
 
     def _create_fallback_result(self, user_query: str) -> PerceptionResult:
         """

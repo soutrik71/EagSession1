@@ -25,6 +25,9 @@ from tool_utils import get_filtered_tools_summary, get_tools_for_prompt
 # Import LLM utilities
 from llm_utils import LLMUtils
 
+# Import PerceptionResult from perception module
+from modules.perception import PerceptionResult
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -243,6 +246,38 @@ class FastMCPDecision:
             logger.error(f"❌ Decision analysis failed: {e}")
             # Return fallback result
             return self._create_fallback_result(enhanced_question, recommended_tools)
+
+    async def analyze_decision_from_perception(
+        self, perception_result: PerceptionResult
+    ) -> DecisionResult:
+        """
+        Analyze a perception result and create a detailed execution plan.
+
+        This is a convenience method that extracts the necessary data from
+        a PerceptionResult object and calls the main analyze_decision method.
+
+        Args:
+            perception_result: The result from perception module
+
+        Returns:
+            DecisionResult with detailed execution plan and tool orchestration
+        """
+        # Extract enhanced_question from perception result
+        enhanced_question = perception_result.enhanced_question
+
+        # Extract tool names from selected_tools
+        recommended_tools = [
+            tool.tool_name for tool in perception_result.selected_tools
+        ]
+
+        logger.info("🔄 Converting PerceptionResult to decision inputs")
+        logger.info(f"📝 Enhanced question: {enhanced_question}")
+        logger.info(
+            f"🔧 Extracted {len(recommended_tools)} tool names: {recommended_tools}"
+        )
+
+        # Call the main analyze_decision method
+        return await self.analyze_decision(enhanced_question, recommended_tools)
 
     def _create_fallback_result(
         self, enhanced_question: str, recommended_tools: List[str]
