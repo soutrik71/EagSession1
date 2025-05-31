@@ -29,3 +29,6 @@
 
 - **web_agent**  
   Web automation agent or bot, possibly for browsing or scraping tasks.
+
+- **eag_planning_agent**  
+  Planning agent for MCP workflows with multiple mcp servers orchestrated by a single agent controller.
