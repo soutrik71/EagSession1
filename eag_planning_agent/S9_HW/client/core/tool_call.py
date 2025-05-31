@@ -158,7 +158,7 @@ class ToolCallExecutor:
                 result = await self.execute_single_tool(tool_call)
                 results.append(result)
 
-                # Log the result
+                # Log success/failure with reduced verbosity
                 if result.success:
                     self.logger.info(f"✅ Parallel tool {i+1} completed successfully")
                 else:
@@ -241,7 +241,9 @@ class ToolCallExecutor:
 
         try:
             result = substitute_in_object(parameters)
-            self.logger.info(f"🔄 Parameters after substitution: {result}")
+            # Only log parameter substitution when it actually happens
+            if result != parameters:
+                self.logger.info(f"🔄 Parameters after substitution: {result}")
             return result
         except Exception as e:
             self.logger.warning(f"Could not substitute variables in {parameters}: {e}")
@@ -278,6 +280,7 @@ class ToolCallExecutor:
                 )
                 tool_call["parameters"] = substituted_params
 
+                # Only log if substitution actually happened
                 if substituted_params != original_params:
                     self.logger.info(
                         f"🔄 Parameters after substitution: {substituted_params}"
@@ -445,6 +448,10 @@ class ToolCallExecutor:
 
             execution_time = asyncio.get_event_loop().time() - start_time
 
+            self.logger.info(
+                f"✅ Strategy execution completed: {success} in {execution_time:.2f}s"
+            )
+
             return ExecutionPlanResult(
                 success=success,
                 strategy=strategy,
@@ -453,22 +460,31 @@ class ToolCallExecutor:
                 final_result=final_result,
                 execution_time=execution_time,
                 execution_log=execution_log,
+                error=(
+                    None
+                    if success
+                    else (
+                        f"Failed tools: {failed_tools}"
+                        if "failed_tools" in locals()
+                        else "Unknown failure"
+                    )
+                ),
             )
 
         except Exception as e:
             execution_time = asyncio.get_event_loop().time() - start_time
             error_msg = f"Strategy execution failed: {str(e)}"
             self.logger.error(f"❌ {error_msg}")
-            execution_log.append(error_msg)
 
             return ExecutionPlanResult(
                 success=False,
                 strategy=strategy,
                 total_steps=len(tool_calls),
                 tool_results=[],
-                error=error_msg,
+                final_result=None,
                 execution_time=execution_time,
-                execution_log=execution_log,
+                execution_log=execution_log + [error_msg],
+                error=error_msg,
             )
 
 

@@ -9,6 +9,9 @@ import logging
 from typing import Dict, List, Any
 from fastmcp import Client
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
 
 class FastMCPSession:
     """
@@ -30,7 +33,7 @@ class FastMCPSession:
         self.available_tools = []
         self.server_info = {}
 
-        # Set up logging
+        # Set up logging with reduced verbosity
         self.logger = logging.getLogger(__name__)
 
     async def __aenter__(self):
@@ -39,7 +42,8 @@ class FastMCPSession:
             # Use the client exactly like test_server_all.py does
             await self.client.__aenter__()
 
-            self.logger.info(
+            # Reduce verbosity - only log if debug level
+            self.logger.debug(
                 f"✅ Multi-server client connected: {self.client.is_connected()}"
             )
 
@@ -49,7 +53,8 @@ class FastMCPSession:
             # Group tools by server for analysis
             self._categorize_tools()
 
-            self.logger.info(
+            # Only log summary at info level
+            self.logger.debug(
                 f"📋 Discovered {len(self.available_tools)} tools from all servers"
             )
 
@@ -67,7 +72,7 @@ class FastMCPSession:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit"""
         try:
-            self.logger.info("FastMCP session shutting down...")
+            self.logger.debug("FastMCP session shutting down...")
             await self.client.__aexit__(exc_type, exc_val, exc_tb)
         except Exception as e:
             self.logger.warning(f"Error during client shutdown: {e}")
@@ -93,10 +98,10 @@ class FastMCPSession:
 
         self.server_info = server_tools
 
-        # Log server tool counts
+        # Only log non-empty servers at debug level to reduce noise
         for server, tools in server_tools.items():
             if tools:
-                self.logger.info(f"   {server}: {len(tools)} tools")
+                self.logger.debug(f"   {server}: {len(tools)} tools")
 
     async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
         """
@@ -121,8 +126,7 @@ class FastMCPSession:
             )
 
         try:
-            self.logger.debug(f"Calling tool: {tool_name} with args: {arguments}")
-            # Use the client directly - it's already connected in the context
+            # No logging for individual tool calls to reduce noise
             result = await self.client.call_tool(tool_name, arguments)
             return result
 
@@ -197,61 +201,28 @@ class MultiMCP:
         server_configs: List[Dict[str, Any]] = None,
         mcp_config: Dict[str, Any] = None,
     ):
-        """
-        Initialize MultiMCP wrapper.
-
-        Args:
-            server_configs: Legacy server configs (ignored in new implementation)
-            mcp_config: New FastMCP 2.0 config (preferred)
-        """
+        """Initialize with server configs or mcp_config."""
         if mcp_config:
-            self.mcp_config = mcp_config
+            self.session = FastMCPSession(mcp_config)
         else:
-            # Default config if none provided
-            self.mcp_config = {
-                "mcpServers": {
-                    "calculator": {
-                        "url": "http://127.0.0.1:4201/mcp/",
-                        "transport": "streamable-http",
-                    },
-                    "web_tools": {
-                        "url": "http://127.0.0.1:4202/mcp/",
-                        "transport": "streamable-http",
-                    },
-                    "doc_search": {
-                        "url": "http://127.0.0.1:4203/mcp/",
-                        "transport": "streamable-http",
-                    },
-                }
-            }
-        self.session = None
+            raise ValueError("mcp_config is required for new FastMCPSession")
 
     async def initialize(self):
-        """Initialize the session"""
-        self.session = FastMCPSession(self.mcp_config)
-        await self.session.__aenter__()
-        return True
+        """Initialize the session - no-op since handled in context manager"""
+        pass
 
     async def call_tool(self, tool_name: str, arguments: dict) -> Any:
-        """Call a tool (compatibility method)"""
-        if not self.session:
-            raise RuntimeError("Session not initialized. Call initialize() first.")
+        """Call a tool through the session"""
         return await self.session.call_tool(tool_name, arguments)
 
     async def list_all_tools(self) -> List[str]:
-        """List all available tools (compatibility method)"""
-        if not self.session:
-            raise RuntimeError("Session not initialized. Call initialize() first.")
+        """List all available tools"""
         return await self.session.list_tools()
 
     def get_all_tools(self) -> List[Any]:
-        """Get all tool objects (compatibility method)"""
-        if not self.session:
-            raise RuntimeError("Session not initialized. Call initialize() first.")
+        """Get all tool objects"""
         return self.session.available_tools
 
     async def shutdown(self):
-        """Shutdown the session"""
-        if self.session:
-            await self.session.__aexit__(None, None, None)
-            self.session = None
+        """Shutdown - handled by context manager"""
+        pass

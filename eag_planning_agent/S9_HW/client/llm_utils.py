@@ -88,7 +88,7 @@ class LLMUtils:
         if "SSL_CERT_FILE" in os.environ:
             cert_file = os.environ["SSL_CERT_FILE"]
             if not os.path.exists(cert_file):
-                print(f"Warning: Removing invalid SSL_CERT_FILE: {cert_file}")
+                # Remove invalid SSL_CERT_FILE silently
                 del os.environ["SSL_CERT_FILE"]
 
         # Create HTTP clients with SSL handling
@@ -109,9 +109,6 @@ class LLMUtils:
             )
         except Exception as e:
             # Fallback: try without custom clients
-            print(
-                f"Warning: Failed to initialize with custom HTTP clients, trying fallback: {e}"
-            )
             try:
                 self.chat_model = ChatOpenAI(model="gpt-4o")
                 self.embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")

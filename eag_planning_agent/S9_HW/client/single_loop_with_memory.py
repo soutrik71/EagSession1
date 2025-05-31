@@ -8,12 +8,36 @@ This script demonstrates the complete pipeline with individual step memory savin
 4. Save final query-tool-outcome to vector database
 """
 
+import logging
 from modules.perception import create_perception_engine
 from modules.decision import create_decision_engine
 from modules.action import execute_with_decision_result
 from modules.mem_agent import create_memory_agent
 import asyncio
 from datetime import datetime
+
+# Configure logging to reduce verbosity from third-party libraries
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",  # Simple format for our logs
+    handlers=[logging.StreamHandler()],
+)
+
+# Suppress verbose logs from third-party libraries
+logging.getLogger("mcp.server.lowlevel.server").setLevel(logging.WARNING)
+logging.getLogger("mcp.client.streamable_http").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+
+# Keep our application logs at INFO level
+logging.getLogger("modules.perception").setLevel(logging.INFO)
+logging.getLogger("modules.decision").setLevel(logging.INFO)
+logging.getLogger("modules.action").setLevel(logging.INFO)
+logging.getLogger("modules.mem_agent").setLevel(logging.INFO)
+logging.getLogger("core.session").setLevel(logging.INFO)
+logging.getLogger("core.tool_call").setLevel(logging.INFO)
 
 # Test queries with different complexity types: simple, sequential, parallel
 test_queries = [
@@ -262,18 +286,24 @@ async def main():
 
     session_history = memory_agent.get_session_history(session_id)
     print(f"📂 Session ID: {session_id}")
-    print(f"💬 Total conversations: {session_history['total_conversations']}")
 
-    for conv in session_history["conversations"]:
-        print(f"\n  🔹 {conv['conversation_id']}: {conv['query']}")
-        if conv["perception"]:
-            print(f"    🧠 Intent: {conv['perception']['intent']}")
-            print(f"    🔧 Tools: {conv['perception']['selected_tools']}")
-        if conv["decision"]:
-            print(f"    🎯 Strategy: {conv['decision']['strategy']}")
-        if conv["action"]:
-            print(f"    ⚡ Success: {conv['action']['success']}")
-            print(f"    ⏱️ Time: {conv['action']['execution_time']:.2f}s")
+    # Handle case where no conversations were processed successfully
+    if session_history and "total_conversations" in session_history:
+        print(f"💬 Total conversations: {session_history['total_conversations']}")
+
+        for conv in session_history["conversations"]:
+            print(f"\n  🔹 {conv['conversation_id']}: {conv['query']}")
+            if conv["perception"]:
+                print(f"    🧠 Intent: {conv['perception']['intent']}")
+                print(f"    🔧 Tools: {conv['perception']['selected_tools']}")
+            if conv["decision"]:
+                print(f"    🎯 Strategy: {conv['decision']['strategy']}")
+            if conv["action"]:
+                print(f"    ⚡ Success: {conv['action']['success']}")
+                print(f"    ⏱️ Time: {conv['action']['execution_time']:.2f}s")
+    else:
+        print("💬 No conversations were successfully processed")
+        print("⚠️ This may be due to configuration or server connectivity issues")
 
     # Analytics
     print("📈 Tool Usage Analytics:")

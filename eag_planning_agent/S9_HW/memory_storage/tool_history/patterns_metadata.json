@@ -362,5 +362,355 @@
     "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
     "error": null,
     "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010644",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T01:07:15.525764",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5469999999986612,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010644",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T01:07:27.240096",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5309999999954016,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010644",
+    "conversation_id": "conv_003",
+    "timestamp": "2025-06-01T01:07:40.959039",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "tools_used": [
+      "calculator_subtract",
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "sequential_tools",
+    "success": true,
+    "execution_time": 0.9690000000045984,
+    "final_outcome": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010644",
+    "conversation_id": "conv_004",
+    "timestamp": "2025-06-01T01:08:17.254189",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "tools_used": [
+      "calculator_multiply",
+      "calculator_divide"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "parallel_tools",
+    "success": true,
+    "execution_time": 1.0630000000019209,
+    "final_outcome": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010826",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T01:08:40.499351",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4529999999940628,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010826",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T01:08:53.764993",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4850000000005821,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010826",
+    "conversation_id": "conv_003",
+    "timestamp": "2025-06-01T01:09:10.544468",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "tools_used": [
+      "calculator_subtract",
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "sequential_tools",
+    "success": true,
+    "execution_time": 1.4380000000019209,
+    "final_outcome": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010826",
+    "conversation_id": "conv_004",
+    "timestamp": "2025-06-01T01:09:37.463958",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "tools_used": [
+      "calculator_multiply",
+      "calculator_divide"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "parallel_tools",
+    "success": true,
+    "execution_time": 1.1719999999986612,
+    "final_outcome": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_010826",
+    "conversation_id": "conv_005",
+    "timestamp": "2025-06-01T01:09:48.798120",
+    "query": "Calculate the factorial of 5",
+    "tools_used": [
+      "calculator_factorial"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.4850000000005821,
+    "final_outcome": "\u2705 {\n  \"result\": 120\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012041",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T01:20:57.254483",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 2.5159999999959837,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012041",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T01:21:19.972961",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.6560000000026776,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012041",
+    "conversation_id": "conv_003",
+    "timestamp": "2025-06-01T01:21:32.311492",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "tools_used": [
+      "calculator_subtract",
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "sequential_tools",
+    "success": true,
+    "execution_time": 1.3590000000040163,
+    "final_outcome": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012041",
+    "conversation_id": "conv_004",
+    "timestamp": "2025-06-01T01:21:47.318521",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "tools_used": [
+      "calculator_multiply",
+      "calculator_divide"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "parallel_tools",
+    "success": true,
+    "execution_time": 1.4530000000013388,
+    "final_outcome": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012041",
+    "conversation_id": "conv_005",
+    "timestamp": "2025-06-01T01:22:10.944625",
+    "query": "Calculate the factorial of 5",
+    "tools_used": [
+      "calculator_factorial"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.625,
+    "final_outcome": "\u2705 {\n  \"result\": 120\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012213",
+    "conversation_id": "conv_001",
+    "timestamp": "2025-06-01T01:22:35.157465",
+    "query": "What is 15 + 25?",
+    "tools_used": [
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.6560000000026776,
+    "final_outcome": "\u2705 {\n  \"result\": 40.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012213",
+    "conversation_id": "conv_002",
+    "timestamp": "2025-06-01T01:22:45.551217",
+    "query": "Now multiply that result by 3",
+    "tools_used": [
+      "calculator_multiply"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5149999999994179,
+    "final_outcome": "\u2705 {\n  \"result\": 120.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012213",
+    "conversation_id": "conv_003",
+    "timestamp": "2025-06-01T01:22:57.605053",
+    "query": "What is 100 - 30 and then add 15 to that result?",
+    "tools_used": [
+      "calculator_subtract",
+      "calculator_add"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "sequential_tools",
+    "success": true,
+    "execution_time": 1.1560000000026776,
+    "final_outcome": "\u2705 Final result: {\n  \"result\": 85.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012213",
+    "conversation_id": "conv_004",
+    "timestamp": "2025-06-01T01:23:09.128917",
+    "query": "What is 8 * 7 and what is 64 divided by 8?",
+    "tools_used": [
+      "calculator_multiply",
+      "calculator_divide"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "parallel_tools",
+    "success": true,
+    "execution_time": 1.0939999999973224,
+    "final_outcome": "\ud83d\udccb Results:\n\u2022 calculator_multiply: {\n  \"result\": 56.0\n}\n\u2022 calculator_divide: {\n  \"result\": 8.0\n}",
+    "error": null,
+    "confidence_score": 1.0
+  },
+  {
+    "session_id": "demo_session_20250601_012213",
+    "conversation_id": "conv_005",
+    "timestamp": "2025-06-01T01:23:18.280205",
+    "query": "Calculate the factorial of 5",
+    "tools_used": [
+      "calculator_factorial"
+    ],
+    "servers_used": [
+      "calculator"
+    ],
+    "strategy": "single_tool",
+    "success": true,
+    "execution_time": 0.5,
+    "final_outcome": "\u2705 {\n  \"result\": 120\n}",
+    "error": null,
+    "confidence_score": 1.0
   }
 ]

@@ -6,6 +6,7 @@ for use in perception and other modules.
 """
 
 import asyncio
+import logging
 import yaml
 import os
 from pathlib import Path
@@ -15,17 +16,24 @@ from core.session import FastMCPSession
 # Fix SSL cert issue for local testing
 os.environ.pop("SSL_CERT_FILE", None)
 
+# Set up logging
+logger = logging.getLogger(__name__)
 
-async def get_server_tools_info() -> Dict[str, Dict[str, Any]]:
+# Cache for tool information to avoid repeated server connections
+_tools_cache = None
+_cache_timestamp = 0
+
+
+async def get_server_tools_info(use_cache: bool = True) -> Dict[str, Dict[str, Any]]:
     """
-    Get comprehensive tool information from all MCP servers dynamically.
+    Get comprehensive tool information from all live MCP servers with caching.
 
-    This function connects to live MCP servers and extracts their tool information.
-    If servers are unavailable, it will raise an exception rather than using fallback data.
+    Args:
+        use_cache: Whether to use cached results if available
 
     Returns:
-        Dict mapping server names to their tool information
-        Format: {
+        Dictionary mapping server names to their tool information:
+        {
             "server_name": {
                 "description": "Server description",
                 "tools": [
@@ -39,14 +47,51 @@ async def get_server_tools_info() -> Dict[str, Dict[str, Any]]:
         }
 
     Raises:
-        ConnectionError: If unable to connect to MCP servers
-        ValueError: If no tools are discovered from any server
+        ConnectionError: If MCP servers are not available
+        ValueError: If no tools are discovered
     """
+    global _tools_cache, _cache_timestamp
+
+    # Check cache first (cache valid for 60 seconds)
+    import time
+
+    current_time = time.time()
+    if use_cache and _tools_cache and (current_time - _cache_timestamp) < 60:
+        logger.debug("Using cached tool information")
+        return _tools_cache
+
     server_info = {}
 
     try:
-        # Load MCP configuration
-        config_path = Path(__file__).parent / "profiles.yaml"
+        # Load configuration - try multiple paths with absolute resolution
+        import os
+
+        current_dir = Path(os.getcwd())
+
+        config_paths = [
+            current_dir / "profiles.yaml",  # Current working directory
+            Path(__file__).parent / "profiles.yaml",  # Same directory as this script
+            current_dir / "../config/profiles.yaml",  # Parent config directory
+            current_dir / "config/profiles.yaml",  # Local config directory
+        ]
+
+        config_path = None
+        logger.debug(
+            f"Looking for profiles.yaml in paths: {[str(p) for p in config_paths]}"
+        )
+
+        for path in config_paths:
+            logger.debug(f"Checking path: {path} (exists: {path.exists()})")
+            if path.exists():
+                config_path = path
+                logger.debug(f"Found config at: {config_path}")
+                break
+
+        if not config_path:
+            raise FileNotFoundError(
+                f"profiles.yaml not found in any of these locations: {[str(p) for p in config_paths]}"
+            )
+
         with open(config_path, "r") as f:
             profiles_config = yaml.safe_load(f)
 
@@ -61,7 +106,8 @@ async def get_server_tools_info() -> Dict[str, Dict[str, Any]]:
             if not all_tools:
                 raise ValueError("No tools discovered from any MCP server")
 
-            print(
+            # Only log discovery once per session, not every call
+            logger.info(
                 f"🔍 Discovered {len(all_tools)} tools from {len(server_tool_mapping)} server categories"
             )
 
@@ -105,14 +151,21 @@ async def get_server_tools_info() -> Dict[str, Dict[str, Any]]:
             if not server_info:
                 raise ValueError("No valid server information could be extracted")
 
-            print(f"✅ Successfully extracted info for {len(server_info)} servers")
+            # Only log details once
+            logger.info(
+                f"✅ Successfully extracted info for {len(server_info)} servers"
+            )
             for server, info in server_info.items():
-                print(f"   📡 {server}: {len(info['tools'])} tools")
+                logger.info(f"   📡 {server}: {len(info['tools'])} tools")
+
+            # Cache the results
+            _tools_cache = server_info
+            _cache_timestamp = current_time
 
     except FileNotFoundError as e:
         raise ConnectionError(f"MCP configuration file not found: {e}")
     except Exception as e:
-        print(f"❌ Failed to connect to MCP servers: {e}")
+        logger.error(f"❌ Failed to connect to MCP servers: {e}")
         raise ConnectionError(f"Unable to connect to MCP servers: {e}")
 
     return server_info
@@ -163,7 +216,7 @@ async def get_tools_for_prompt() -> str:
     Returns:
         Formatted string ready for use in prompts
     """
-    server_info = await get_server_tools_info()
+    server_info = await get_server_tools_info(use_cache=True)
     return format_tools_for_prompt(server_info)
 
 
@@ -204,7 +257,7 @@ async def get_server_tools_tuples() -> List[tuple]:
     Returns:
         List of tuples in format (server_name, tool_name, tool_description)
     """
-    server_info = await get_server_tools_info()
+    server_info = await get_server_tools_info(use_cache=True)
     tool_tuples = []
 
     for server_name, info in server_info.items():
@@ -222,7 +275,7 @@ async def get_all_tools_dict() -> Dict[str, str]:
         Dict mapping tool_name to description: {"tool_name": "description", ...}
     """
     try:
-        all_server_info = await get_server_tools_info()
+        all_server_info = await get_server_tools_info(use_cache=True)
     except Exception as e:
         raise ConnectionError(f"Failed to fetch tools from MCP servers: {e}")
 
@@ -247,48 +300,50 @@ def filter_tools_dict(
     Returns:
         Filtered dictionary containing only specified tools
     """
-    return {name: desc for name, desc in all_tools_dict.items() if name in tool_names}
+    return {name: all_tools_dict[name] for name in tool_names if name in all_tools_dict}
 
 
 def format_tools_summary(tools_dict: Dict[str, str]) -> str:
     """
-    Create a formatted string summary of tools.
+    Format a tools dictionary into a human-readable summary for prompts.
 
     Args:
-        tools_dict: Dictionary of tools {name: description}
+        tools_dict: Dictionary mapping tool names to descriptions
 
     Returns:
-        Formatted string with tool names and descriptions
+        Formatted string suitable for LLM prompts
     """
-    return "\n".join(
-        f"- {tool_name}: {description if description else 'No description provided.'}"
-        for tool_name, description in tools_dict.items()
-    )
+    if not tools_dict:
+        return "No tools available."
+
+    formatted_tools = []
+    for tool_name, description in tools_dict.items():
+        formatted_tools.append(f"• {tool_name}: {description}")
+
+    return "\n".join(formatted_tools)
 
 
 async def get_filtered_tools_summary(tool_names: List[str]) -> str:
     """
-    Simple function to get filtered tools summary in one call.
-
-    Steps:
-    1. Extract all tools and descriptions to dict
-    2. Filter dict by tool names list
-    3. Format as string summary
+    Get a formatted summary of specific tools by name.
 
     Args:
-        tool_names: List of tool names to include
+        tool_names: List of tool names to include in the summary
 
     Returns:
-        Formatted string summary of specified tools
+        Formatted string describing the specified tools
+
+    Raises:
+        ConnectionError: If unable to fetch tools from MCP servers
     """
-    # Step 1: Get all tools dict
-    all_tools = await get_all_tools_dict()
-
-    # Step 2: Filter by tool names
-    filtered_tools = filter_tools_dict(all_tools, tool_names)
-
-    # Step 3: Format as string
-    return format_tools_summary(filtered_tools)
+    try:
+        # Use cached version to avoid repeated server calls
+        all_tools_dict = await get_all_tools_dict()
+        filtered_tools = filter_tools_dict(all_tools_dict, tool_names)
+        return format_tools_summary(filtered_tools)
+    except Exception as e:
+        logger.error(f"Failed to get filtered tools summary: {e}")
+        raise
 
 
 # Test function
